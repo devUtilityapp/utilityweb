@@ -41,10 +41,10 @@ async def download_video(video: YouTubeURL):
         
         # 해상도에 따른 format 문자열 설정
         format_strings = {
-            Resolution.R360: 'bestvideo[height<=360][ext=mp4]+bestaudio[ext=m4a]/best[height<=360][ext=mp4]/best[height<=360]',
-            Resolution.R480: 'bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best[height<=480]',
-            Resolution.R720: 'bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best[height<=720]',
-            Resolution.R1080: 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best[height<=1080]'
+            Resolution.R360: 'bestvideo[height<=360][ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[height<=360][ext=mp4][vcodec^=avc1]',
+            Resolution.R480: 'bestvideo[height<=480][ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[height<=480][ext=mp4][vcodec^=avc1]',
+            Resolution.R720: 'bestvideo[height<=720][ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[height<=720][ext=mp4][vcodec^=avc1]',
+            Resolution.R1080: 'bestvideo[height<=1080][ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4][vcodec^=avc1]'
         }
         
         download_opts = {
@@ -54,6 +54,16 @@ async def download_video(video: YouTubeURL):
                 'key': 'FFmpegVideoConvertor',
                 'preferedformat': video.format,
             }],
+            # FFmpeg 옵션을 postprocessor_args로 이동
+            'postprocessor_args': {
+                'ffmpeg': [
+                    '-c:v', 'libx264',    # H.264 비디오 코덱
+                    '-c:a', 'aac',        # AAC 오디오 코덱
+                    '-movflags', '+faststart',  # 웹 스트리밍 최적화
+                    '-pix_fmt', 'yuv420p'  # QuickTime 호환 픽셀 포맷
+                ]
+            },
+            'merge_output_format': 'mp4'
         }
 
         # YouTube 동영상 정보 추출 및 다운로드

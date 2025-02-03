@@ -1,10 +1,22 @@
 import { useState } from "react";
 import type { FunctionComponent } from "../common/types";
 import axios, { type AxiosResponse } from "axios";
-import type { YouTubeDownloadRequest } from "../types/youtube";
+import type {
+	YouTubeDownloadRequest,
+	YouTubeDownloadResolution,
+} from "../types/youtube";
 
 export const YoutubeDownloader = (): FunctionComponent => {
+	const resolutions: Array<YouTubeDownloadResolution> = [
+		"360p",
+		"480p",
+		"720p",
+		"1080p",
+	];
+
 	const [url, setUrl] = useState<string>("");
+	const [resolution, setResolution] =
+		useState<YouTubeDownloadResolution>("360p");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +32,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 				"http://localhost:8000/api/v1/youtube-download",
 				{
 					url: url,
-					resolution: "360p",
+					resolution: resolution,
 					format: "mp4",
 				} as YouTubeDownloadRequest,
 				{
@@ -100,6 +112,18 @@ export const YoutubeDownloader = (): FunctionComponent => {
 								setUrl(event.target.value);
 							}}
 						/>
+						<select
+							value={resolution}
+							onChange={(event) => {
+								setResolution(event.target.value as YouTubeDownloadResolution);
+							}}
+						>
+							{resolutions.map((resolution) => (
+								<option key={resolution} value={resolution}>
+									{resolution}
+								</option>
+							))}
+						</select>
 					</div>
 
 					<button
