@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+	--main-00: #171110;
+	--main-05: #38282a;
+	--main-10: #3a2e30;
+	--neutral-00: #fff;
+	--neutral-05: #f7f7f7;
+	--neutral-15: #7c7c6f;
+}
+body {
+	background-color: var(--main-00);
+}
