@@ -9,6 +9,8 @@ import subprocess
 from pathlib import Path
 import tempfile
 import shutil
+from starlette.background import BackgroundTask
+from urllib.parse import quote
 
 router = APIRouter(tags=["utils"])
 
@@ -58,6 +60,8 @@ async def download_video(video: YouTubeURL):
         with yt_dlp.YoutubeDL(download_opts) as ydl:
             info = ydl.extract_info(str(video.url), download=True)
             title = info.get('title', 'video')
+            # UTF-8로 인코딩된 파일명으로 헤더 설정
+            encoded_title = quote(title)
             
             # 다운로드된 파일 찾기
             downloaded_files = [f for f in os.listdir(temp_dir) if f.endswith('.mp4')]
@@ -77,6 +81,7 @@ async def download_video(video: YouTubeURL):
                 )
             
             # 안전한 출력 파일명 생성
+            
             safe_title = "".join(c for c in title if c.isalnum() or c in ('-', '_')).strip()
             if not safe_title:
                 safe_title = "video"
@@ -86,23 +91,40 @@ async def download_video(video: YouTubeURL):
             safe_path = os.path.join(temp_dir, safe_filename)
             shutil.copy2(actual_file, safe_path)
             
-            # 파일을 클라이언트에게 전송
+            def cleanup_temp_dir():
+                try:
+                    if temp_dir and os.path.exists(temp_dir):
+                        shutil.rmtree(temp_dir)
+                        print(f"Cleaned up temp directory: {temp_dir}")
+                except Exception as e:
+                    print(f"Failed to clean up temp directory: {str(e)}")
+            
+
+            headers = {
+                'Content-Disposition': f'attachment; filename*=UTF-8\'\'{encoded_title}.mp4'
+            }
+            
             return FileResponse(
                 path=safe_path,
                 filename=safe_filename,
-                media_type="video/mp4"
+                media_type="video/mp4",
+                headers=headers,
+                background=BackgroundTask(cleanup_temp_dir)
             )
 
     except Exception as e:
         print(f"Error details: {str(e)}")
         if temp_dir and os.path.exists(temp_dir):
             print(f"Temp directory contents: {os.listdir(temp_dir)}")
+            try:
+                shutil.rmtree(temp_dir)
+                print(f"Cleaned up temp directory on error: {temp_dir}")
+            except Exception as cleanup_error:
+                print(f"Failed to clean up temp directory: {str(cleanup_error)}")
         raise HTTPException(
             status_code=500,
             detail=f"Download failed: {str(e)}"
         )
-    
-    # finally 블록 제거 - FastAPI가 응답 전송 후 자동으로 정리할 것입니다
 
 @router.get("/youtube-video/formats/{video_id}")
 async def get_video_formats(video_id: str):

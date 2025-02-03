@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { FunctionComponent } from "../common/types";
+import axios, { type AxiosResponse } from "axios";
+import type { YouTubeDownloadRequest } from "../types/youtube";
 
 export const YoutubeDownloader = (): FunctionComponent => {
 	const [url, setUrl] = useState<string>("");
@@ -14,37 +16,63 @@ export const YoutubeDownloader = (): FunctionComponent => {
 		setError(null);
 
 		try {
-			const response = await fetch(
+			const response: AxiosResponse<Blob> = await axios.post(
 				"http://localhost:8000/api/v1/youtube-download",
 				{
-					method: "POST",
+					url: url,
+					resolution: "360p",
+					format: "mp4",
+				} as YouTubeDownloadRequest,
+				{
+					responseType: "blob",
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({
-						url: url,
-						resolution: "360p", // 기본 해상도 설정
-						format: "mp4", // 기본 포맷 설정
-					}),
 				}
 			);
 
-			if (!response.ok) {
-				throw new Error("Download failed");
+			// Content-Disposition 헤더에서 파일명 추출
+			const contentDisposition = response.headers["content-disposition"] as
+				| string
+				| undefined;
+			let filename = "video.mp4"; // 기본 파일명
+
+			if (contentDisposition) {
+				// UTF-8로 인코딩된 파일명 디코딩
+				const filenameMatch = contentDisposition.match(
+					/filename\*?=['"]?(?:UTF-\d['"]*)?([^;\r\n"']*)['"]?;?/i
+				);
+				if (filenameMatch && filenameMatch[1]) {
+					filename = decodeURIComponent(filenameMatch[1]);
+				} else {
+					// 기본 filename 파라미터 확인
+					const defaultMatch = contentDisposition.match(
+						/filename=['"]?([^;\r\n"']*)['"]?;?/i
+					);
+					if (defaultMatch && defaultMatch[1]) {
+						filename = defaultMatch[1];
+					}
+				}
 			}
 
 			// 파일 다운로드 처리
-			const blob = await response.blob();
-			const downloadUrl = window.URL.createObjectURL(blob);
+			const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
 			const link = document.createElement("a");
 			link.href = downloadUrl;
-			link.download = "video.mp4"; // 또는 서버에서 제공하는 파일명 사용
+			link.download = filename;
 			document.body.appendChild(link);
 			link.click();
 			link.remove();
 			window.URL.revokeObjectURL(downloadUrl);
-		} catch (error_) {
-			setError(error_ instanceof Error ? error_.message : "An error occurred");
+		} catch (error) {
+			console.error(error);
+			if (axios.isAxiosError(error)) {
+				setError(
+					(error.response?.data as { detail: string })?.detail || error.message
+				);
+			} else {
+				setError("An unexpected error occurred");
+			}
 		} finally {
 			setIsLoading(false);
 		}
