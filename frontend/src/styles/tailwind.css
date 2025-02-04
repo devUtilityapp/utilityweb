@@ -23,3 +23,30 @@ body {
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
+
+.loading-gradient {
+	animation-duration: 1.8s;
+	animation-fill-mode: forwards;
+	animation-iteration-count: infinite;
+	animation-name: placeHolderShimmer;
+	animation-timing-function: linear;
+	background: #f6f7f8;
+	background: linear-gradient(
+		90deg,
+		rgba(250, 250, 250, 1) 0%,
+		rgba(217, 217, 217, 1) 40%,
+		rgba(217, 217, 217, 1) 60%,
+		rgba(250, 250, 250, 1) 100%
+	);
+	background-size: 1000px 640px;
+	position: relative;
+}
+
+@keyframes placeHolderShimmer {
+	0% {
+		background-position: -468px 0;
+	}
+	100% {
+		background-position: 468px 0;
+	}
+}

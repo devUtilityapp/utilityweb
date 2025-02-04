@@ -148,6 +148,12 @@ export const YoutubeDownloader = (): FunctionComponent => {
 			const durationString = data.duration_string;
 			const thumbnail = data.thumbnail;
 
+			if (!title || !durationString || !thumbnail) {
+				setError("Failed to get video info");
+				setIsLoading(false);
+				return;
+			}
+
 			const videoInfo: YouTubeVideoInfo = {
 				title,
 				durationString,
@@ -185,10 +191,10 @@ export const YoutubeDownloader = (): FunctionComponent => {
 					<button
 						disabled={isLoading}
 						type="submit"
-						className={`w-1/6 bg-main-05 border-2 border-neutral-05 flex justify-center items-center rounded-2xl text-2xl text-neutral-05
-							${isLoading ? "bg-main-10 cursor-not-allowed" : "bg-main-05 hover:bg-main-10"}`}
+						className={`w-1/6 bg-main-05 border-2 border-neutral-05 flex justify-center items-center rounded-2xl text-2xl text-neutral-05 px-3
+							${isLoading ? "bg-neutral-50 cursor-not-allowed" : "bg-main-05 hover:bg-main-10"}`}
 					>
-						{isLoading ? "Downloading..." : "Download"}
+						{isLoading ? "download..." : "download"}
 					</button>
 				</form>
 
@@ -198,14 +204,26 @@ export const YoutubeDownloader = (): FunctionComponent => {
 					</div>
 				)}
 
+				{/* 비디오 정보 */}
 				{videoInfo && (
 					<div className="flex gap-8">
-						<div className="w-md container rounded-2xl overflow-hidden">
-							<img alt={videoInfo?.title} src={videoInfo?.thumbnail} />
+						{/* 썸네일 */}
+						<div
+							className={`w-1/2 rounded-2xl overflow-hidden ${
+								videoInfo?.thumbnail ? "" : "loading-gradient"
+							}`}
+						>
+							<img
+								alt={videoInfo?.title}
+								className="w-full h-full object-cover"
+								src={videoInfo?.thumbnail}
+							/>
 						</div>
-						<div className="w-full flex flex-col justify-between p-6 rounded-2xl bg-main-00 border border-neutral-05">
+
+						{/* 비디오 정보 */}
+						<div className="w-full flex flex-col justify-between  p-6 rounded-2xl bg-main-00 border border-neutral-05 w-1/2">
 							<div className="flex flex-col h-full gap-3">
-								<div className="font-medium text-neutral-05">
+								<div className="font-medium text-neutral-05 text-ellipsis overflow-hidden whitespace-nowrap">
 									{videoInfo?.title}
 								</div>
 								<div className="text-sm text-neutral-10 font-medium text-right">
@@ -216,12 +234,12 @@ export const YoutubeDownloader = (): FunctionComponent => {
 								<button
 									disabled={isLoading}
 									className={`w-full h-12 bg-main-05 border border-neutral-05 flex justify-center items-center rounded-xl text-neutral-05
-								${isLoading ? "bg-main-10 cursor-not-allowed" : "bg-main-05 hover:bg-main-10"}`}
+									${isLoading ? "bg-neutral-50 cursor-not-allowed" : "bg-main-05 hover:bg-main-10"}`}
 									onClick={async () => {
 										await videoDownload();
 									}}
 								>
-									FREE DOWNLOAD
+									{isLoading ? "FREE DOWNLOAD..." : "FREE DOWNLOAD"}
 								</button>
 								<div className="flex justify-end items-center gap-6 h-12">
 									<label className="pointer-events-none " htmlFor="resolution">
