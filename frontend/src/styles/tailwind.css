@@ -13,3 +13,13 @@
 body {
 	background-color: var(--main-00);
 }
+
+.border-top-radius-none {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.border-bottom-radius-none {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}

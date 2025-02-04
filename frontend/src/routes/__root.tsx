@@ -6,8 +6,12 @@ export const Route = createRootRoute({
 		return (
 			<div className="min-h-screen bg-main-00">
 				<Header />
-				<main className="mt-16">
-					<Outlet />
+				<main className="mt-16 flex">
+					<div className="w-1/6"></div>
+					<div className="container w-2/3">
+						<Outlet />
+					</div>
+					<div className="w-1/6"></div>
 				</main>
 			</div>
 		);

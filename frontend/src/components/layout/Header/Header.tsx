@@ -11,9 +11,9 @@ export const Header = (): FunctionComponent => {
 	// };
 
 	return (
-		<header className="fixed top-0 left-0 right-0 px-10 bg-main-00 shadow-md ">
-			<div className="container px-5 border-b border-neutral-50">
-				<div className="flex justify-between items-center h-16">
+		<header className="flex fixed top-0 left-0 right-0 px-10 bg-main-00 shadow-md w-full">
+			<div className="flex px-5 border-b border-neutral-50 w-full">
+				<div className="flex justify-between items-center h-16 w-full">
 					{/* 로고 및 네비게이션 */}
 					<div className="flex items-center space-x-8">
 						<Link className="flex items-center gap-5" to="/">

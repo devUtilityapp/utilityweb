@@ -13,13 +13,19 @@ export default {
 				neutral: {
 					"00": "#fff",
 					"05": "#f7f7f7",
+					10: "#aaa",
 					15: "#7C7C6F",
 					50: "#42433D",
 				},
 			},
 
 			padding: {
-				"px-5": "5px",
+				"5px": "5px",
+				30: "7.5rem",
+			},
+
+			minWidth: {
+				"100px": "100px",
 			},
 		},
 	},

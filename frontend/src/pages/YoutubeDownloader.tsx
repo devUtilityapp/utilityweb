@@ -4,7 +4,28 @@ import axios, { type AxiosResponse } from "axios";
 import type {
 	YouTubeDownloadRequest,
 	YouTubeDownloadResolution,
+	ResponseYouTubeVideoInfo,
 } from "../types/youtube";
+import { CustomSelect, PageTitle } from "../components/page/common";
+
+interface YouTubeVideoInfo {
+	title: string;
+	durationString: string;
+	thumbnail: string;
+}
+
+const isValidURLString = (url: string): boolean => {
+	const urlPattern = new RegExp(
+		"^(https?:\\/\\/)?" + // validate protocol
+			"((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // validate domain name
+			"((\\d{1,3}\\.){3}\\d{1,3}))" + // validate OR ip (v4) address
+			"(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // validate port and path
+			"(\\?[;&a-z\\d%_.~+=-]*)?" + // validate query string
+			"(\\#[-a-z\\d_]*)?$",
+		"i"
+	); // validate fragment locator
+	return !!urlPattern.test(url);
+};
 
 export const YoutubeDownloader = (): FunctionComponent => {
 	const resolutions: Array<YouTubeDownloadResolution> = [
@@ -13,17 +34,19 @@ export const YoutubeDownloader = (): FunctionComponent => {
 		"720p",
 		"1080p",
 	];
-
+	const [videoInfo, setVideoInfo] = useState<YouTubeVideoInfo | null>(null);
 	const [url, setUrl] = useState<string>("");
 	const [resolution, setResolution] =
 		useState<YouTubeDownloadResolution>("360p");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const handleSubmit = async (
-		event: React.FormEvent<HTMLFormElement>
-	): Promise<void> => {
-		event.preventDefault();
+	const getVideoId = (url: string): string | null => {
+		const videoId = new URL(url).searchParams.get("v");
+		return videoId;
+	};
+
+	const videoDownload = async (): Promise<void> => {
 		setIsLoading(true);
 		setError(null);
 
@@ -90,20 +113,65 @@ export const YoutubeDownloader = (): FunctionComponent => {
 		}
 	};
 
+	const getVideoInfo = async (
+		event: React.FormEvent<HTMLFormElement>
+	): Promise<void> => {
+		event.preventDefault();
+		setIsLoading(true);
+		setError(null);
+
+		if (!isValidURLString(url)) {
+			setError("Invalid YouTube URL");
+			setIsLoading(false);
+			return;
+		}
+
+		const videoId = getVideoId(url);
+		if (!videoId) {
+			setError("Invalid YouTube URL");
+			setIsLoading(false);
+			return;
+		}
+
+		try {
+			const response: AxiosResponse<ResponseYouTubeVideoInfo> = await axios.get(
+				`http://localhost:8000/api/v1/youtube-video/info/${videoId}`
+			);
+
+			const data = response.data;
+			if (!data) {
+				setError("Failed to get video info");
+				setIsLoading(false);
+				return;
+			}
+			const title = data.title;
+			const durationString = data.duration_string;
+			const thumbnail = data.thumbnail;
+
+			const videoInfo: YouTubeVideoInfo = {
+				title,
+				durationString,
+				thumbnail,
+			};
+
+			setVideoInfo(videoInfo);
+		} catch (error) {
+			console.error(error);
+			setError("An unexpected error occurred");
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	return (
-		<div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] p-4">
-			<div className="w-full max-w-md">
-				<form className="space-y-4" onSubmit={handleSubmit}>
-					<div>
-						<label
-							className="block text-sm font-medium text-gray-700"
-							htmlFor="url"
-						>
-							YouTube URL
-						</label>
+		<div className="flex flex-col items-center justify-start min-h-[calc(100vh-4rem)] py-20 px-30 box-border">
+			<PageTitle name="YOUTUBE DOWNLOADER" />
+			<div className="w-full flex flex-col gap-8">
+				<form className="flex h-20 gap-8" onSubmit={getVideoInfo}>
+					<div className="w-5/6 h-full">
 						<input
 							required
-							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+							className="block w-full h-full rounded-2xl text-2xl px-8 border-neutral-05 border-2 bg-main-00 text-neutral-05 outline-none"
 							id="url"
 							placeholder="https://www.youtube.com/watch?v=..."
 							type="text"
@@ -112,29 +180,13 @@ export const YoutubeDownloader = (): FunctionComponent => {
 								setUrl(event.target.value);
 							}}
 						/>
-						<select
-							value={resolution}
-							onChange={(event) => {
-								setResolution(event.target.value as YouTubeDownloadResolution);
-							}}
-						>
-							{resolutions.map((resolution) => (
-								<option key={resolution} value={resolution}>
-									{resolution}
-								</option>
-							))}
-						</select>
 					</div>
 
 					<button
 						disabled={isLoading}
 						type="submit"
-						className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
-              ${
-								isLoading
-									? "bg-blue-400 cursor-not-allowed"
-									: "bg-blue-600 hover:bg-blue-700"
-							}`}
+						className={`w-1/6 bg-main-05 border-2 border-neutral-05 flex justify-center items-center rounded-2xl text-2xl text-neutral-05
+							${isLoading ? "bg-main-10 cursor-not-allowed" : "bg-main-05 hover:bg-main-10"}`}
 					>
 						{isLoading ? "Downloading..." : "Download"}
 					</button>
@@ -143,6 +195,50 @@ export const YoutubeDownloader = (): FunctionComponent => {
 				{error && (
 					<div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
 						{error}
+					</div>
+				)}
+
+				{videoInfo && (
+					<div className="flex gap-8">
+						<div className="w-md container rounded-2xl overflow-hidden">
+							<img alt={videoInfo?.title} src={videoInfo?.thumbnail} />
+						</div>
+						<div className="w-full flex flex-col justify-between p-6 rounded-2xl bg-main-00 border border-neutral-05">
+							<div className="flex flex-col h-full gap-3">
+								<div className="font-medium text-neutral-05">
+									{videoInfo?.title}
+								</div>
+								<div className="text-sm text-neutral-10 font-medium text-right">
+									{videoInfo?.durationString}
+								</div>
+							</div>
+							<div className="w-full flex justify-center gap-4 flex-col">
+								<button
+									disabled={isLoading}
+									className={`w-full h-12 bg-main-05 border border-neutral-05 flex justify-center items-center rounded-xl text-neutral-05
+								${isLoading ? "bg-main-10 cursor-not-allowed" : "bg-main-05 hover:bg-main-10"}`}
+									onClick={async () => {
+										await videoDownload();
+									}}
+								>
+									FREE DOWNLOAD
+								</button>
+								<div className="flex justify-end items-center gap-6 h-12">
+									<label className="pointer-events-none " htmlFor="resolution">
+										<span className="text-neutral-05 font-medium">
+											Select video quality
+										</span>
+									</label>
+									<CustomSelect
+										currentValue={resolution}
+										options={resolutions}
+										onChange={(value) => {
+											setResolution(value as YouTubeDownloadResolution);
+										}}
+									></CustomSelect>
+								</div>
+							</div>
+						</div>
 					</div>
 				)}
 			</div>

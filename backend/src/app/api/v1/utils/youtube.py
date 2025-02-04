@@ -136,6 +136,19 @@ async def download_video(video: YouTubeURL):
             detail=f"Download failed: {str(e)}"
         )
 
+@router.get("/youtube-video/info/{video_id}")
+async def get_video_info(video_id: str):
+    try:
+        url = f"https://www.youtube.com/watch?v={video_id}"
+        with yt_dlp.YoutubeDL() as ydl:
+            info = ydl.extract_info(url, download=False)
+            return info
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to get video info: {str(e)}"
+        )
+
 @router.get("/youtube-video/formats/{video_id}")
 async def get_video_formats(video_id: str):
     try:

@@ -42,7 +42,7 @@ export const IconButton = ({
 	svg: React.ReactNode;
 }): FunctionComponent => {
 	return (
-		<div className="flex justify-center items-center bg-main-10 p-px-5 rounded-md">
+		<div className="flex justify-center items-center bg-main-10 p-5px rounded-md">
 			{svg}
 		</div>
 	);
