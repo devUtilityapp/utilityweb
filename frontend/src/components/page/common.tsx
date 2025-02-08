@@ -59,7 +59,7 @@ export const CustomSelect = ({
 			</div>
 
 			{open && (
-				<div className="options_contianer absolute border-top-radius-none border border-neutral-05 translate-y-full bottom-0 left-0 min-w-[100px] w-full bg-main-00 rounded-xl flex flex-col gap-2 py-3 overflow-hidden h-max left-[-1px]">
+				<div className="options_contianer absolute border-top-radius-none border border-neutral-05 translate-y-full bottom-0 left-0 min-w-[100px] w-full bg-main-00 rounded-xl flex flex-col gap-2 py-3 overflow-hidden h-max left-[-1px] z-10">
 					{options.map((option, index) => {
 						const value = option;
 						if (!value) return null;

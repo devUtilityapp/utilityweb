@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FunctionComponent } from "../common/types";
 import axios, { type AxiosResponse } from "axios";
 import type {
 	YouTubeDownloadRequest,
 	YouTubeDownloadResolution,
 	ResponseYouTubeVideoInfo,
+	YouTubeDownloadFormat,
 } from "../types/youtube";
 import { CustomSelect, PageTitle } from "../components/page/common";
+import uuid from "react-uuid";
 
 interface YouTubeVideoInfo {
 	title: string;
@@ -34,12 +36,86 @@ export const YoutubeDownloader = (): FunctionComponent => {
 		"720p",
 		"1080p",
 	];
+	// const formats: Array<YouTubeDownloadFormat> = ["mp4", "mp3"];
 	const [videoInfo, setVideoInfo] = useState<YouTubeVideoInfo | null>(null);
 	const [url, setUrl] = useState<string>("");
 	const [resolution, setResolution] =
 		useState<YouTubeDownloadResolution>("360p");
+	const [format] = useState<YouTubeDownloadFormat>("mp4");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
+	const [progress, setProgress] = useState(0);
+	const [speed, setSpeed] = useState(0);
+	const [, setEta] = useState(0);
+	const [isConverting, setIsConverting] = useState(false);
+	const clientId = useRef(uuid()); // 고유 ID 생성
+	const wsRef = useRef<WebSocket | null>(null); // WebSocket 참조 저장
+
+	useEffect(() => {
+		console.log("Connecting WebSocket...");
+		const ws = new WebSocket(
+			`ws://localhost:8000/api/v1/ws/${clientId.current}`
+		);
+		wsRef.current = ws;
+
+		// 연결 시도
+		ws.onopen = (): void => {
+			console.log("WebSocket Connected:", clientId.current);
+		};
+
+		// 메시지 수신
+		ws.onmessage = (event: MessageEvent): void => {
+			console.log("Raw WebSocket message:", event.data);
+			try {
+				const data = JSON.parse(event.data as string) as {
+					progress: number;
+					speed: number;
+					eta: number;
+					status: string;
+					phase: string;
+				};
+				console.log("Parsed WebSocket data:", data);
+
+				setProgress(data.progress);
+				setSpeed(data.speed);
+				setEta(data.eta);
+
+				if (data.phase === "downloading audio" && data.progress === 50) {
+					setIsConverting(true);
+
+					const progressInterval = setInterval(() => {
+						setProgress((previousProgress) => {
+							if (previousProgress === 99) {
+								clearInterval(progressInterval);
+								return previousProgress;
+							}
+							return previousProgress + 1;
+						});
+					}, 1000);
+				}
+			} catch (error) {
+				console.error("Error parsing WebSocket message:", error);
+			}
+		};
+
+		// 에러 발생
+		ws.onerror = (error: Event): void => {
+			console.error("WebSocket Error:", error);
+		};
+
+		// 연결 종료
+		ws.onclose = (event: CloseEvent): void => {
+			console.log("WebSocket Closed:", event.code, event.reason);
+		};
+
+		// 컴포넌트 언마운트 시 정리
+		return (): void => {
+			console.log("Cleaning up WebSocket connection");
+			if (wsRef.current?.readyState === WebSocket.OPEN) {
+				wsRef.current.close();
+			}
+		};
+	}, []);
 
 	const getVideoId = (url: string): string | null => {
 		const videoId = new URL(url).searchParams.get("v");
@@ -47,16 +123,17 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	};
 
 	const videoDownload = async (): Promise<void> => {
+		console.log("Starting download with clientId:", clientId.current);
 		setIsLoading(true);
 		setError(null);
 
 		try {
 			const response: AxiosResponse<Blob> = await axios.post(
-				"http://localhost:8000/api/v1/youtube-download",
+				`http://localhost:8000/api/v1/youtube-download/${clientId.current}`,
 				{
 					url: url,
 					resolution: resolution,
-					format: "mp4",
+					format: format,
 				} as YouTubeDownloadRequest,
 				{
 					responseType: "blob",
@@ -70,7 +147,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 			const contentDisposition = response.headers["content-disposition"] as
 				| string
 				| undefined;
-			let filename = "video.mp4"; // 기본 파일명
+			let filename = `video.${format}`; // 기본 파일명
 
 			if (contentDisposition) {
 				// UTF-8로 인코딩된 파일명 디코딩
@@ -99,6 +176,9 @@ export const YoutubeDownloader = (): FunctionComponent => {
 			link.click();
 			link.remove();
 			window.URL.revokeObjectURL(downloadUrl);
+
+			setProgress(100);
+			setIsConverting(false);
 		} catch (error) {
 			console.error(error);
 			if (axios.isAxiosError(error)) {
@@ -170,7 +250,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	};
 
 	return (
-		<div className="flex flex-col items-center justify-start min-h-[calc(100vh-4rem)] py-20 px-30 box-border">
+		<div className="flex flex-col items-center justify-start min-h-[calc(100vh-4rem)] box-border">
 			<PageTitle name="YOUTUBE DOWNLOADER" />
 			<div className="w-full flex flex-col gap-8">
 				<form className="flex h-20 gap-8" onSubmit={getVideoInfo}>
@@ -207,12 +287,25 @@ export const YoutubeDownloader = (): FunctionComponent => {
 				{/* 비디오 정보 */}
 				{videoInfo && (
 					<div className="flex gap-8">
-						{/* 썸네일 */}
-						<div
-							className={`w-1/2 rounded-2xl overflow-hidden ${
-								videoInfo?.thumbnail ? "" : "loading-gradient"
-							}`}
-						>
+						<div className="w-md container rounded-2xl overflow-hidden">
+							<img alt={videoInfo?.title} src={videoInfo?.thumbnail} />
+						</div>
+						<div className="w-full flex flex-col justify-between p-6 rounded-2xl bg-main-00 border border-neutral-05">
+							<div className="flex flex-col h-full gap-3">
+								<div className="font-medium text-neutral-05">
+									{videoInfo?.title}
+								</div>
+								<div className="text-sm text-neutral-10 font-medium text-right">
+									{videoInfo?.durationString}
+								</div>
+							</div>
+						</div>
+					</div>
+				)}
+
+				{videoInfo && (
+					<div className="flex gap-8">
+						<div className="w-md container rounded-2xl overflow-hidden">
 							<img
 								alt={videoInfo?.title}
 								className="w-full h-full object-cover"
@@ -221,7 +314,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 						</div>
 
 						{/* 비디오 정보 */}
-						<div className="w-full flex flex-col justify-between  p-6 rounded-2xl bg-main-00 border border-neutral-05 w-1/2">
+						<div className="flex flex-col justify-between  p-6 rounded-2xl bg-main-00 border border-neutral-05 w-1/2">
 							<div className="flex flex-col h-full gap-3">
 								<div className="font-medium text-neutral-05 text-ellipsis overflow-hidden whitespace-nowrap">
 									{videoInfo?.title}
@@ -241,20 +334,87 @@ export const YoutubeDownloader = (): FunctionComponent => {
 								>
 									{isLoading ? "FREE DOWNLOAD..." : "FREE DOWNLOAD"}
 								</button>
-								<div className="flex justify-end items-center gap-6 h-12">
-									<label className="pointer-events-none " htmlFor="resolution">
-										<span className="text-neutral-05 font-medium">
-											Select video quality
-										</span>
-									</label>
-									<CustomSelect
-										currentValue={resolution}
-										options={resolutions}
-										onChange={(value) => {
-											setResolution(value as YouTubeDownloadResolution);
-										}}
-									></CustomSelect>
-								</div>
+								{/*
+									<div className="flex justify-end items-center gap-6 h-12">
+										<label
+											className="pointer-events-none "
+											htmlFor="resolution"
+										>
+											<span className="text-neutral-05 font-medium">
+												Select video format
+											</span>
+										</label>
+										<CustomSelect
+											currentValue={format}
+											options={formats}
+											onChange={(value) => {
+												setFormat(value as YouTubeDownloadFormat);
+											}}
+										></CustomSelect>
+									</div> 
+									*/}
+								{format === "mp4" && (
+									<div className="flex justify-end items-center gap-6 h-12">
+										<label
+											className="pointer-events-none "
+											htmlFor="resolution"
+										>
+											<span className="text-neutral-05 font-medium">
+												Select video quality
+											</span>
+										</label>
+										<CustomSelect
+											currentValue={resolution}
+											options={resolutions}
+											onChange={(value) => {
+												setResolution(value as YouTubeDownloadResolution);
+											}}
+										></CustomSelect>
+									</div>
+								)}
+							</div>
+						</div>
+
+						<div className="w-full flex justify-center gap-4 flex-col">
+							<button
+								disabled={isLoading}
+								className={`w-full h-12 bg-main-05 border border-neutral-05 flex justify-center items-center rounded-xl text-neutral-05
+								${isLoading ? "bg-main-10 cursor-not-allowed" : "bg-main-05 hover:bg-main-10"}`}
+								onClick={async () => {
+									await videoDownload();
+								}}
+							>
+								FREE DOWNLOAD
+							</button>
+							<div className="flex justify-end items-center gap-6 h-12">
+								<label className="pointer-events-none " htmlFor="resolution">
+									<span className="text-neutral-05 font-medium">
+										Select video quality
+									</span>
+								</label>
+								<CustomSelect
+									currentValue={resolution}
+									options={resolutions}
+									onChange={(value) => {
+										setResolution(value as YouTubeDownloadResolution);
+									}}
+								></CustomSelect>
+							</div>
+						</div>
+						<div className="progress_bar_area">
+							<div className="progress_bar">
+								<div
+									className="progress"
+									style={{ width: `${progress}%` }}
+								></div>
+								<div className="progress_text">{progress}%</div>
+							</div>
+							<div className="stats text-sm text-neutral-10 font-medium text-right">
+								{isConverting ? (
+									<p>Converting audio to mp3...</p>
+								) : (
+									<p>Download speed: {speed} MB/s</p>
+								)}
 							</div>
 						</div>
 					</div>
