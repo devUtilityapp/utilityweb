@@ -11,6 +11,9 @@ import tempfile
 import shutil
 from starlette.background import BackgroundTask
 from urllib.parse import quote
+import asyncio
+from functools import partial
+from ..websocket import YoutubeDownloadProgressHook
 
 router = APIRouter(tags=["utils"])
 
@@ -20,10 +23,14 @@ class Resolution(str, Enum):
     R720 = "720p"
     R1080 = "1080p"
 
+class Format(str, Enum):
+    MP4 = "mp4"
+    MP3 = "mp3"
+
 class YouTubeURL(BaseModel):
-    url: HttpUrl = "https://www.youtube.com/watch?v=2C3CuRQcBuM"
-    format: Optional[str] = "mp4"
-    resolution: Optional[Resolution] = Resolution.R360  # 기본값 360p
+    url: str
+    resolution: str
+    format: Format
 
 class DownloadResponse(BaseModel):
     status: str
@@ -32,11 +39,11 @@ class DownloadResponse(BaseModel):
     
 
 
-@router.post("/youtube-download")
-async def download_video(video: YouTubeURL):
+
+@router.post("/youtube-download/{client_id}")
+async def download_video(video: YouTubeURL, client_id: str):
     temp_dir = None
     try:
-        # 임시 디렉토리 생성
         temp_dir = tempfile.mkdtemp()
         
         # 해상도에 따른 format 문자열 설정
@@ -46,81 +53,124 @@ async def download_video(video: YouTubeURL):
             Resolution.R720: 'bestvideo[height<=720][ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[height<=720][ext=mp4][vcodec^=avc1]',
             Resolution.R1080: 'bestvideo[height<=1080][ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4][vcodec^=avc1]'
         }
-        
-        download_opts = {
-            'format': format_strings.get(video.resolution, format_strings[Resolution.R360]),
+
+        # 기본 다운로드 옵션
+        base_opts = {
             'outtmpl': os.path.join(temp_dir, '%(title)s.%(ext)s'),
-            'postprocessors': [{
-                'key': 'FFmpegVideoConvertor',
-                'preferedformat': video.format,
-            }],
-            # FFmpeg 옵션을 postprocessor_args로 이동
-            'postprocessor_args': {
-                'ffmpeg': [
-                    '-c:v', 'libx264',    # H.264 비디오 코덱
-                    '-c:a', 'aac',        # AAC 오디오 코덱
-                    '-movflags', '+faststart',  # 웹 스트리밍 최적화
-                    '-pix_fmt', 'yuv420p'  # QuickTime 호환 픽셀 포맷
-                ]
-            },
-            'merge_output_format': 'mp4'
+            'quiet': True,
+            'no_warnings': True,
+            'extract_flat': True,
         }
 
-        # YouTube 동영상 정보 추출 및 다운로드
-        with yt_dlp.YoutubeDL(download_opts) as ydl:
-            info = ydl.extract_info(str(video.url), download=True)
-            title = info.get('title', 'video')
-            # UTF-8로 인코딩된 파일명으로 헤더 설정
-            encoded_title = quote(title)
-            
-            # 다운로드된 파일 찾기
-            downloaded_files = [f for f in os.listdir(temp_dir) if f.endswith('.mp4')]
-            if not downloaded_files:
-                raise HTTPException(
-                    status_code=500,
-                    detail="Download failed: No MP4 file found"
-                )
-            
-            # 실제 다운로드된 파일의 경로
-            actual_file = os.path.join(temp_dir, downloaded_files[0])
-            
-            if not os.path.exists(actual_file):
-                raise HTTPException(
-                    status_code=500,
-                    detail="Download failed: File not found after download"
-                )
-            
-            # 안전한 출력 파일명 생성
-            
-            safe_title = "".join(c for c in title if c.isalnum() or c in ('-', '_')).strip()
-            if not safe_title:
-                safe_title = "video"
-            
-            # 임시 파일을 새로운 이름으로 복사
-            safe_filename = f"{safe_title}_{video.resolution}.mp4"
-            safe_path = os.path.join(temp_dir, safe_filename)
-            shutil.copy2(actual_file, safe_path)
-            
-            def cleanup_temp_dir():
-                try:
-                    if temp_dir and os.path.exists(temp_dir):
-                        shutil.rmtree(temp_dir)
-                        print(f"Cleaned up temp directory: {temp_dir}")
-                except Exception as e:
-                    print(f"Failed to clean up temp directory: {str(e)}")
-            
+        # progress_hook 인스턴스 생성
+        progress_hook = YoutubeDownloadProgressHook(client_id, video.format == Format.MP3)
 
-            headers = {
-                'Content-Disposition': f'attachment; filename*=UTF-8\'\'{encoded_title}.mp4'
+        if video.format == Format.MP3:
+            # MP3 다운로드 옵션
+            download_opts = {
+                **base_opts,
+                'format': 'bestaudio[ext=m4a]/best',
+                'progress_hooks': [progress_hook.progress_hook],
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '192',
+                }],
             }
-            
-            return FileResponse(
-                path=safe_path,
-                filename=safe_filename,
-                media_type="video/mp4",
-                headers=headers,
-                background=BackgroundTask(cleanup_temp_dir)
+        else:
+            # MP4 다운로드 옵션
+            download_opts = {
+                **base_opts,
+                'format': format_strings.get(video.resolution, format_strings[Resolution.R360]),
+                'progress_hooks': [progress_hook.progress_hook],
+                'postprocessor_args': {
+                    'ffmpeg': [
+                        '-c:v', 'copy',
+                        '-c:a', 'copy',
+                        '-movflags', '+faststart'
+                    ]
+                },
+                'merge_output_format': 'mp4'
+            }
+
+        # progress_hook = YoutubeDownloadProgressHook(client_id)
+        # download_opts['progress_hooks'] = [progress_hook.progress_hook]
+        
+        # 다운로드 함수를 별도로 정의
+        async def download():
+            loop = asyncio.get_event_loop()
+            with yt_dlp.YoutubeDL(download_opts) as ydl:
+                # run_in_executor를 사용하여 비동기적으로 실행
+                return await loop.run_in_executor(
+                    None, 
+                    partial(ydl.extract_info, str(video.url), download=True)
+                )
+
+        # 타임아웃 설정 (예: 5분)
+        try:
+            info = await asyncio.wait_for(download(), timeout=60)  # 60초 = 1분
+        except asyncio.TimeoutError:
+            if temp_dir and os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir)
+            raise HTTPException(
+                status_code=408,
+                detail="Download timed out after 1 minute"
             )
+
+        title = info.get('title', 'video')
+        # UTF-8로 인코딩된 파일명으로 헤더 설정
+        encoded_title = quote(title)
+        
+        # 파일 확장자 동적 처리
+        file_extension = '.mp3' if video.format == Format.MP3 else '.mp4'
+        downloaded_files = [f for f in os.listdir(temp_dir) if f.endswith(file_extension)]
+        
+        if not downloaded_files:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Download failed: No {file_extension} file found"
+            )
+        
+        # 실제 다운로드된 파일의 경로
+        actual_file = os.path.join(temp_dir, downloaded_files[0])
+        
+        if not os.path.exists(actual_file):
+            raise HTTPException(
+                status_code=500,
+                detail="Download failed: File not found after download"
+            )
+        
+        # 안전한 출력 파일명 생성
+        
+        safe_title = "".join(c for c in title if c.isalnum() or c in ('-', '_')).strip()
+        if not safe_title:
+            safe_title = "video"
+        
+        # 파일명 생성 시 format 반영
+        safe_filename = f"{safe_title}_{video.resolution if video.format == Format.MP4 else 'audio'}{file_extension}"
+        safe_path = os.path.join(temp_dir, safe_filename)
+        shutil.copy2(actual_file, safe_path)
+        
+        def cleanup_temp_dir():
+            try:
+                if temp_dir and os.path.exists(temp_dir):
+                    shutil.rmtree(temp_dir)
+                    print(f"Cleaned up temp directory: {temp_dir}")
+            except Exception as e:
+                print(f"Failed to clean up temp directory: {str(e)}")
+        
+
+        headers = {
+            'Content-Disposition': f'attachment; filename*=UTF-8\'\'{encoded_title}{file_extension}'
+        }
+        
+        return FileResponse(
+            path=safe_path,
+            filename=safe_filename,
+            media_type='audio/mpeg' if video.format == Format.MP3 else 'video/mp4',
+            headers=headers,
+            background=BackgroundTask(cleanup_temp_dir)
+        )
 
     except Exception as e:
         print(f"Error details: {str(e)}")
