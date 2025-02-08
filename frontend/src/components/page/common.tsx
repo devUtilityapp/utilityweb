@@ -67,8 +67,8 @@ export const CustomSelect = ({
 						return (
 							<div
 								key={value}
-								className={`select-none text-neutral-05 font-medium border-b border-neutral-15 pb-3 px-3 cursor-pointer ${
-									index === options.length - 1 ? "border-b-0 pb-0" : ""
+								className={`select-none text-neutral-05 font-medium border-b border-neutral-15 px-3 cursor-pointer ${
+									index === options.length - 1 ? "border-b-0 pb-0" : "pb-3"
 								}`}
 								onClick={() => {
 									handleOptionClick(value);

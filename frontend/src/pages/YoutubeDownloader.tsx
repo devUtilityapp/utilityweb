@@ -228,6 +228,12 @@ export const YoutubeDownloader = (): FunctionComponent => {
 			const durationString = data.duration_string;
 			const thumbnail = data.thumbnail;
 
+			if (!title || !durationString || !thumbnail) {
+				setError("Failed to get video info");
+				setIsLoading(false);
+				return;
+			}
+
 			const videoInfo: YouTubeVideoInfo = {
 				title,
 				durationString,
@@ -279,16 +285,6 @@ export const YoutubeDownloader = (): FunctionComponent => {
 				)}
 
 				{videoInfo && (
-<<<<<<< HEAD
-					<div className="flex gap-8">
-						<div className="w-md container rounded-2xl overflow-hidden">
-							<img alt={videoInfo?.title} src={videoInfo?.thumbnail} />
-						</div>
-						<div className="w-full flex flex-col justify-between p-6 rounded-2xl bg-main-00 border border-neutral-05">
-							<div className="flex flex-col h-full gap-3">
-								<div className="font-medium text-neutral-05">
-									{videoInfo?.title}
-=======
 					<div className="flex flex-col gap-8">
 						{/* 썸네일 */}
 						<div className="flex gap-8">
@@ -313,7 +309,6 @@ export const YoutubeDownloader = (): FunctionComponent => {
 									<div className="text-sm text-neutral-10 font-medium text-right">
 										{videoInfo?.durationString}
 									</div>
->>>>>>> ee5fa71 (동영상 다운로드 진행률 표시 및 최적화)
 								</div>
 								<div className="w-full flex justify-center gap-4 flex-col">
 									<button
@@ -366,33 +361,6 @@ export const YoutubeDownloader = (): FunctionComponent => {
 									)}
 								</div>
 							</div>
-<<<<<<< HEAD
-							<div className="w-full flex justify-center gap-4 flex-col">
-								<button
-									disabled={isLoading}
-									className={`w-full h-12 bg-main-05 border border-neutral-05 flex justify-center items-center rounded-xl text-neutral-05
-								${isLoading ? "bg-main-10 cursor-not-allowed" : "bg-main-05 hover:bg-main-10"}`}
-									onClick={async () => {
-										await videoDownload();
-									}}
-								>
-									FREE DOWNLOAD
-								</button>
-								<div className="flex justify-end items-center gap-6 h-12">
-									<label className="pointer-events-none " htmlFor="resolution">
-										<span className="text-neutral-05 font-medium">
-											Select video quality
-										</span>
-									</label>
-									<CustomSelect
-										currentValue={resolution}
-										options={resolutions}
-										onChange={(value) => {
-											setResolution(value as YouTubeDownloadResolution);
-										}}
-									></CustomSelect>
-								</div>
-=======
 						</div>
 						<div className="progress_bar_area">
 							<div className="progress_bar">
@@ -408,7 +376,6 @@ export const YoutubeDownloader = (): FunctionComponent => {
 								) : (
 									<p>Download speed: {speed} MB/s</p>
 								)}
->>>>>>> ee5fa71 (동영상 다운로드 진행률 표시 및 최적화)
 							</div>
 						</div>
 					</div>
