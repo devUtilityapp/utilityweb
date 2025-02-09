@@ -35,6 +35,7 @@ export default {
 
 			minWidth: {
 				"100px": "100px",
+				"140px": "140px",
 			},
 		},
 	},

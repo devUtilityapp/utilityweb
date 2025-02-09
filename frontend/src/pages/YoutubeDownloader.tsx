@@ -3,9 +3,9 @@ import type { FunctionComponent } from "../common/types";
 import axios, { type AxiosResponse } from "axios";
 import type {
 	YouTubeDownloadRequest,
-	YouTubeDownloadResolution,
-	ResponseYouTubeVideoInfo,
 	YouTubeDownloadFormat,
+	ResponseYouTubeVideoInfoWithAllowResolutions,
+	AllowResolution,
 } from "../types/youtube";
 import { PageTitle } from "../components/page/common";
 import uuid from "react-uuid";
@@ -19,6 +19,7 @@ interface YouTubeVideoInfo {
 	durationString: string;
 	thumbnail: string;
 	tags: Array<string>;
+	allowResolutions: Array<AllowResolution>;
 }
 
 const isValidURLString = (url: string): boolean => {
@@ -55,12 +56,6 @@ const isVaildYoutubeURLString = (url: string): boolean => {
 };
 
 export const YoutubeDownloader = (): FunctionComponent => {
-	const resolutions: Array<YouTubeDownloadResolution> = [
-		"360p",
-		"480p",
-		"720p",
-		"1080p",
-	];
 	// const formats: Array<YouTubeDownloadFormat> = ["mp4", "mp3"];
 	const searchParameters = new URLSearchParams(window.location.search);
 	const [title] = useState<string>(
@@ -70,8 +65,10 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	);
 	const [videoInfo, setVideoInfo] = useState<YouTubeVideoInfo | null>(null);
 	const [url, setUrl] = useState<string>("");
-	const [resolution, setResolution] =
-		useState<YouTubeDownloadResolution>("360p");
+	const [resolution, setResolution] = useState<AllowResolution | null>(null);
+	const [allowResolutions, setAllowResolutions] = useState<
+		Array<AllowResolution>
+	>([]);
 	const [format] = useState<YouTubeDownloadFormat>("mp4");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
@@ -164,7 +161,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 				`http://localhost:8000/api/v1/youtube-download/${clientId.current}`,
 				{
 					url: url,
-					resolution: resolution,
+					resolution: resolution?.resolution,
 					format: format,
 				} as YouTubeDownloadRequest,
 				{
@@ -244,22 +241,47 @@ export const YoutubeDownloader = (): FunctionComponent => {
 		}
 
 		try {
-			const response: AxiosResponse<ResponseYouTubeVideoInfo> = await axios.get(
-				`http://localhost:8000/api/v1/youtube-video/info/${videoId}`
-			);
+			const response: AxiosResponse<ResponseYouTubeVideoInfoWithAllowResolutions> =
+				await axios.get(
+					`http://localhost:8000/api/v1/youtube-video/info/${videoId}`,
+					{
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
 
 			const data = response.data;
 
-			if (!data) {
+			if (!data.info) {
 				setError("Failed to get video info");
 				setIsLoading(false);
 				return;
 			}
+
 			console.log(data);
-			const title = data.title;
-			const durationString = data.duration_string;
-			const thumbnail = data.thumbnail;
-			const tags = data.tags;
+			const title = data.info.title;
+			const durationString = data.info.duration_string;
+			const thumbnail = data.info.thumbnail;
+			const tags = data.info.tags;
+			const allowResolutions = data.allow_resolutions || [];
+
+			if (!allowResolutions.length) {
+				toast.error("Unable to download videos");
+				setIsLoading(false);
+				return;
+			} else {
+				setAllowResolutions(allowResolutions);
+				let audioResolution = null;
+				for (const resolution of allowResolutions) {
+					if (resolution.is_audio) {
+						audioResolution = resolution;
+						break;
+					}
+				}
+
+				setResolution(audioResolution || allowResolutions[0] || null);
+			}
 
 			if (!title || !durationString || !thumbnail || !tags.length) {
 				setError("Failed to get video info");
@@ -272,6 +294,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 				durationString,
 				thumbnail,
 				tags,
+				allowResolutions,
 			};
 
 			setVideoInfo(videoInfo);
@@ -386,7 +409,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 							>
 								<img
 									alt={videoInfo?.title}
-									className="w-full  object-cover"
+									className="w-full rounded-2xl object-cover"
 									src={videoInfo?.thumbnail}
 								/>
 							</div>
@@ -405,10 +428,10 @@ export const YoutubeDownloader = (): FunctionComponent => {
 									{/* 다운로드 버튼 */}
 									{!infoParameter && (
 										<YoutubeDownloadButton
+											allowResolutions={allowResolutions}
 											format={format}
 											isLoading={isLoading}
 											resolution={resolution}
-											resolutions={resolutions}
 											setResolution={setResolution}
 											videoDownload={videoDownload}
 										/>

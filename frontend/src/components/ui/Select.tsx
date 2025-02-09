@@ -2,12 +2,16 @@ import { useState } from "react";
 import type { FunctionComponent } from "../../common/types";
 
 export const Select = ({
+	width = "100px",
 	currentValue,
 	options,
+	optionTitles,
 	onChange,
 }: {
+	width?: string;
 	currentValue: string;
 	options: Array<string>;
+	optionTitles?: Array<FunctionComponent>;
 	onChange: (value: string) => void;
 }): FunctionComponent => {
 	const [open, setOpen] = useState(false);
@@ -23,12 +27,12 @@ export const Select = ({
 
 	return (
 		<div
-			className={`relative h-full flex items-center bg-main-00 border border-neutral-05 rounded-xl min-w-[100px] ${
-				open ? "border-bottom-radius-none" : ""
-			}`}
+			className={`relative h-full flex items-center bg-main-00 min-w-[${width}]`}
 		>
 			<div
-				className="flex items-center justify-between w-full h-full px-3 cursor-pointer"
+				className={`flex items-center justify-between w-full h-full px-3 rounded-xl cursor-pointer border border-neutral-05 ${
+					open ? "border-bottom-radius-none" : ""
+				}`}
 				onClick={handleSelect}
 			>
 				<div className="text-neutral-05 font-medium select-none">
@@ -53,7 +57,7 @@ export const Select = ({
 			</div>
 
 			{open && (
-				<div className="options_contianer absolute border-top-radius-none border border-neutral-05 translate-y-full bottom-0 left-0 min-w-[100px] w-full bg-main-00 rounded-xl flex flex-col gap-2 py-3 overflow-hidden h-max left-[-1px] z-10">
+				<div className="options_contianer absolute border-top-radius-none border border-neutral-05 translate-y-full bottom-0 left-0 min-w-[140px] w-full bg-main-00 rounded-xl flex flex-col overflow-hidden h-max z-10">
 					{options.map((option, index) => {
 						const value = option;
 						if (!value) return null;
@@ -61,14 +65,12 @@ export const Select = ({
 						return (
 							<div
 								key={value}
-								className={`select-none text-neutral-05 font-medium border-b border-neutral-15 px-3 cursor-pointer ${
-									index === options.length - 1 ? "border-b-0 pb-0" : "pb-3"
-								}`}
+								className={`select-none text-neutral-05 font-medium border-b border-neutral-15 px-3 cursor-pointer py-3 `}
 								onClick={() => {
 									handleOptionClick(value);
 								}}
 							>
-								{option}
+								{optionTitles ? optionTitles[index] : option}
 							</div>
 						);
 					})}

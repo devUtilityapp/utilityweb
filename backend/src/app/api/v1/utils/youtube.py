@@ -14,6 +14,7 @@ from urllib.parse import quote
 import asyncio
 from functools import partial
 from ..websocket import YoutubeDownloadProgressHook
+from frozendict import frozendict
 
 router = APIRouter(tags=["utils"])
 
@@ -38,22 +39,19 @@ class DownloadResponse(BaseModel):
     title: str
     
 
-
-
 @router.post("/youtube-download/{client_id}")
 async def download_video(video: YouTubeURL, client_id: str):
     temp_dir = None
     try:
         temp_dir = tempfile.mkdtemp()
-        
-        # 해상도에 따른 format 문자열 설정
+
+        # 해상도에 따른 format 문자열 설정    
         format_strings = {
             Resolution.R360: 'bestvideo[height<=360][ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[height<=360][ext=mp4][vcodec^=avc1]',
             Resolution.R480: 'bestvideo[height<=480][ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[height<=480][ext=mp4][vcodec^=avc1]',
             Resolution.R720: 'bestvideo[height<=720][ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[height<=720][ext=mp4][vcodec^=avc1]',
             Resolution.R1080: 'bestvideo[height<=1080][ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4][vcodec^=avc1]'
         }
-
         # 기본 다운로드 옵션
         base_opts = {
             'outtmpl': os.path.join(temp_dir, '%(title)s.%(ext)s'),
@@ -189,15 +187,71 @@ async def download_video(video: YouTubeURL, client_id: str):
 @router.get("/youtube-video/info/{video_id}")
 async def get_video_info(video_id: str):
     try:
+        ydl_opts = {
+            "format": f'best',
+            'quiet': True,
+            'no_warnings': True,
+            'extract_flat': False,
+        }
+        
         url = f"https://www.youtube.com/watch?v={video_id}"
-        with yt_dlp.YoutubeDL() as ydl:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
-            return info
+
+            formats = info.get('formats', [])
+            allow_resolutions = []
+            resolution_index = {}  # resolution을 키로 하여 allow_resolutions의 인덱스를 저장
+
+            for fmt in formats:
+                resolution = fmt.get('format_note')
+                if (fmt.get('url') and
+                    not fmt.get('url').startswith('https://manifest.googlevideo.com/') and
+                    fmt.get('video_ext') == 'mp4' and 
+                    resolution):
+                    
+                    is_audio = fmt.get('acodec') != 'none'
+                    new_format = { 
+                        "resolution": resolution,
+                        "is_audio": is_audio,
+                        "download_url": fmt.get('url')
+                    }
+
+                    if resolution in resolution_index:
+                        # 기존 포맷의 인덱스
+                        idx = resolution_index[resolution]
+                        # 기존 포맷이 오디오가 없고, 새 포맷이 오디오가 있는 경우 교체
+                        if not allow_resolutions[idx]['is_audio'] and is_audio:
+                            allow_resolutions[idx] = new_format
+                    else:
+                        # 새로운 resolution인 경우
+                        allow_resolutions.append(new_format)
+                        resolution_index[resolution] = len(allow_resolutions) - 1
+                
+            sorted_resolutions = sorted(
+                allow_resolutions, 
+                key=lambda x: _resolution_to_number(x['resolution']),
+                reverse=False
+            )
+            
+            return {
+                "info": info,
+                "allow_resolutions": sorted_resolutions
+            }        
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
             detail=f"Failed to get video info: {str(e)}"
         )
+
+def _resolution_to_number(resolution: str) -> int:
+    """해상도 문자열을 숫자로 변환하는 헬퍼 함수"""
+    if not resolution:
+        return 0
+    try:
+        return int(resolution.lower().replace('p', ''))
+    except ValueError:
+        return 0
 
 @router.get("/youtube-video/formats/{video_id}")
 async def get_video_formats(video_id: str):

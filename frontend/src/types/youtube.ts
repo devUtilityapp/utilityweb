@@ -1,10 +1,10 @@
-export type YouTubeDownloadResolution = "360p" | "480p" | "720p" | "1080p";
+export type Resolutions = "360p" | "480p" | "720p" | "1080p";
 export type YouTubeDownloadFormat = "mp4" | "mp3";
 
 // YouTube 관련 타입 정의
 export type YouTubeDownloadRequest = {
 	url: string;
-	resolution: YouTubeDownloadResolution;
+	resolution: Resolutions;
 	format: YouTubeDownloadFormat;
 };
 
@@ -76,50 +76,64 @@ interface Chapter {
 }
 
 export interface ResponseYouTubeVideoInfo {
-	id: string;
-	title: string;
-	formats: Array<Format>;
-	thumbnail: string;
-	description: string;
-	channel_id: string;
-	channel_url: string;
-	duration: number;
-	view_count: number;
-	average_rating: number | null;
-	age_limit: number;
-	webpage_url: string;
-	categories: Array<string>;
-	tags: Array<string>;
-	playable_in_embed: boolean;
-	live_status: string;
-	media_type: string | null;
-	release_timestamp: number | null;
-	automatic_captions: Record<string, unknown>;
-	subtitles: Record<string, unknown>;
-	comment_count: number;
-	chapters: Array<Chapter> | null;
-	heatmap: Array<Heatmap>;
-	like_count: number;
-	channel: string;
-	channel_follower_count: number;
-	channel_is_verified: boolean;
-	uploader: string;
-	uploader_id: string;
-	uploader_url: string;
-	upload_date: string;
-	availability: string;
-	original_url: string;
-	webpage_url_basename: string;
-	webpage_url_domain: string;
-	extractor: string;
-	extractor_key: string;
-	display_id: string;
-	fulltitle: string;
-	duration_string: string;
-	is_live: boolean;
-	was_live: boolean;
-	_format_sort_fields: Array<string>;
-	requested_formats: Array<Format>;
-	format: string;
-	format_id: string;
+	info: {
+		id: string;
+		url: string | undefined;
+		title: string;
+		formats: Array<Format>;
+		thumbnail: string;
+		description: string;
+		channel_id: string;
+		channel_url: string;
+		duration: number;
+		view_count: number;
+		average_rating: number | null;
+		age_limit: number;
+		webpage_url: string;
+		categories: Array<string>;
+		tags: Array<string>;
+		playable_in_embed: boolean;
+		live_status: string;
+		media_type: string | null;
+		release_timestamp: number | null;
+		automatic_captions: Record<string, unknown>;
+		subtitles: Record<string, unknown>;
+		comment_count: number;
+		chapters: Array<Chapter> | null;
+		heatmap: Array<Heatmap>;
+		like_count: number;
+		channel: string;
+		channel_follower_count: number;
+		channel_is_verified: boolean;
+		uploader: string;
+		uploader_id: string;
+		uploader_url: string;
+		upload_date: string;
+		availability: string;
+		original_url: string;
+		webpage_url_basename: string;
+		webpage_url_domain: string;
+		extractor: string;
+		extractor_key: string;
+		display_id: string;
+		fulltitle: string;
+		duration_string: string;
+		is_live: boolean;
+		was_live: boolean;
+		_format_sort_fields: Array<string>;
+		requested_formats: Array<Format>;
+		format: string;
+		format_id: string;
+	};
+}
+
+export type AllowResolution = {
+	resolution: string;
+	is_audio: boolean;
+	download_url: string;
+};
+
+export interface ResponseYouTubeVideoInfoWithAllowResolutions
+	extends ResponseYouTubeVideoInfo {
+	allow_resolutions: Array<AllowResolution> | null;
 }
