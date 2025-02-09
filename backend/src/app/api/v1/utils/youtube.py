@@ -108,7 +108,7 @@ async def download_video(video: YouTubeURL, client_id: str):
 
         # 타임아웃 설정 (예: 5분)
         try:
-            info = await asyncio.wait_for(download(), timeout=60)  # 60초 = 1분
+            info = await asyncio.wait_for(download(), timeout=300)  # 300초 = 5분
         except asyncio.TimeoutError:
             if temp_dir and os.path.exists(temp_dir):
                 shutil.rmtree(temp_dir)

@@ -1,5 +1,7 @@
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { Header } from "../components/layout/Header/Header";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const Route = createRootRoute({
 	component: () => {
@@ -13,6 +15,8 @@ export const Route = createRootRoute({
 					</div>
 					<div className="w-1/6"></div>
 				</main>
+
+				<ToastContainer />
 			</div>
 		);
 	},
