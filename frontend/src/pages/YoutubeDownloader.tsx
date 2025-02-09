@@ -263,7 +263,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 			const title = data.info.title;
 			const durationString = data.info.duration_string;
 			const thumbnail = data.info.thumbnail;
-			const tags = data.info.tags;
+			const tags = data.info.tags || [];
 			const allowResolutions = data.allow_resolutions || [];
 
 			if (!allowResolutions.length) {
@@ -283,7 +283,19 @@ export const YoutubeDownloader = (): FunctionComponent => {
 				setResolution(audioResolution || allowResolutions[0] || null);
 			}
 
-			if (!title || !durationString || !thumbnail || !tags.length) {
+			if (!title || !durationString || !thumbnail) {
+				if (!title) {
+					console.error("No title");
+				}
+				if (!durationString) {
+					console.error("No durationString");
+				}
+				if (!thumbnail) {
+					console.error("No thumbnail");
+				}
+				if (!tags.length) {
+					console.error("No tags");
+				}
 				setError("Failed to get video info");
 				setIsLoading(false);
 				return;
@@ -308,7 +320,14 @@ export const YoutubeDownloader = (): FunctionComponent => {
 
 	const copyTags = async (): Promise<void> => {
 		const videoTags = videoInfo?.tags || [];
-		setMyTags([...myTags, ...videoTags]);
+		const newTags = [];
+
+		for (const videoTag of videoTags) {
+			if (!myTags.includes(videoTag)) {
+				newTags.push(videoTag);
+			}
+		}
+		setMyTags([...myTags, ...newTags]);
 
 		const tags = videoInfo?.tags.join(",");
 		if (tags) {
@@ -442,8 +461,35 @@ export const YoutubeDownloader = (): FunctionComponent => {
 								{infoParameter === "tags" && (
 									<div className="flex flex-col gap-8">
 										<div className="flex gap-3 items-center">
-											<div className="text-neutral-05 font-medium">TAGS</div>
-											<CopyIcon iconSize="18" onClick={copyTags} />
+											{videoInfo?.tags.length > 0 ? (
+												<>
+													<div className="text-neutral-05 font-medium">
+														TAGS
+													</div>
+													<CopyIcon iconSize="18" onClick={copyTags} />
+												</>
+											) : (
+												<>
+													<div className="text-neutral-05 font-medium">
+														No tags found
+													</div>
+													<svg
+														fill="none"
+														height="19"
+														viewBox="0 0 18 19"
+														width="18"
+														xmlns="http://www.w3.org/2000/svg"
+													>
+														<path
+															d="M1.5 2.15523L16.5 17.0007M4.9215 2.38623C6.426 1.93473 10.737 1.84398 13.293 2.29773C13.9118 2.40798 14.508 2.80698 14.8335 3.33648C15.378 4.22373 15.3488 5.25648 15.3488 6.29298L15.2587 12.6342M3 3.62898C2.526 5.32923 2.58975 8.44998 2.6205 13.0565C2.625 13.649 2.65275 14.249 2.83125 14.8152C3.108 15.6927 3.5685 16.2252 4.58025 16.6527C5.0115 16.8357 5.48475 16.8957 5.955 16.8957H8.98725C11.8342 16.8267 12.9833 16.5297 14.2418 14.8872M7.86525 16.8957C9.651 15.9905 10.5712 15.8645 10.3372 13.5875C10.2922 12.998 10.6298 12.2937 11.2328 12.1047M15.3038 9.53373C15.1215 10.6107 14.9993 11.0112 14.2725 11.6345"
+															stroke="#F7F7F7"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															strokeWidth="1.125"
+														/>
+													</svg>
+												</>
+											)}
 										</div>
 										<div className="flex flex-wrap gap-4">
 											{videoInfo?.tags.map((tag) => (
