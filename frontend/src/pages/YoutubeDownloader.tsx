@@ -13,6 +13,8 @@ import { toast } from "react-toastify";
 import { TAG } from "../components/ui/TAG";
 import { CopyIcon } from "../components/icons/CopyIcon";
 import { YoutubeDownloadButton } from "../components/page/YoutubeDonwloader/YoutubeDownloadButton";
+import { useYoutubeStore } from "../store/youtubeStore";
+import { useSidebarStore } from "../store/Sidebar";
 
 interface YouTubeVideoInfo {
 	title: string;
@@ -59,11 +61,13 @@ const isVaildYoutubeURLString = (url: string): boolean => {
 };
 
 export const YoutubeDownloader = (): FunctionComponent => {
-	// const formats: Array<YouTubeDownloadFormat> = ["mp4", "mp3"];
-	const searchParameters = new URLSearchParams(window.location.search);
-	const [title] = useState<string>(
-		searchParameters.get("info") === "tags"
-			? "YOUTUBE TAGS EXPLORER"
+	const currentYoutubeInfo = useYoutubeStore(
+		(state) => state.currentYoutubeInfo
+	);
+
+	const [title, setTitle] = useState<string>(
+		currentYoutubeInfo === "tags"
+			? "YOUTUBE TAG EXPLORER"
 			: "YOUTUBE DOWNLOADER"
 	);
 	const [videoInfo, setVideoInfo] = useState<YouTubeVideoInfo | null>(null);
@@ -80,19 +84,35 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	const [, setEta] = useState(0);
 	const [, setIsConverting] = useState(false);
 	const [infoParameter, setInfoParameter] = useState<string | null>(
-		searchParameters.get("info")
+		currentYoutubeInfo
 	);
+	const sidebarOpen = useSidebarStore((state) => state.sidebarOpen);
+	const setSidebarOpen = useSidebarStore((state) => state.setSidebarOpen);
 	const [myTags, setMyTags] = useState<Array<string>>([]);
 	const clientId = useRef(uuid()); // 고유 ID 생성
 	const wsRef = useRef<WebSocket | null>(null); // WebSocket 참조 저장
 
 	useEffect(() => {
-		console.log("change search parameters");
-		const searchParameters = new URLSearchParams(window.location.search);
-		if (searchParameters.get("info")) {
-			setInfoParameter(searchParameters.get("info"));
-		}
-	}, [window.location.search]);
+		setInfoParameter(currentYoutubeInfo);
+		setTitle(
+			currentYoutubeInfo === "tags"
+				? "YOUTUBE TAG EXPLORER"
+				: "YOUTUBE DOWNLOADER"
+		);
+	}, [currentYoutubeInfo]);
+
+	const youtubeDownloaderButtonElements = document.querySelectorAll(
+		".youtube_downloader_btn"
+	);
+	youtubeDownloaderButtonElements.forEach((element) => {
+		element.addEventListener("click", () => {
+			const href = element.getAttribute("href");
+			if (href) {
+				const url = new URL(href);
+				setInfoParameter(url.searchParams.get("info"));
+			}
+		});
+	});
 
 	useEffect(() => {
 		const ws = new WebSocket(
@@ -370,8 +390,15 @@ export const YoutubeDownloader = (): FunctionComponent => {
 		<div className="flex flex-col items-center justify-start min-h-[calc(100vh-4rem)] box-border">
 			<div className="relative w-full flex justify-center items-center">
 				<PageTitle name={title} />
-				<div className="absolute top-0 left-0 cursor-pointer">
-					<div className="text-neutral-15 font-medium text-2xl">Tools</div>
+				<div
+					className="absolute top-0 left-0 cursor-pointer"
+					onClick={() => {
+						setSidebarOpen(!sidebarOpen);
+					}}
+				>
+					<div className="text-neutral-15 font-medium text-2xl select-none">
+						Tools
+					</div>
 				</div>
 			</div>
 			<div className="w-full flex flex-col gap-8">
@@ -410,7 +437,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 					</div>
 				)}
 
-				{myTags.length > 0 && (
+				{myTags.length > 0 && infoParameter === "tags" && (
 					<div className="flex flex-col gap-4 border border-neutral-05 rounded-2xl py-6 px-8">
 						<div className="flex gap-3 items-center">
 							<div className="text-neutral-05 font-medium text-2xl">
