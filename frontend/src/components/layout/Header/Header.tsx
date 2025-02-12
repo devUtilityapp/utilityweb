@@ -11,7 +11,10 @@ export const Header = (): FunctionComponent => {
 	// };
 
 	return (
-		<header className="flex fixed top-0 left-0 right-0 px-10 bg-main-00 shadow-md w-full">
+		<header
+			className="flex fixed top-0 left-0 right-0 px-10 bg-main-00 shadow-md w-full z-40"
+			id="header"
+		>
 			<div className="flex px-5 border-b border-neutral-50 w-full">
 				<div className="flex justify-between items-center h-16 w-full">
 					{/* 로고 및 네비게이션 */}

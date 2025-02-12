@@ -42,10 +42,13 @@ const isVaildYoutubeURLString = (url: string): boolean => {
 	}
 
 	const urlObject = new URL(url);
-	if (urlObject.hostname !== "www.youtube.com") {
+	const hostname = urlObject.hostname;
+
+	if (hostname !== "www.youtube.com" && hostname !== "music.youtube.com") {
 		toast.error("Invalid YouTube URL");
 		return false;
 	}
+
 	const videoId = urlObject.searchParams.get("v");
 	if (!videoId) {
 		toast.error("Invalid YouTube URL");
@@ -60,7 +63,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	const searchParameters = new URLSearchParams(window.location.search);
 	const [title] = useState<string>(
 		searchParameters.get("info") === "tags"
-			? "YOUTUBE TAGS EXTRACTOR"
+			? "YOUTUBE TAGS EXPLORER"
 			: "YOUTUBE DOWNLOADER"
 	);
 	const [videoInfo, setVideoInfo] = useState<YouTubeVideoInfo | null>(null);
@@ -72,14 +75,24 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	const [format] = useState<YouTubeDownloadFormat>("mp4");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
-	const [progress, setProgress] = useState(0);
-	const [speed, setSpeed] = useState(0);
+	const [, setProgress] = useState(0);
+	const [, setSpeed] = useState(0);
 	const [, setEta] = useState(0);
-	const [isConverting, setIsConverting] = useState(false);
-	const [infoParameter] = useState<string | null>(searchParameters.get("info"));
+	const [, setIsConverting] = useState(false);
+	const [infoParameter, setInfoParameter] = useState<string | null>(
+		searchParameters.get("info")
+	);
 	const [myTags, setMyTags] = useState<Array<string>>([]);
 	const clientId = useRef(uuid()); // 고유 ID 생성
 	const wsRef = useRef<WebSocket | null>(null); // WebSocket 참조 저장
+
+	useEffect(() => {
+		console.log("change search parameters");
+		const searchParameters = new URLSearchParams(window.location.search);
+		if (searchParameters.get("info")) {
+			setInfoParameter(searchParameters.get("info"));
+		}
+	}, [window.location.search]);
 
 	useEffect(() => {
 		const ws = new WebSocket(
@@ -355,7 +368,12 @@ export const YoutubeDownloader = (): FunctionComponent => {
 
 	return (
 		<div className="flex flex-col items-center justify-start min-h-[calc(100vh-4rem)] box-border">
-			<PageTitle name={title} />
+			<div className="relative w-full flex justify-center items-center">
+				<PageTitle name={title} />
+				<div className="absolute top-0 left-0 cursor-pointer">
+					<div className="text-neutral-15 font-medium text-2xl">Tools</div>
+				</div>
+			</div>
 			<div className="w-full flex flex-col gap-8">
 				<form className="flex h-20 gap-8" onSubmit={getVideoInfo}>
 					<div className="w-5/6 h-full">
@@ -515,7 +533,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 						</div>
 
 						{/* 다운로드 진행 바 */}
-						{!infoParameter && (
+						{/* {!infoParameter && (
 							<div className="progress_bar_area">
 								<div className="progress_bar">
 									<div
@@ -532,7 +550,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 									)}
 								</div>
 							</div>
-						)}
+						)} */}
 					</div>
 				)}
 			</div>

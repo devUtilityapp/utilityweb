@@ -71,6 +71,10 @@ body {
 	color: var(--neutral-05);
 }
 
+.sidebar {
+	box-shadow: 4px 4px 10px 0px #0e100f;
+}
+
 @keyframes placeHolderShimmer {
 	0% {
 		background-position: -468px 0;
