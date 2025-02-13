@@ -1,7 +1,8 @@
-import { Link } from "@tanstack/react-router";
 import type { FunctionComponent } from "../../../common/types";
 import { useYoutubeStore } from "../../../store/youtubeStore";
 import { useSidebarStore } from "../../../store/Sidebar";
+import SidebarItems from "./SidebarItem/SidebarItems";
+import SidebarItem from "./SidebarItem/SidebarItem";
 
 export const Sidebar = (): FunctionComponent => {
 	const setCurrentYoutubeInfo = useYoutubeStore(
@@ -41,32 +42,40 @@ export const Sidebar = (): FunctionComponent => {
 				</div>
 			</div>
 			<div className="border-b border-neutral-15 w-full"></div>
-			<div className="flex flex-col gap-4">
-				<div className="text-neutral-10 text-xl font-medium">Youtube</div>
-				<ul className="flex flex-col gap-3 pl-3">
-					<li className="text-neutral-05 text-xl font-medium">
-						<Link
-							to="/youtube-downloader"
-							onClick={() => {
+			<div className="flex flex-col gap-10">
+				<SidebarItems title="Youtube">
+					<SidebarItem
+						item={{
+							name: "video downloader",
+							link: "/youtube-downloader",
+							onClick: () => {
 								setCurrentYoutubeInfo("");
 								setSidebarOpen(false);
-							}}
-						>
-							video downloader
-						</Link>
-					</li>
-					<li className="text-neutral-05 text-xl font-medium">
-						<Link
-							to="/youtube-downloader?info=tags"
-							onClick={() => {
+							},
+						}}
+					/>
+					<SidebarItem
+						item={{
+							name: "tag explorer",
+							link: "/youtube-downloader?info=tags",
+							onClick: () => {
 								setCurrentYoutubeInfo("tags");
 								setSidebarOpen(false);
-							}}
-						>
-							tag explorer
-						</Link>
-					</li>
-				</ul>
+							},
+						}}
+					/>
+				</SidebarItems>
+				<SidebarItems title="Calculator">
+					<SidebarItem
+						item={{
+							name: "divisor",
+							link: "/calculator",
+							onClick: () => {
+								setSidebarOpen(false);
+							},
+						}}
+					/>
+				</SidebarItems>
 			</div>
 		</div>
 	);
