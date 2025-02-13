@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as YoutubeDownloaderImport } from './routes/youtube-downloader'
 import { Route as IndexImport } from './routes/index'
+import { Route as CalculatorLcmImport } from './routes/calculator/lcm'
 import { Route as CalculatorGcdImport } from './routes/calculator/gcd'
 
 // Create/Update Routes
@@ -24,6 +25,11 @@ const YoutubeDownloaderRoute = YoutubeDownloaderImport.update({
 
 const IndexRoute = IndexImport.update({
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CalculatorLcmRoute = CalculatorLcmImport.update({
+  path: '/calculator/lcm',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -57,6 +63,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalculatorGcdImport
       parentRoute: typeof rootRoute
     }
+    '/calculator/lcm': {
+      id: '/calculator/lcm'
+      path: '/calculator/lcm'
+      fullPath: '/calculator/lcm'
+      preLoaderRoute: typeof CalculatorLcmImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -66,6 +79,7 @@ export const routeTree = rootRoute.addChildren({
   IndexRoute,
   YoutubeDownloaderRoute,
   CalculatorGcdRoute,
+  CalculatorLcmRoute,
 })
 
 /* prettier-ignore-end */
@@ -78,7 +92,8 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/",
         "/youtube-downloader",
-        "/calculator/gcd"
+        "/calculator/gcd",
+        "/calculator/lcm"
       ]
     },
     "/": {
@@ -89,6 +104,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/calculator/gcd": {
       "filePath": "calculator/gcd.ts"
+    },
+    "/calculator/lcm": {
+      "filePath": "calculator/lcm.ts"
     }
   }
 }

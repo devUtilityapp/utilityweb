@@ -75,6 +75,15 @@ export const Sidebar = (): FunctionComponent => {
 							},
 						}}
 					/>
+					<SidebarItem
+						item={{
+							name: "least common multiple",
+							link: "/calculator/lcm",
+							onClick: () => {
+								setSidebarOpen(false);
+							},
+						}}
+					/>
 				</SidebarItems>
 			</div>
 		</div>
