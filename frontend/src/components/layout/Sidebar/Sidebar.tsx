@@ -68,8 +68,8 @@ export const Sidebar = (): FunctionComponent => {
 				<SidebarItems title="Calculator">
 					<SidebarItem
 						item={{
-							name: "divisor",
-							link: "/calculator",
+							name: "greatest common divisor",
+							link: "/calculator/gcd",
 							onClick: () => {
 								setSidebarOpen(false);
 							},

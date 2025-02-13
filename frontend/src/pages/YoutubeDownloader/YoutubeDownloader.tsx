@@ -1,20 +1,24 @@
 import { useEffect, useRef, useState } from "react";
-import type { FunctionComponent } from "../common/types";
+import type { FunctionComponent } from "../../common/types";
 import axios, { type AxiosResponse } from "axios";
 import type {
 	YouTubeDownloadRequest,
 	YouTubeDownloadFormat,
 	ResponseYouTubeVideoInfoWithAllowResolutions,
 	AllowResolution,
-} from "../types/youtube";
-import { PageTitle } from "../components/page/common";
+} from "../../types/youtube";
+
 import uuid from "react-uuid";
 import { toast } from "react-toastify";
-import { TAG } from "../components/ui/TAG";
-import { CopyIcon } from "../components/icons/CopyIcon";
-import { YoutubeDownloadButton } from "../components/page/YoutubeDonwloader/YoutubeDownloadButton";
-import { useYoutubeStore } from "../store/youtubeStore";
-import { useSidebarStore } from "../store/Sidebar";
+import { TAG } from "../../components/ui/TAG";
+import { CopyIcon } from "../../components/icons/CopyIcon";
+import { YoutubeDownloadButton } from "../../components/page/YoutubeDonwloader/YoutubeDownloadButton";
+import { useYoutubeStore } from "../../store/youtubeStore";
+
+import { MainInput } from "../../components/ui/MainInput";
+import { Content } from "../../components/ui/Content";
+import { useProcessLoadingStore } from "../../store/ProcessLoading";
+import { MainSearchParameterForm } from "../../components/ui/MainSearchParameterForm";
 
 interface YouTubeVideoInfo {
 	title: string;
@@ -77,7 +81,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 		Array<AllowResolution>
 	>([]);
 	const [format] = useState<YouTubeDownloadFormat>("mp4");
-	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const { processLoading, setProcessLoading } = useProcessLoadingStore();
 	const [error, setError] = useState<string | null>(null);
 	const [, setProgress] = useState(0);
 	const [, setSpeed] = useState(0);
@@ -86,8 +90,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	const [infoParameter, setInfoParameter] = useState<string | null>(
 		currentYoutubeInfo
 	);
-	const sidebarOpen = useSidebarStore((state) => state.sidebarOpen);
-	const setSidebarOpen = useSidebarStore((state) => state.setSidebarOpen);
+
 	const [myTags, setMyTags] = useState<Array<string>>([]);
 	const clientId = useRef(uuid()); // 고유 ID 생성
 	const wsRef = useRef<WebSocket | null>(null); // WebSocket 참조 저장
@@ -186,7 +189,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 
 	const videoDownload = async (): Promise<void> => {
 		console.log("Starting download with clientId:", clientId.current);
-		setIsLoading(true);
+		setProcessLoading(true);
 		setError(null);
 
 		try {
@@ -251,7 +254,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 				setError("An unexpected error occurred");
 			}
 		} finally {
-			setIsLoading(false);
+			setProcessLoading(false);
 		}
 	};
 
@@ -259,17 +262,17 @@ export const YoutubeDownloader = (): FunctionComponent => {
 		event: React.FormEvent<HTMLFormElement>
 	): Promise<void> => {
 		event.preventDefault();
-		setIsLoading(true);
+		setProcessLoading(true);
 		setError(null);
 
 		if (!isVaildYoutubeURLString(url)) {
-			setIsLoading(false);
+			setProcessLoading(false);
 			return;
 		}
 
 		const videoId = getVideoId(url);
 		if (!videoId) {
-			setIsLoading(false);
+			setProcessLoading(false);
 			return;
 		}
 
@@ -288,7 +291,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 
 			if (!data.info) {
 				setError("Failed to get video info");
-				setIsLoading(false);
+				setProcessLoading(false);
 				return;
 			}
 
@@ -301,7 +304,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 
 			if (!allowResolutions.length) {
 				toast.error("Unable to download videos");
-				setIsLoading(false);
+				setProcessLoading(false);
 				return;
 			} else {
 				setAllowResolutions(allowResolutions);
@@ -330,7 +333,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 					console.error("No tags");
 				}
 				setError("Failed to get video info");
-				setIsLoading(false);
+				setProcessLoading(false);
 				return;
 			}
 
@@ -347,7 +350,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 			console.error(error);
 			setError("An unexpected error occurred");
 		} finally {
-			setIsLoading(false);
+			setProcessLoading(false);
 		}
 	};
 
@@ -387,49 +390,21 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	};
 
 	return (
-		<div className="flex flex-col items-center justify-start min-h-[calc(100vh-4rem)] box-border">
-			<div className="relative w-full flex justify-center items-center">
-				<PageTitle name={title} />
-				<div
-					className="absolute top-0 left-0 cursor-pointer"
-					onClick={() => {
-						setSidebarOpen(!sidebarOpen);
-					}}
-				>
-					<div className="text-neutral-15 font-medium text-2xl select-none">
-						Tools
-					</div>
-				</div>
-			</div>
+		<Content title={title}>
 			<div className="w-full flex flex-col gap-8">
-				<form className="flex h-20 gap-8" onSubmit={getVideoInfo}>
+				<MainSearchParameterForm
+					parameter={infoParameter || ""}
+					onSubmit={getVideoInfo}
+				>
 					<div className="w-5/6 h-full">
-						<input
-							required
-							className="block w-full h-full rounded-2xl text-2xl px-8 border-neutral-05 border-2 bg-main-00 text-neutral-05 outline-none"
+						<MainInput
 							id="url"
 							placeholder="https://www.youtube.com/watch?v=..."
-							type="text"
+							setValue={setUrl}
 							value={url}
-							onChange={(event) => {
-								setUrl(event.target.value);
-							}}
 						/>
 					</div>
-
-					<button
-						disabled={isLoading}
-						type="submit"
-						className={`w-1/6 bg-main-05 border-2 border-neutral-05 flex justify-center items-center rounded-2xl text-2xl text-neutral-05
-							${isLoading ? "bg-neutral-50 cursor-not-allowed" : "bg-main-05 hover:bg-main-10"}`}
-					>
-						{isLoading
-							? "Ready..."
-							: infoParameter === "tags"
-								? "Get Tags"
-								: "Download"}
-					</button>
-				</form>
+				</MainSearchParameterForm>
 
 				{error && (
 					<div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -494,7 +469,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 										<YoutubeDownloadButton
 											allowResolutions={allowResolutions}
 											format={format}
-											isLoading={isLoading}
+											isLoading={processLoading}
 											resolution={resolution}
 											setResolution={setResolution}
 											videoDownload={videoDownload}
@@ -581,6 +556,6 @@ export const YoutubeDownloader = (): FunctionComponent => {
 					</div>
 				)}
 			</div>
-		</div>
+		</Content>
 	);
 };

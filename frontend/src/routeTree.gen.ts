@@ -10,49 +10,63 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as YoutubeDownloaderImport } from './routes/youtube-downloader'
-import { Route as IndexImport } from './routes/index'
+import { Route as rootRoute } from "./routes/__root";
+import { Route as YoutubeDownloaderImport } from "./routes/youtube-downloader";
+import { Route as IndexImport } from "./routes/index";
+import { Route as CalculatorGcdImport } from "./routes/calculator/gcd";
 
 // Create/Update Routes
 
 const YoutubeDownloaderRoute = YoutubeDownloaderImport.update({
-  path: '/youtube-downloader',
-  getParentRoute: () => rootRoute,
-} as any)
+	path: "/youtube-downloader",
+	getParentRoute: () => rootRoute,
+} as any);
 
 const IndexRoute = IndexImport.update({
-  path: '/',
-  getParentRoute: () => rootRoute,
-} as any)
+	path: "/",
+	getParentRoute: () => rootRoute,
+} as any);
+
+const CalculatorGcdRoute = CalculatorGcdImport.update({
+	path: "/calculator/gcd",
+	getParentRoute: () => rootRoute,
+} as any);
 
 // Populate the FileRoutesByPath interface
 
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/youtube-downloader': {
-      id: '/youtube-downloader'
-      path: '/youtube-downloader'
-      fullPath: '/youtube-downloader'
-      preLoaderRoute: typeof YoutubeDownloaderImport
-      parentRoute: typeof rootRoute
-    }
-  }
+declare module "@tanstack/react-router" {
+	interface FileRoutesByPath {
+		"/": {
+			id: "/";
+			path: "/";
+			fullPath: "/";
+			preLoaderRoute: typeof IndexImport;
+			parentRoute: typeof rootRoute;
+		};
+		"/youtube-downloader": {
+			id: "/youtube-downloader";
+			path: "/youtube-downloader";
+			fullPath: "/youtube-downloader";
+			preLoaderRoute: typeof YoutubeDownloaderImport;
+			parentRoute: typeof rootRoute;
+		};
+		"/calculator/gcd": {
+			id: "/calculator/gcd";
+			path: "/calculator/gcd";
+			fullPath: "/calculator/gcd";
+			preLoaderRoute: typeof CalculatorGcdImport;
+			parentRoute: typeof rootRoute;
+		};
+	}
 }
 
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
-  IndexRoute,
-  YoutubeDownloaderRoute,
-})
+	IndexRoute,
+	YoutubeDownloaderRoute,
+	CalculatorGcdRoute,
+});
 
 /* prettier-ignore-end */
 
@@ -63,7 +77,8 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/youtube-downloader"
+        "/youtube-downloader",
+        "/calculator/gcd"
       ]
     },
     "/": {
@@ -71,6 +86,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/youtube-downloader": {
       "filePath": "youtube-downloader.ts"
+    },
+    "/calculator/gcd": {
+      "filePath": "calculator/gcd.ts"
     }
   }
 }
