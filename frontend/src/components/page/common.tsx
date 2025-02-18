@@ -1,7 +1,16 @@
 import type { FunctionComponent } from "../../common/types";
 
-export const PageTitle = ({ name }: { name: string }): FunctionComponent => {
+export const PageTitle = ({
+	categoryName,
+	name,
+}: {
+	categoryName: string;
+	name: string;
+}): FunctionComponent => {
 	return (
-		<div className="text-2xl font-medium text-neutral-05 mb-10">{name}</div>
+		<div className="w-full flex flex-col items-center justify-start">
+			<div className="font-regular text-neutral-15 mb-2">{categoryName}</div>
+			<div className="text-2xl font-medium text-neutral-05 mb-10">{name}</div>
+		</div>
 	);
 };

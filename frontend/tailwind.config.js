@@ -37,6 +37,10 @@ export default {
 				"100px": "100px",
 				"140px": "140px",
 			},
+
+			height: {
+				"80px": "80px",
+			},
 		},
 	},
 	plugins: [],

@@ -105,60 +105,58 @@ export const GCD = (): FunctionComponent => {
 	};
 
 	return (
-		<Content title="Greatest Common Divisor">
-			<div className="w-full flex flex-col gap-8">
-				<MainForm buttonText="calculate" onSubmit={calculateGCD}>
-					<div className="w-5/6 h-full">
-						<MainInput
-							id="number"
-							pattern="numbers-only"
-							placeholder="75,90,135,625,7895"
-							setValue={setGcdString}
-							value={gcdString}
-						/>
+		<Content categoryName="Calculator" title="Greatest Common Divisor">
+			<MainForm buttonText="calculate" onSubmit={calculateGCD}>
+				<div className="w-5/6 h-full">
+					<MainInput
+						id="number"
+						pattern="numbers-only"
+						placeholder="75,90,135,625,7895"
+						setValue={setGcdString}
+						value={gcdString}
+					/>
+				</div>
+			</MainForm>
+
+			{/* 결과 표시 */}
+			{result !== undefined && (
+				<div className="flex flex-col gap-8">
+					<div className="text-2xl font-bold text-center text-neutral-05">
+						GCD: {result}
 					</div>
-				</MainForm>
 
-				{/* 결과 표시 */}
-				{result !== undefined && (
-					<div className="flex flex-col gap-8">
-						<div className="text-2xl font-bold text-center text-neutral-05">
-							GCD: {result}
-						</div>
-
-						{/* 각 숫자의 약수 표시 */}
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-							{gcdDetails.map((detail) => (
-								<div
-									key={detail.number}
-									className="p-4 border bg-main-00 border-neutral-05 rounded-lg"
-								>
-									<h3 className="text-lg text-neutral-05 font-semibold mb-2">
-										Number: {detail.number}
-									</h3>
-									<div className="text-sm text-neutral-05">
-										Divisors:{" "}
-										{detail.divisors.map((divisor, index) => (
-											<span key={divisor.number}>
-												{index > 0 && ", "}
-												<span
-													className={
-														divisor.isCommon
-															? "text-green-05 font-semibold"
-															: "text-neutral-05"
-													}
-												>
-													{divisor.number}
-												</span>
+					{/* 각 숫자의 약수 표시 */}
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+						{gcdDetails.map((detail) => (
+							<div
+								key={detail.number}
+								className="p-4 border bg-main-00 border-neutral-05 rounded-lg"
+							>
+								<h3 className="text-lg text-neutral-05 font-semibold mb-2">
+									Number: {detail.number}
+								</h3>
+								<div className="text-sm text-neutral-05">
+									Divisors:{" "}
+									{detail.divisors.map((divisor, index) => (
+										<span key={divisor.number}>
+											{index > 0 && ", "}
+											<span
+												className={
+													divisor.isCommon
+														? "text-green-05 font-semibold"
+														: "text-neutral-05"
+												}
+											>
+												{divisor.number}
 											</span>
-										))}
-									</div>
+										</span>
+									))}
 								</div>
-							))}
-						</div>
+							</div>
+						))}
 					</div>
-				)}
-			</div>
+				</div>
+			)}
 		</Content>
 	);
 };

@@ -47,7 +47,7 @@ export const Header = (): FunctionComponent => {
 					<nav className="gap-7 flex">
 						<div className="flex gap-8 text-lg font-semibold">
 							<NavItem name="Home" to="/" />
-							<NavItem name="Apps" to="/youtube-downloader" />
+							<NavItem name="Tools" to="/tools" />
 						</div>
 						<div className="flex justify-center items-center">
 							<CircleNavItem name="로그인" to="/login" />

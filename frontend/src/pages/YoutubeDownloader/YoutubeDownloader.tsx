@@ -70,9 +70,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	);
 
 	const [title, setTitle] = useState<string>(
-		currentYoutubeInfo === "tags"
-			? "YOUTUBE TAG EXPLORER"
-			: "YOUTUBE DOWNLOADER"
+		currentYoutubeInfo === "tags" ? "TAG EXPLORER" : "VIDEO DOWNLOADER"
 	);
 	const [videoInfo, setVideoInfo] = useState<YouTubeVideoInfo | null>(null);
 	const [url, setUrl] = useState<string>("");
@@ -98,9 +96,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	useEffect(() => {
 		setInfoParameter(currentYoutubeInfo);
 		setTitle(
-			currentYoutubeInfo === "tags"
-				? "YOUTUBE TAG EXPLORER"
-				: "YOUTUBE DOWNLOADER"
+			currentYoutubeInfo === "tags" ? "TAG EXPLORER" : "VIDEO DOWNLOADER"
 		);
 	}, [currentYoutubeInfo]);
 
@@ -390,152 +386,145 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	};
 
 	return (
-		<Content title={title}>
-			<div className="w-full flex flex-col gap-8">
-				<MainSearchParameterForm
-					parameter={infoParameter || ""}
-					onSubmit={getVideoInfo}
-				>
-					<div className="w-5/6 h-full">
-						<MainInput
-							id="url"
-							placeholder="https://www.youtube.com/watch?v=..."
-							setValue={setUrl}
-							value={url}
-						/>
-					</div>
-				</MainSearchParameterForm>
+		<Content categoryName="Youtube" title={title}>
+			<MainSearchParameterForm
+				parameter={infoParameter || ""}
+				onSubmit={getVideoInfo}
+			>
+				<div className="w-5/6 h-full">
+					<MainInput
+						id="url"
+						placeholder="https://www.youtube.com/watch?v=..."
+						setValue={setUrl}
+						value={url}
+					/>
+				</div>
+			</MainSearchParameterForm>
 
-				{error && (
-					<div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-						{error}
-					</div>
-				)}
+			{error && (
+				<div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+					{error}
+				</div>
+			)}
 
-				{myTags.length > 0 && infoParameter === "tags" && (
-					<div className="flex flex-col gap-4 border border-neutral-05 rounded-2xl py-6 px-8">
-						<div className="flex gap-3 items-center">
-							<div className="text-neutral-05 font-medium text-2xl">
-								MY TAGS
-							</div>
-							<CopyIcon iconSize="26" onClick={copyMyTags} />
+			{myTags.length > 0 && infoParameter === "tags" && (
+				<div className="flex flex-col gap-4 border border-neutral-05 rounded-2xl py-6 px-8">
+					<div className="flex gap-3 items-center">
+						<div className="text-neutral-05 font-medium text-2xl">MY TAGS</div>
+						<CopyIcon iconSize="26" onClick={copyMyTags} />
+					</div>
+					<div className="rounded text-neutral-05 flex flex-wrap gap-4">
+						{myTags.map((tag) => (
+							<TAG
+								key={tag}
+								backgroundColorClass="bg-main-05"
+								tag={tag}
+								textColorClass="text-neutral-05"
+								textSizeClass="text-md"
+								onClick={() => {
+									tagHandler(tag);
+								}}
+							/>
+						))}
+					</div>
+				</div>
+			)}
+
+			{videoInfo && (
+				<div className="flex flex-col gap-8">
+					{/* 썸네일 */}
+					<div className="flex gap-8">
+						<div
+							className={`w-1/2 rounded-2xl overflow-hidden ${
+								videoInfo?.thumbnail ? "" : "loading-gradient"
+							}`}
+						>
+							<img
+								alt={videoInfo?.title}
+								className="w-full rounded-2xl object-cover"
+								src={videoInfo?.thumbnail}
+							/>
 						</div>
-						<div className="rounded text-neutral-05 flex flex-wrap gap-4">
-							{myTags.map((tag) => (
-								<TAG
-									key={tag}
-									backgroundColorClass="bg-main-05"
-									tag={tag}
-									textColorClass="text-neutral-05"
-									textSizeClass="text-md"
-									onClick={() => {
-										tagHandler(tag);
-									}}
-								/>
-							))}
-						</div>
-					</div>
-				)}
-
-				{videoInfo && (
-					<div className="flex flex-col gap-8">
-						{/* 썸네일 */}
-						<div className="flex gap-8">
-							<div
-								className={`w-1/2 rounded-2xl overflow-hidden ${
-									videoInfo?.thumbnail ? "" : "loading-gradient"
-								}`}
-							>
-								<img
-									alt={videoInfo?.title}
-									className="w-full rounded-2xl object-cover"
-									src={videoInfo?.thumbnail}
-								/>
-							</div>
-							{/* 비디오 정보 */}
-							<div className="flex flex-col gap-8 w-1/2 ">
-								<div className="flex flex-col justify-between h-full p-6 rounded-2xl bg-main-00 border border-neutral-05 ">
-									<div className="flex flex-col h-full gap-3">
-										<div className="font-medium text-neutral-05 text-ellipsis overflow-hidden whitespace-nowrap">
-											{videoInfo?.title}
-										</div>
-										<div className="text-sm text-neutral-10 font-medium text-right">
-											{videoInfo?.durationString}
-										</div>
+						{/* 비디오 정보 */}
+						<div className="flex flex-col gap-8 w-1/2 ">
+							<div className="flex flex-col justify-between h-full p-6 rounded-2xl bg-main-00 border border-neutral-05 ">
+								<div className="flex flex-col h-full gap-3">
+									<div className="font-medium text-neutral-05 text-ellipsis overflow-hidden whitespace-nowrap">
+										{videoInfo?.title}
 									</div>
-
-									{/* 다운로드 버튼 */}
-									{!infoParameter && (
-										<YoutubeDownloadButton
-											allowResolutions={allowResolutions}
-											format={format}
-											isLoading={processLoading}
-											resolution={resolution}
-											setResolution={setResolution}
-											videoDownload={videoDownload}
-										/>
-									)}
+									<div className="text-sm text-neutral-10 font-medium text-right">
+										{videoInfo?.durationString}
+									</div>
 								</div>
 
-								{/* 태그 */}
-								{infoParameter === "tags" && (
-									<div className="flex flex-col gap-8">
-										<div className="flex gap-3 items-center">
-											{videoInfo?.tags.length > 0 ? (
-												<>
-													<div className="text-neutral-05 font-medium">
-														TAGS
-													</div>
-													<CopyIcon iconSize="18" onClick={copyTags} />
-												</>
-											) : (
-												<>
-													<div className="text-neutral-05 font-medium">
-														No tags found
-													</div>
-													<svg
-														fill="none"
-														height="19"
-														viewBox="0 0 18 19"
-														width="18"
-														xmlns="http://www.w3.org/2000/svg"
-													>
-														<path
-															d="M1.5 2.15523L16.5 17.0007M4.9215 2.38623C6.426 1.93473 10.737 1.84398 13.293 2.29773C13.9118 2.40798 14.508 2.80698 14.8335 3.33648C15.378 4.22373 15.3488 5.25648 15.3488 6.29298L15.2587 12.6342M3 3.62898C2.526 5.32923 2.58975 8.44998 2.6205 13.0565C2.625 13.649 2.65275 14.249 2.83125 14.8152C3.108 15.6927 3.5685 16.2252 4.58025 16.6527C5.0115 16.8357 5.48475 16.8957 5.955 16.8957H8.98725C11.8342 16.8267 12.9833 16.5297 14.2418 14.8872M7.86525 16.8957C9.651 15.9905 10.5712 15.8645 10.3372 13.5875C10.2922 12.998 10.6298 12.2937 11.2328 12.1047M15.3038 9.53373C15.1215 10.6107 14.9993 11.0112 14.2725 11.6345"
-															stroke="#F7F7F7"
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															strokeWidth="1.125"
-														/>
-													</svg>
-												</>
-											)}
-										</div>
-										<div className="flex flex-wrap gap-4">
-											{videoInfo?.tags.map((tag) => (
-												<TAG
-													key={tag}
-													tag={tag}
-													textColorClass="text-main-05"
-													textSizeClass="text-md"
-													backgroundColorClass={`${
-														myTags.includes(tag)
-															? "bg-green-05"
-															: "bg-neutral-05"
-													}`}
-													onClick={() => {
-														tagHandler(tag);
-													}}
-												/>
-											))}
-										</div>
-									</div>
+								{/* 다운로드 버튼 */}
+								{!infoParameter && (
+									<YoutubeDownloadButton
+										allowResolutions={allowResolutions}
+										format={format}
+										isLoading={processLoading}
+										resolution={resolution}
+										setResolution={setResolution}
+										videoDownload={videoDownload}
+									/>
 								)}
 							</div>
-						</div>
 
-						{/* 다운로드 진행 바 */}
-						{/* {!infoParameter && (
+							{/* 태그 */}
+							{infoParameter === "tags" && (
+								<div className="flex flex-col gap-8">
+									<div className="flex gap-3 items-center">
+										{videoInfo?.tags.length > 0 ? (
+											<>
+												<div className="text-neutral-05 font-medium">TAGS</div>
+												<CopyIcon iconSize="18" onClick={copyTags} />
+											</>
+										) : (
+											<>
+												<div className="text-neutral-05 font-medium">
+													No tags found
+												</div>
+												<svg
+													fill="none"
+													height="19"
+													viewBox="0 0 18 19"
+													width="18"
+													xmlns="http://www.w3.org/2000/svg"
+												>
+													<path
+														d="M1.5 2.15523L16.5 17.0007M4.9215 2.38623C6.426 1.93473 10.737 1.84398 13.293 2.29773C13.9118 2.40798 14.508 2.80698 14.8335 3.33648C15.378 4.22373 15.3488 5.25648 15.3488 6.29298L15.2587 12.6342M3 3.62898C2.526 5.32923 2.58975 8.44998 2.6205 13.0565C2.625 13.649 2.65275 14.249 2.83125 14.8152C3.108 15.6927 3.5685 16.2252 4.58025 16.6527C5.0115 16.8357 5.48475 16.8957 5.955 16.8957H8.98725C11.8342 16.8267 12.9833 16.5297 14.2418 14.8872M7.86525 16.8957C9.651 15.9905 10.5712 15.8645 10.3372 13.5875C10.2922 12.998 10.6298 12.2937 11.2328 12.1047M15.3038 9.53373C15.1215 10.6107 14.9993 11.0112 14.2725 11.6345"
+														stroke="#F7F7F7"
+														strokeLinecap="round"
+														strokeLinejoin="round"
+														strokeWidth="1.125"
+													/>
+												</svg>
+											</>
+										)}
+									</div>
+									<div className="flex flex-wrap gap-4">
+										{videoInfo?.tags.map((tag) => (
+											<TAG
+												key={tag}
+												tag={tag}
+												textColorClass="text-main-05"
+												textSizeClass="text-md"
+												backgroundColorClass={`${
+													myTags.includes(tag) ? "bg-green-05" : "bg-neutral-05"
+												}`}
+												onClick={() => {
+													tagHandler(tag);
+												}}
+											/>
+										))}
+									</div>
+								</div>
+							)}
+						</div>
+					</div>
+
+					{/* 다운로드 진행 바 */}
+					{/* {!infoParameter && (
 							<div className="progress_bar_area">
 								<div className="progress_bar">
 									<div
@@ -553,9 +542,8 @@ export const YoutubeDownloader = (): FunctionComponent => {
 								</div>
 							</div>
 						)} */}
-					</div>
-				)}
-			</div>
+				</div>
+			)}
 		</Content>
 	);
 };

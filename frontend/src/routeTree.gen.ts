@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as YoutubeDownloaderImport } from './routes/youtube-downloader'
+import { Route as ToolsImport } from './routes/tools'
 import { Route as IndexImport } from './routes/index'
 import { Route as CalculatorLcmImport } from './routes/calculator/lcm'
 import { Route as CalculatorGcdImport } from './routes/calculator/gcd'
@@ -20,6 +21,11 @@ import { Route as CalculatorGcdImport } from './routes/calculator/gcd'
 
 const YoutubeDownloaderRoute = YoutubeDownloaderImport.update({
   path: '/youtube-downloader',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ToolsRoute = ToolsImport.update({
+  path: '/tools',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -47,6 +53,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/tools': {
+      id: '/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof ToolsImport
       parentRoute: typeof rootRoute
     }
     '/youtube-downloader': {
@@ -77,6 +90,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
+  ToolsRoute,
   YoutubeDownloaderRoute,
   CalculatorGcdRoute,
   CalculatorLcmRoute,
@@ -91,6 +105,7 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/tools",
         "/youtube-downloader",
         "/calculator/gcd",
         "/calculator/lcm"
@@ -98,6 +113,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/": {
       "filePath": "index.ts"
+    },
+    "/tools": {
+      "filePath": "tools.ts"
     },
     "/youtube-downloader": {
       "filePath": "youtube-downloader.ts"
