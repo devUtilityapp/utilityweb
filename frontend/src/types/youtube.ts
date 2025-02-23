@@ -1,18 +1,10 @@
-<<<<<<< HEAD
 export type Resolutions = "360p" | "480p" | "720p" | "1080p";
-=======
-export type YouTubeDownloadResolution = "360p" | "480p" | "720p" | "1080p";
->>>>>>> e22e062bd6cbd9918725c0b677010f8cfe69fccb
 export type YouTubeDownloadFormat = "mp4" | "mp3";
 
 // YouTube 관련 타입 정의
 export type YouTubeDownloadRequest = {
 	url: string;
-<<<<<<< HEAD
 	resolution: Resolutions;
-=======
-	resolution: YouTubeDownloadResolution;
->>>>>>> e22e062bd6cbd9918725c0b677010f8cfe69fccb
 	format: YouTubeDownloadFormat;
 };
 
