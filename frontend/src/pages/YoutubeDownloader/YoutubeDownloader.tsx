@@ -184,7 +184,6 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	};
 
 	const videoDownload = async (): Promise<void> => {
-		console.log("Starting download with clientId:", clientId.current);
 		setProcessLoading(true);
 		setError(null);
 
@@ -274,8 +273,16 @@ export const YoutubeDownloader = (): FunctionComponent => {
 
 		try {
 			const response: AxiosResponse<ResponseYouTubeVideoInfoWithAllowResolutions> =
+				// await axios.get(
+				// 	`http://localhost:8000/api/v1/youtube-video/info/${videoId}`,
+				// 	{
+				// 		headers: {
+				// 			"Content-Type": "application/json",
+				// 		},
+				// 	}
+				// );
 				await axios.get(
-					`http://localhost:8000/api/v1/youtube-video/info/${videoId}`,
+					`https://get-video-info-amqzqqtshq-dt.a.run.app?video_id=${videoId}`,
 					{
 						headers: {
 							"Content-Type": "application/json",
@@ -283,6 +290,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 					}
 				);
 
+			console.log(response);
 			const data = response.data;
 
 			if (!data.info) {
@@ -391,7 +399,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 				parameter={infoParameter || ""}
 				onSubmit={getVideoInfo}
 			>
-				<div className="w-5/6 h-full">
+				<div className="w-full h-full">
 					<MainInput
 						id="url"
 						placeholder="https://www.youtube.com/watch?v=..."

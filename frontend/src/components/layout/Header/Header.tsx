@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 // import { useTranslation } from "react-i18next";
 import type { FunctionComponent } from "../../../common/types";
-import { CircleNavItem, IconButton, NavItem } from "./HeaderItem/NavItem";
+import { NavItem } from "./HeaderItem/NavItem";
 
 export const Header = (): FunctionComponent => {
 	// const { i18n } = useTranslation();
@@ -12,10 +12,10 @@ export const Header = (): FunctionComponent => {
 
 	return (
 		<header
-			className="flex fixed top-0 left-0 right-0 px-10 bg-main-00 shadow-md w-full z-40"
+			className="flex fixed top-0 left-0 right-0 px-8 lg:px-10 bg-main-00 shadow-md w-full z-40"
 			id="header"
 		>
-			<div className="flex px-5 border-b border-neutral-50 w-full">
+			<div className="flex lg:px-5 border-b border-neutral-50 w-full">
 				<div className="flex justify-between items-center h-16 w-full">
 					{/* 로고 및 네비게이션 */}
 					<div className="flex items-center space-x-8">
@@ -49,10 +49,10 @@ export const Header = (): FunctionComponent => {
 							<NavItem name="Home" to="/" />
 							<NavItem name="Tools" to="/tools" />
 						</div>
-						<div className="flex justify-center items-center">
+						{/* <div className="flex cursor-pointer justify-center items-center">
 							<CircleNavItem name="로그인" to="/login" />
-						</div>
-						<div>
+						</div> */}
+						{/* <div className="cursor-pointer">
 							<IconButton
 								svg={
 									<svg
@@ -69,7 +69,7 @@ export const Header = (): FunctionComponent => {
 									</svg>
 								}
 							/>
-						</div>
+						</div> */}
 					</nav>
 					{/* 언어 선택 버튼 */}
 					{/* <div className="flex gap-2">

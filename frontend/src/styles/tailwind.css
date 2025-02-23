@@ -82,7 +82,7 @@ body {
 }
 
 .tool_item {
-	width: calc(25% - calc((var(--tool-items-gap) * 3) / 4));
+	width: calc(33.33% - calc((var(--tool-items-gap) * 2) / 3));
 	height: 80px;
 }
 
@@ -92,5 +92,11 @@ body {
 	}
 	100% {
 		background-position: 468px 0;
+	}
+}
+
+@media (max-width: 1023px) {
+	.tool_item {
+		width: calc(50% - calc((var(--tool-items-gap) * 1) / 2));
 	}
 }

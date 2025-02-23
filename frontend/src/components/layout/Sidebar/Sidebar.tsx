@@ -3,6 +3,7 @@ import { useYoutubeStore } from "../../../store/youtubeStore";
 import { useSidebarStore } from "../../../store/Sidebar";
 import SidebarItems from "./SidebarItem/SidebarItems";
 import SidebarItem from "./SidebarItem/SidebarItem";
+import { useEffect } from "react";
 
 export const Sidebar = (): FunctionComponent => {
 	const setCurrentYoutubeInfo = useYoutubeStore(
@@ -10,10 +11,23 @@ export const Sidebar = (): FunctionComponent => {
 	);
 	const sidebarOpen = useSidebarStore((state) => state.sidebarOpen);
 	const setSidebarOpen = useSidebarStore((state) => state.setSidebarOpen);
+
+	const setSidebarHeight = (): void => {
+		const header = document.getElementById("header");
+		const sidebar = document.getElementById("sidebar");
+		if (header && sidebar) {
+			sidebar.style.height = `${window.innerHeight - header.clientHeight + 1}px`;
+		}
+	};
+
+	window.addEventListener("resize", setSidebarHeight);
+	useEffect(() => {
+		setSidebarHeight();
+	}, []);
 	return (
 		<div
 			id="sidebar"
-			className={`sidebar w-1/6 h-screen flex flex-col fixed bottom-0 py-6 px-8 left-0 bg-main-10 rounded-tr-2xl rounded-br-2xl shadow-md z-50 gap-8 transition-all duration-300 ${
+			className={`sidebar w-1/6 min-w-[300px] h-screen flex flex-col fixed bottom-0 py-6 px-8 left-0 bg-main-10 rounded-tr-2xl rounded-br-2xl shadow-md z-50 gap-8 transition-transform duration-300 ${
 				sidebarOpen ? "translate-x-0" : "-translate-x-full"
 			}`}
 		>

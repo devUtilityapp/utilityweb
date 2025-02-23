@@ -26,7 +26,7 @@ export const Content = ({
 							setSidebarOpen(!sidebarOpen);
 						}}
 					>
-						<div className="text-neutral-15 font-medium text-2xl select-none">
+						<div className="text-neutral-15 font-medium text-md lg:text-2xl select-none">
 							Tools
 						</div>
 					</div>

@@ -126,11 +126,15 @@ export const MainInput = <T extends string | number | Array<number>>({
 	return (
 		<input
 			required
-			className="block w-full h-full rounded-2xl text-2xl px-8 border-neutral-05 border-2 bg-main-00 text-neutral-05 outline-none"
 			id={id}
 			placeholder={placeholder}
 			type="text"
 			value={Array.isArray(value) ? value.join(", ") : value.toString()}
+			className="block w-full h-full border-neutral-05 border-2 bg-main-00 text-neutral-05 outline-none
+				lg:rounded-2xl rounded-xl
+				lg:text-2xl text-xl
+				lg:px-8 px-4
+			"
 			onChange={handleChange}
 			onKeyDown={handleKeyDown}
 			onPaste={handlePaste}
