@@ -213,9 +213,6 @@ importers:
       globals:
         specifier: ^15.9.0
         version: 15.9.0
-      husky:
-        specifier: ^9.1.5
-        version: 9.1.5
       jsdom:
         specifier: ^25.0.0
         version: 25.0.0
@@ -3605,11 +3602,6 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
 
-  husky@9.1.5:
-    resolution: {integrity: sha512-rowAVRUBfI0b4+niA4SJMhfQwc107VLkBUgEYYAOQAbqDCnra1nYh83hF/MDmhYs9t9n1E3DuKOrs2LYNC+0Ag==}
-    engines: {node: '>=18'}
-    hasBin: true
-
   i18next-browser-languagedetector@8.0.0:
     resolution: {integrity: sha512-zhXdJXTTCoG39QsrOCiOabnWj2jecouOqbchu3EfhtSHxIB5Uugnm9JaizenOy39h7ne3+fLikIjeW88+rgszw==}
 
@@ -4729,15 +4721,12 @@ packages:
     peerDependencies:
       react-dom: ^16.8.0 || ^17 || ^18
 
-<<<<<<< HEAD
   react-toastify@11.0.3:
     resolution: {integrity: sha512-cbPtHJPfc0sGqVwozBwaTrTu1ogB9+BLLjd4dDXd863qYLj7DGrQ2sg5RAChjFUB4yc3w8iXOtWcJqPK/6xqRQ==}
     peerDependencies:
       react: ^18 || ^19
       react-dom: ^18 || ^19
 
-=======
->>>>>>> e22e062bd6cbd9918725c0b677010f8cfe69fccb
   react-uuid@2.0.0:
     resolution: {integrity: sha512-FNUH/8WR/FEtx0Bu6gmt1eONfc413hhvrEXFWUSFGvznUhI4dYoVZA09p7JHoTpnM4WC2D/bG2YSxGKXF4oVLg==}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
@@ -9909,8 +9898,6 @@ snapshots:
 
   human-signals@5.0.0: {}
 
-  husky@9.1.5: {}
-
   i18next-browser-languagedetector@8.0.0:
     dependencies:
       '@babel/runtime': 7.25.6
@@ -10965,15 +10952,12 @@ snapshots:
     dependencies:
       react-dom: 18.3.1(react@18.3.1)
 
-<<<<<<< HEAD
   react-toastify@11.0.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       clsx: 2.1.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-=======
->>>>>>> e22e062bd6cbd9918725c0b677010f8cfe69fccb
   react-uuid@2.0.0: {}
 
   react@18.3.1:
