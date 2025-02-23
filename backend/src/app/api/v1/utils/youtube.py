@@ -1,12 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
 from enum import Enum
 import yt_dlp
 import os
-from typing import Optional
-import subprocess
-from pathlib import Path
 import tempfile
 import shutil
 from starlette.background import BackgroundTask
@@ -14,10 +11,6 @@ from urllib.parse import quote
 import asyncio
 from functools import partial
 from ..websocket import YoutubeDownloadProgressHook
-<<<<<<< HEAD
-from frozendict import frozendict
-=======
->>>>>>> e22e062bd6cbd9918725c0b677010f8cfe69fccb
 
 router = APIRouter(tags=["utils"])
 
@@ -42,11 +35,6 @@ class DownloadResponse(BaseModel):
     title: str
     
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> e22e062bd6cbd9918725c0b677010f8cfe69fccb
 @router.post("/youtube-download/{client_id}")
 async def download_video(video: YouTubeURL, client_id: str):
     temp_dir = None
@@ -60,10 +48,6 @@ async def download_video(video: YouTubeURL, client_id: str):
             Resolution.R720: 'bestvideo[height<=720][ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[height<=720][ext=mp4][vcodec^=avc1]',
             Resolution.R1080: 'bestvideo[height<=1080][ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4][vcodec^=avc1]'
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> e22e062bd6cbd9918725c0b677010f8cfe69fccb
         # 기본 다운로드 옵션
         base_opts = {
             'outtmpl': os.path.join(temp_dir, '%(title)s.%(ext)s'),
@@ -118,11 +102,7 @@ async def download_video(video: YouTubeURL, client_id: str):
 
         # 타임아웃 설정 (예: 5분)
         try:
-<<<<<<< HEAD
             info = await asyncio.wait_for(download(), timeout=300)  # 300초 = 5분
-=======
-            info = await asyncio.wait_for(download(), timeout=60)  # 60초 = 1분
->>>>>>> e22e062bd6cbd9918725c0b677010f8cfe69fccb
         except asyncio.TimeoutError:
             if temp_dir and os.path.exists(temp_dir):
                 shutil.rmtree(temp_dir)
@@ -201,7 +181,7 @@ async def download_video(video: YouTubeURL, client_id: str):
         )
 
 @router.get("/youtube-video/info/{video_id}")
-async def get_video_info(video_id: str):
+def get_video_info(video_id: str):
     try:
         ydl_opts = {
             "format": f'best',
