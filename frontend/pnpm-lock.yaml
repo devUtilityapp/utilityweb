@@ -59,15 +59,12 @@ importers:
       react-i18next:
         specifier: ^15.0.1
         version: 15.0.1(i18next@23.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-<<<<<<< HEAD
       react-router-dom:
         specifier: ^7.1.5
         version: 7.1.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-toastify:
         specifier: ^11.0.3
         version: 11.0.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-=======
->>>>>>> e22e062bd6cbd9918725c0b677010f8cfe69fccb
       react-uuid:
         specifier: ^2.0.0
         version: 2.0.0
