@@ -202,3 +202,8 @@ frontend/storybook-static
 
 # tests
 frontend//coverage/
+
+.firebaserc
+firebase.json
+functions
+functions/
