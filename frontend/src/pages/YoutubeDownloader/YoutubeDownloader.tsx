@@ -273,16 +273,10 @@ export const YoutubeDownloader = (): FunctionComponent => {
 
 		try {
 			const response: AxiosResponse<ResponseYouTubeVideoInfoWithAllowResolutions> =
-				// await axios.get(
-				// 	`http://localhost:8000/api/v1/youtube-video/info/${videoId}`,
-				// 	{
-				// 		headers: {
-				// 			"Content-Type": "application/json",
-				// 		},
-				// 	}
-				// );
 				await axios.get(
-					`https://get-video-info-amqzqqtshq-dt.a.run.app?video_id=${videoId}`,
+					import.meta.env["VITE_APP_ENVIRONMENT"] === "development"
+						? `http://127.0.0.1:5001/utility-web-451616/asia-northeast2/get_video_info?video_id=${videoId}`
+						: `https://get-video-info-amqzqqtshq-dt.a.run.app?video_id=${videoId}`,
 					{
 						headers: {
 							"Content-Type": "application/json",
@@ -290,7 +284,6 @@ export const YoutubeDownloader = (): FunctionComponent => {
 					}
 				);
 
-			console.log(response);
 			const data = response.data;
 
 			if (!data.info) {
@@ -299,7 +292,6 @@ export const YoutubeDownloader = (): FunctionComponent => {
 				return;
 			}
 
-			console.log(data);
 			const title = data.info.title;
 			const durationString = data.info.duration_string;
 			const thumbnail = data.info.thumbnail;
