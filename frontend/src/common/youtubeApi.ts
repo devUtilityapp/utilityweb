@@ -19,8 +19,13 @@ const DOWNLOAD_API_BASE_URL =
 
 export const isDownloadApiConfigured = DOWNLOAD_API_BASE_URL !== "";
 
+// 기본 엔드포인트는 ?video_id= 형태를 쓰지만, 경로에 아이디가 들어가는 서버도
+// 쓸 수 있게 {videoId} 자리표시자를 지원한다.
+// 예: VITE_VIDEO_INFO_URL=https://api.example.com/api/v1/youtube-video/info/{videoId}
 export const videoInfoUrl = (videoId: string): string =>
-	`${VIDEO_INFO_URL}?video_id=${encodeURIComponent(videoId)}`;
+	VIDEO_INFO_URL.includes("{videoId}")
+		? VIDEO_INFO_URL.replace("{videoId}", encodeURIComponent(videoId))
+		: `${VIDEO_INFO_URL}?video_id=${encodeURIComponent(videoId)}`;
 
 export const videoDownloadUrl = (clientId: string): string =>
 	`${DOWNLOAD_API_BASE_URL}/api/v1/youtube-download/${clientId}`;
