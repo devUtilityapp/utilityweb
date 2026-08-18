@@ -36,6 +36,16 @@ const labelToValue = <T extends string>(
 const isPdfFile = (file: File): boolean =>
 	file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
 
+// 한 번에 추가된 파일은 이름 오름차순으로 정렬한다.
+// 파일명 안의 숫자는 숫자 크기로 비교한다(file2 < file10).
+const sortFilesByName = (files: Array<File>): Array<File> =>
+	[...files].sort((first, second) =>
+		first.name.localeCompare(second.name, undefined, {
+			numeric: true,
+			sensitivity: "base",
+		})
+	);
+
 export const PdfToPptx = (): FunctionComponent => {
 	const [items, setItems] = useState<Array<PdfItem>>([]);
 	const [slideSize, setSlideSize] = useState<SlideSize>("16:9");
@@ -54,7 +64,7 @@ export const PdfToPptx = (): FunctionComponent => {
 		}
 		if (pdfFiles.length === 0) return;
 
-		const newItems: Array<PdfItem> = pdfFiles.map((file) => ({
+		const newItems: Array<PdfItem> = sortFilesByName(pdfFiles).map((file) => ({
 			id: uuid(),
 			file,
 			pageCount: null,
@@ -84,18 +94,21 @@ export const PdfToPptx = (): FunctionComponent => {
 		}
 	};
 
-	const moveItem = (index: number, direction: -1 | 1): void => {
+	const reorderItems = (fromIndex: number, toIndex: number): void => {
 		setItems((previousItems) => {
-			const nextIndex = index + direction;
-			if (nextIndex < 0 || nextIndex >= previousItems.length) {
+			if (
+				fromIndex === toIndex ||
+				fromIndex < 0 ||
+				toIndex < 0 ||
+				fromIndex >= previousItems.length ||
+				toIndex >= previousItems.length
+			) {
 				return previousItems;
 			}
 			const nextItems = [...previousItems];
-			const current = nextItems[index];
-			const target = nextItems[nextIndex];
-			if (!current || !target) return previousItems;
-			nextItems[index] = target;
-			nextItems[nextIndex] = current;
+			const [moved] = nextItems.splice(fromIndex, 1);
+			if (!moved) return previousItems;
+			nextItems.splice(toIndex, 0, moved);
 			return nextItems;
 		});
 	};
@@ -165,8 +178,8 @@ export const PdfToPptx = (): FunctionComponent => {
 					<PdfFileList
 						disabled={processLoading}
 						items={items}
-						onMove={moveItem}
 						onRemove={removeItem}
+						onReorder={reorderItems}
 						onClear={() => {
 							setItems([]);
 						}}
