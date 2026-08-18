@@ -27,7 +27,9 @@ export const Select = ({
 
 	return (
 		<div
-			className={`relative h-full flex items-center bg-main-00 min-w-[${width}]`}
+			// Tailwind는 실행 시점에 조합된 클래스를 만들지 못하므로 인라인 스타일로 지정한다.
+			className="relative h-full flex items-center bg-main-00"
+			style={{ minWidth: width }}
 		>
 			<div
 				className={`flex items-center justify-between w-full h-full px-3 rounded-xl cursor-pointer border border-neutral-05 ${

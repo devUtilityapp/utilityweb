@@ -35,7 +35,13 @@ const readFileAsArrayBuffer = async (file: File): Promise<ArrayBuffer> =>
 
 const loadDocument = async (file: File): Promise<pdfjsLib.PDFDocumentProxy> => {
 	const data = await readFileAsArrayBuffer(file);
-	return pdfjsLib.getDocument({ data: new Uint8Array(data) }).promise;
+	return pdfjsLib.getDocument({
+		data: new Uint8Array(data),
+		// vite.config.ts의 static copy로 배포되는 pdf.js 리소스 위치.
+		standardFontDataUrl: "/pdfjs/standard_fonts/",
+		cMapUrl: "/pdfjs/cmaps/",
+		cMapPacked: true,
+	}).promise;
 };
 
 export const getPdfPageCount = async (file: File): Promise<number> => {

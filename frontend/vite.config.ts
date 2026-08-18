@@ -13,6 +13,16 @@ export default defineConfig({
 		  {
 			src: normalizePath(path.resolve('./src/assets/locales')),
 			dest: normalizePath(path.resolve('./dist'))
+		  },
+		  // pdf.js가 표준 폰트와 CJK cmap을 런타임에 받아간다. 없으면 404가 뜨고
+		  // 한글 등 일부 PDF의 글자가 깨진 채로 렌더링된다.
+		  {
+			src: normalizePath(path.resolve('./node_modules/pdfjs-dist/standard_fonts')),
+			dest: 'pdfjs'
+		  },
+		  {
+			src: normalizePath(path.resolve('./node_modules/pdfjs-dist/cmaps')),
+			dest: 'pdfjs'
 		  }
 		]
 	  })],
