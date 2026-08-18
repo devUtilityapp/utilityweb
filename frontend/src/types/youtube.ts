@@ -1,10 +1,10 @@
-export type Resolutions = "360p" | "480p" | "720p" | "1080p";
 export type YouTubeDownloadFormat = "mp4" | "mp3";
 
 // YouTube 관련 타입 정의
 export type YouTubeDownloadRequest = {
 	url: string;
-	resolution: Resolutions;
+	// 서버가 내려주는 화질 문자열을 그대로 전달한다("360p", "1080p", "audio" 등).
+	resolution: string;
 	format: YouTubeDownloadFormat;
 };
 

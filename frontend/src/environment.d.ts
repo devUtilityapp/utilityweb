@@ -6,6 +6,12 @@
 
 interface ImportMetaEnv {
 	readonly VITE_APP_TITLE: string;
+	/** "development"이면 로컬 에뮬레이터/백엔드를 사용한다. */
+	readonly VITE_APP_ENVIRONMENT?: string;
+	/** 영상 정보 조회 엔드포인트. 없으면 배포된 Cloud Function을 사용한다. */
+	readonly VITE_VIDEO_INFO_URL?: string;
+	/** 영상 다운로드 백엔드 주소(예: https://api.example.com). 없으면 기능 비활성화. */
+	readonly VITE_DOWNLOAD_API_BASE_URL?: string;
 	// more env variables...
 }
 

@@ -1,20 +1,24 @@
 import { useEffect, useRef, useState } from "react";
-import type { FunctionComponent } from "../../common/types";
+import { useSearch } from "@tanstack/react-router";
 import axios, { type AxiosResponse } from "axios";
-import type {
-	YouTubeDownloadRequest,
-	YouTubeDownloadFormat,
-	ResponseYouTubeVideoInfoWithAllowResolutions,
-	AllowResolution,
-} from "../../types/youtube";
-
 import uuid from "react-uuid";
 import { toast } from "react-toastify";
+import type { FunctionComponent } from "../../common/types";
+import type {
+	AllowResolution,
+	ResponseYouTubeVideoInfoWithAllowResolutions,
+	YouTubeDownloadFormat,
+	YouTubeDownloadRequest,
+} from "../../types/youtube";
+import {
+	downloadProgressWebSocketUrl,
+	isDownloadApiConfigured,
+	videoDownloadUrl,
+	videoInfoUrl,
+} from "../../common/youtubeApi";
 import { TAG } from "../../components/ui/TAG";
 import { CopyIcon } from "../../components/icons/CopyIcon";
 import { YoutubeDownloadButton } from "../../components/page/YoutubeDonwloader/YoutubeDownloadButton";
-import { useYoutubeStore } from "../../store/youtubeStore";
-
 import { MainInput } from "../../components/ui/MainInput";
 import { Content } from "../../components/ui/Content";
 import { useProcessLoadingStore } from "../../store/ProcessLoading";
@@ -28,228 +32,187 @@ interface YouTubeVideoInfo {
 	allowResolutions: Array<AllowResolution>;
 }
 
-const isValidURLString = (url: string): boolean => {
-	const urlPattern = new RegExp(
-		"^(https?:\\/\\/)?" + // validate protocol
-			"((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // validate domain name
-			"((\\d{1,3}\\.){3}\\d{1,3}))" + // validate OR ip (v4) address
-			"(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // validate port and path
-			"(\\?[;&a-z\\d%_.~+=-]*)?" + // validate query string
-			"(\\#[-a-z\\d_]*)?$",
-		"i"
-	); // validate fragment locator
-	return !!urlPattern.test(url);
+interface DownloadProgress {
+	progress: number;
+	speed: number;
+	eta: number;
+	phase: string;
+}
+
+// Cloud Function은 실패해도 HTTP 200으로 { error, status }를 돌려주는 경우가 있다.
+interface VideoInfoErrorResponse {
+	error?: string;
+	status?: number;
+}
+
+const getYoutubeVideoId = (url: string): string | null => {
+	let urlObject: URL;
+	try {
+		urlObject = new URL(url.startsWith("http") ? url : `https://${url}`);
+	} catch {
+		return null;
+	}
+
+	const hostname = urlObject.hostname.replace(/^www\./, "");
+
+	if (hostname === "youtu.be") {
+		return urlObject.pathname.slice(1) || null;
+	}
+
+	if (
+		hostname !== "youtube.com" &&
+		hostname !== "m.youtube.com" &&
+		hostname !== "music.youtube.com"
+	) {
+		return null;
+	}
+
+	// /shorts/<id>, /embed/<id> 형태도 지원한다.
+	const pathMatch = /^\/(?:shorts|embed|live)\/([^/?]+)/.exec(
+		urlObject.pathname
+	);
+	if (pathMatch?.[1]) {
+		return pathMatch[1];
+	}
+
+	return urlObject.searchParams.get("v");
 };
 
-const isVaildYoutubeURLString = (url: string): boolean => {
-	if (!isValidURLString(url)) {
-		toast.error("Invalid YouTube URL");
-		return false;
+const readErrorMessage = (data: unknown, fallback: string): string => {
+	if (typeof data === "object" && data !== null) {
+		const { error, status } = data as VideoInfoErrorResponse;
+		if (typeof error === "string" && error.length > 0) {
+			return status === undefined ? error : `${error} (status ${status})`;
+		}
+		const { detail } = data as { detail?: string };
+		if (typeof detail === "string" && detail.length > 0) {
+			return detail;
+		}
+	}
+	return fallback;
+};
+
+const parseFilename = (
+	contentDisposition: string | undefined,
+	fallback: string
+): string => {
+	if (!contentDisposition) return fallback;
+
+	const encodedMatch =
+		/filename\*?=['"]?(?:UTF-\d['"]*)?([^;\r\n"']*)['"]?;?/i.exec(
+			contentDisposition
+		);
+	if (encodedMatch?.[1]) {
+		return decodeURIComponent(encodedMatch[1]);
 	}
 
-	const urlObject = new URL(url);
-	const hostname = urlObject.hostname;
-
-	if (hostname !== "www.youtube.com" && hostname !== "music.youtube.com") {
-		toast.error("Invalid YouTube URL");
-		return false;
-	}
-
-	const videoId = urlObject.searchParams.get("v");
-	if (!videoId) {
-		toast.error("Invalid YouTube URL");
-		return false;
-	}
-
-	return true;
+	const plainMatch = /filename=['"]?([^;\r\n"']*)['"]?;?/i.exec(
+		contentDisposition
+	);
+	return plainMatch?.[1] ?? fallback;
 };
 
 export const YoutubeDownloader = (): FunctionComponent => {
-	const currentYoutubeInfo = useYoutubeStore(
-		(state) => state.currentYoutubeInfo
-	);
+	// 현재 모드는 URL(?info=tags)에서 읽는다. 새로고침이나 링크 공유에도 유지된다.
+	const { info } = useSearch({ from: "/youtube-downloader" });
+	const isTagMode = info === "tags";
 
-	const [title, setTitle] = useState<string>(
-		currentYoutubeInfo === "tags" ? "TAG EXPLORER" : "VIDEO DOWNLOADER"
-	);
 	const [videoInfo, setVideoInfo] = useState<YouTubeVideoInfo | null>(null);
 	const [url, setUrl] = useState<string>("");
 	const [resolution, setResolution] = useState<AllowResolution | null>(null);
-	const [allowResolutions, setAllowResolutions] = useState<
-		Array<AllowResolution>
-	>([]);
 	const [format] = useState<YouTubeDownloadFormat>("mp4");
 	const { processLoading, setProcessLoading } = useProcessLoadingStore();
 	const [error, setError] = useState<string | null>(null);
-	const [, setProgress] = useState(0);
-	const [, setSpeed] = useState(0);
-	const [, setEta] = useState(0);
-	const [, setIsConverting] = useState(false);
-	const [infoParameter, setInfoParameter] = useState<string | null>(
-		currentYoutubeInfo
-	);
-
+	const [downloadProgress, setDownloadProgress] =
+		useState<DownloadProgress | null>(null);
 	const [myTags, setMyTags] = useState<Array<string>>([]);
-	const clientId = useRef(uuid()); // 고유 ID 생성
-	const wsRef = useRef<WebSocket | null>(null); // WebSocket 참조 저장
+	const clientId = useRef(uuid());
+
+	const title = isTagMode ? "TAG EXPLORER" : "VIDEO DOWNLOADER";
+	const allowResolutions = videoInfo?.allowResolutions ?? [];
 
 	useEffect(() => {
-		setInfoParameter(currentYoutubeInfo);
-		setTitle(
-			currentYoutubeInfo === "tags" ? "TAG EXPLORER" : "VIDEO DOWNLOADER"
+		// 다운로드 백엔드가 설정되지 않은 환경(예: 배포)에서는 연결을 시도하지 않는다.
+		// 예전 코드는 localhost로 접속을 시도해 콘솔이 에러로 가득 찼다.
+		if (!isDownloadApiConfigured) return;
+
+		const websocket = new WebSocket(
+			downloadProgressWebSocketUrl(clientId.current)
 		);
-	}, [currentYoutubeInfo]);
 
-	const youtubeDownloaderButtonElements = document.querySelectorAll(
-		".youtube_downloader_btn"
-	);
-	youtubeDownloaderButtonElements.forEach((element) => {
-		element.addEventListener("click", () => {
-			const href = element.getAttribute("href");
-			if (href) {
-				const url = new URL(href);
-				setInfoParameter(url.searchParams.get("info"));
-			}
-		});
-	});
-
-	useEffect(() => {
-		const ws = new WebSocket(
-			`ws://localhost:8000/api/v1/ws/${clientId.current}`
-		);
-		wsRef.current = ws;
-
-		// 연결 시도
-		ws.onopen = (): void => {
-			console.log("WebSocket Connected:", clientId.current);
-		};
-
-		// 메시지 수신
-		ws.onmessage = (event: MessageEvent): void => {
-			console.log("Raw WebSocket message:", event.data);
+		websocket.onmessage = (event: MessageEvent): void => {
 			try {
-				const data = JSON.parse(event.data as string) as {
-					progress: number;
-					speed: number;
-					eta: number;
-					status: string;
-					phase: string;
-				};
-				console.log("Parsed WebSocket data:", data);
-
-				setProgress(data.progress);
-				setSpeed(data.speed);
-				setEta(data.eta);
-
-				if (data.phase === "downloading audio" && data.progress === 50) {
-					setIsConverting(true);
-
-					const progressInterval = setInterval(() => {
-						setProgress((previousProgress) => {
-							if (previousProgress === 99) {
-								clearInterval(progressInterval);
-								return previousProgress;
-							}
-							return previousProgress + 1;
-						});
-					}, 1000);
-				}
-			} catch (error) {
-				console.error("Error parsing WebSocket message:", error);
+				const data = JSON.parse(event.data as string) as DownloadProgress;
+				setDownloadProgress(data);
+			} catch {
+				// 진행률 메시지는 실패해도 다운로드 자체에는 영향이 없다.
 			}
 		};
 
-		// 에러 발생
-		ws.onerror = (error: Event): void => {
-			console.error("WebSocket Error:", error);
-		};
-
-		// 연결 종료
-		ws.onclose = (event: CloseEvent): void => {
-			console.log("WebSocket Closed:", event.code, event.reason);
-		};
-
-		// 컴포넌트 언마운트 시 정리
 		return (): void => {
-			console.log("Cleaning up WebSocket connection");
-			if (wsRef.current?.readyState === WebSocket.OPEN) {
-				wsRef.current.close();
+			if (
+				websocket.readyState === WebSocket.OPEN ||
+				websocket.readyState === WebSocket.CONNECTING
+			) {
+				websocket.close();
 			}
 		};
 	}, []);
 
-	const getVideoId = (url: string): string | null => {
-		const videoId = new URL(url).searchParams.get("v");
-		return videoId;
-	};
+	// 모드가 바뀌면 이전 조회 결과를 남기지 않는다.
+	useEffect(() => {
+		setVideoInfo(null);
+		setResolution(null);
+		setError(null);
+		setDownloadProgress(null);
+	}, [isTagMode]);
 
 	const videoDownload = async (): Promise<void> => {
+		if (!isDownloadApiConfigured) {
+			toast.error("Download server is not configured");
+			return;
+		}
+
 		setProcessLoading(true);
 		setError(null);
 
 		try {
 			const response: AxiosResponse<Blob> = await axios.post(
-				`http://localhost:8000/api/v1/youtube-download/${clientId.current}`,
+				videoDownloadUrl(clientId.current),
 				{
-					url: url,
+					url,
 					resolution: resolution?.resolution,
-					format: format,
-				} as YouTubeDownloadRequest,
+					format,
+				} satisfies Partial<YouTubeDownloadRequest>,
 				{
 					responseType: "blob",
-					headers: {
-						"Content-Type": "application/json",
-					},
+					headers: { "Content-Type": "application/json" },
 				}
 			);
 
-			// Content-Disposition 헤더에서 파일명 추출
-			const contentDisposition = response.headers["content-disposition"] as
-				| string
-				| undefined;
-			let filename = `video.${format}`; // 기본 파일명
+			const filename = parseFilename(
+				response.headers["content-disposition"] as string | undefined,
+				`video.${format}`
+			);
 
-			if (contentDisposition) {
-				// UTF-8로 인코딩된 파일명 디코딩
-				const filenameMatch = contentDisposition.match(
-					/filename\*?=['"]?(?:UTF-\d['"]*)?([^;\r\n"']*)['"]?;?/i
-				);
-				if (filenameMatch && filenameMatch[1]) {
-					filename = decodeURIComponent(filenameMatch[1]);
-				} else {
-					// 기본 filename 파라미터 확인
-					const defaultMatch = contentDisposition.match(
-						/filename=['"]?([^;\r\n"']*)['"]?;?/i
-					);
-					if (defaultMatch && defaultMatch[1]) {
-						filename = defaultMatch[1];
-					}
-				}
-			}
-
-			// 파일 다운로드 처리
-			const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+			const downloadUrl = window.URL.createObjectURL(response.data);
 			const link = document.createElement("a");
 			link.href = downloadUrl;
 			link.download = filename;
-			document.body.appendChild(link);
+			document.body.append(link);
 			link.click();
 			link.remove();
 			window.URL.revokeObjectURL(downloadUrl);
-
-			setProgress(100);
-			setIsConverting(false);
-		} catch (error) {
-			console.error(error);
-			if (axios.isAxiosError(error)) {
-				setError(
-					(error.response?.data as { detail: string })?.detail || error.message
-				);
-			} else {
-				setError("An unexpected error occurred");
-			}
+		} catch (caughtError) {
+			console.error(caughtError);
+			const message = axios.isAxiosError(caughtError)
+				? readErrorMessage(caughtError.response?.data, caughtError.message)
+				: "An unexpected error occurred";
+			setError(message);
+			toast.error(message);
 		} finally {
 			setProcessLoading(false);
+			setDownloadProgress(null);
 		}
 	};
 
@@ -257,138 +220,98 @@ export const YoutubeDownloader = (): FunctionComponent => {
 		event: React.FormEvent<HTMLFormElement>
 	): Promise<void> => {
 		event.preventDefault();
-		setProcessLoading(true);
 		setError(null);
 
-		if (!isVaildYoutubeURLString(url)) {
-			setProcessLoading(false);
+		const videoId = getYoutubeVideoId(url);
+		if (!videoId) {
+			toast.error("Invalid YouTube URL");
 			return;
 		}
 
-		const videoId = getVideoId(url);
-		if (!videoId) {
-			setProcessLoading(false);
-			return;
-		}
+		setProcessLoading(true);
 
 		try {
-			const response: AxiosResponse<ResponseYouTubeVideoInfoWithAllowResolutions> =
-				await axios.get(
-					import.meta.env["VITE_APP_ENVIRONMENT"] === "development"
-						? `http://127.0.0.1:5001/utility-web-451616/asia-northeast2/get_video_info?video_id=${videoId}`
-						: `https://get-video-info-amqzqqtshq-dt.a.run.app?video_id=${videoId}`,
-					{
-						headers: {
-							"Content-Type": "application/json",
-						},
-					}
-				);
+			const response: AxiosResponse<
+				ResponseYouTubeVideoInfoWithAllowResolutions | VideoInfoErrorResponse
+			> = await axios.get(videoInfoUrl(videoId), {
+				headers: { "Content-Type": "application/json" },
+			});
 
 			const data = response.data;
+			const videoDetails =
+				"info" in data && data.info !== undefined ? data.info : null;
 
-			if (!data.info) {
-				setError("Failed to get video info");
-				setProcessLoading(false);
+			// 서버가 200으로 에러 본문을 돌려주는 경우까지 여기서 걸러낸다.
+			if (!videoDetails) {
+				const message = readErrorMessage(data, "Failed to get video info");
+				setError(message);
+				toast.error(message);
 				return;
 			}
 
-			const title = data.info.title;
-			const durationString = data.info.duration_string;
-			const thumbnail = data.info.thumbnail;
-			const tags = data.info.tags || [];
-			const allowResolutions = data.allow_resolutions || [];
+			const resolutions =
+				("allow_resolutions" in data ? data.allow_resolutions : null) ?? [];
 
-			if (!allowResolutions.length) {
-				toast.error("Unable to download videos");
-				setProcessLoading(false);
-				return;
-			} else {
-				setAllowResolutions(allowResolutions);
-				let audioResolution = null;
-				for (const resolution of allowResolutions) {
-					if (resolution.is_audio) {
-						audioResolution = resolution;
-						break;
-					}
-				}
-
-				setResolution(audioResolution || allowResolutions[0] || null);
-			}
-
-			if (!title || !durationString || !thumbnail) {
-				if (!title) {
-					console.error("No title");
-				}
-				if (!durationString) {
-					console.error("No durationString");
-				}
-				if (!thumbnail) {
-					console.error("No thumbnail");
-				}
-				if (!tags.length) {
-					console.error("No tags");
-				}
-				setError("Failed to get video info");
-				setProcessLoading(false);
+			if (!isTagMode && resolutions.length === 0) {
+				const message = "Unable to download this video";
+				setError(message);
+				toast.error(message);
 				return;
 			}
 
-			const videoInfo: YouTubeVideoInfo = {
-				title,
-				durationString,
-				thumbnail,
-				tags,
-				allowResolutions,
-			};
+			setResolution(
+				resolutions.find((item) => item.is_audio) ?? resolutions[0] ?? null
+			);
 
-			setVideoInfo(videoInfo);
-		} catch (error) {
-			console.error(error);
-			setError("An unexpected error occurred");
+			setVideoInfo({
+				title: videoDetails.title,
+				durationString: videoDetails.duration_string,
+				thumbnail: videoDetails.thumbnail,
+				tags: videoDetails.tags ?? [],
+				allowResolutions: resolutions,
+			});
+		} catch (caughtError) {
+			console.error(caughtError);
+			const message = axios.isAxiosError(caughtError)
+				? readErrorMessage(caughtError.response?.data, caughtError.message)
+				: "Failed to get video info";
+			setError(message);
+			toast.error(message);
 		} finally {
 			setProcessLoading(false);
 		}
 	};
 
 	const copyTags = async (): Promise<void> => {
-		const videoTags = videoInfo?.tags || [];
-		const newTags = [];
+		const videoTags = videoInfo?.tags ?? [];
+		if (videoTags.length === 0) return;
 
-		for (const videoTag of videoTags) {
-			if (!myTags.includes(videoTag)) {
-				newTags.push(videoTag);
-			}
-		}
-		setMyTags([...myTags, ...newTags]);
-
-		const tags = videoInfo?.tags.join(",");
-		if (tags) {
-			await navigator.clipboard.writeText(tags);
-			toast.success("Copied to clipboard");
-		}
+		setMyTags((previousTags) => [
+			...previousTags,
+			...videoTags.filter((tag) => !previousTags.includes(tag)),
+		]);
+		await navigator.clipboard.writeText(videoTags.join(","));
+		toast.success("Copied to clipboard");
 	};
 
 	const copyMyTags = async (): Promise<void> => {
-		const tags = myTags.join(",");
-		if (tags) {
-			await navigator.clipboard.writeText(tags);
-			toast.success("Copied to clipboard");
-		}
+		if (myTags.length === 0) return;
+		await navigator.clipboard.writeText(myTags.join(","));
+		toast.success("Copied to clipboard");
 	};
 
 	const tagHandler = (tag: string): void => {
-		setMyTags((previousTags) => {
-			if (previousTags.includes(tag)) {
-				return previousTags.filter((t) => t !== tag);
-			}
-			return [...previousTags, tag];
-		});
+		setMyTags((previousTags) =>
+			previousTags.includes(tag)
+				? previousTags.filter((previousTag) => previousTag !== tag)
+				: [...previousTags, tag]
+		);
 	};
 
 	return (
 		<Content categoryName="Youtube" title={title}>
 			<MainSearchParameterForm
-				parameter={infoParameter || ""}
+				parameter={isTagMode ? "tags" : ""}
 				onSubmit={getVideoInfo}
 			>
 				<div className="w-full h-full">
@@ -407,7 +330,14 @@ export const YoutubeDownloader = (): FunctionComponent => {
 				</div>
 			)}
 
-			{myTags.length > 0 && infoParameter === "tags" && (
+			{!isTagMode && !isDownloadApiConfigured && (
+				<div className="text-neutral-15 text-sm">
+					Videos that provide a direct link can be downloaded. Other qualities
+					need the download server, which is not configured in this environment.
+				</div>
+			)}
+
+			{myTags.length > 0 && isTagMode && (
 				<div className="flex flex-col gap-4 border border-neutral-05 rounded-2xl py-6 px-8">
 					<div className="flex gap-3 items-center">
 						<div className="text-neutral-05 font-medium text-2xl">MY TAGS</div>
@@ -432,33 +362,26 @@ export const YoutubeDownloader = (): FunctionComponent => {
 
 			{videoInfo && (
 				<div className="flex flex-col gap-8">
-					{/* 썸네일 */}
 					<div className="flex gap-8">
-						<div
-							className={`w-1/2 rounded-2xl overflow-hidden ${
-								videoInfo?.thumbnail ? "" : "loading-gradient"
-							}`}
-						>
+						<div className="w-1/2 rounded-2xl overflow-hidden">
 							<img
-								alt={videoInfo?.title}
+								alt={videoInfo.title}
 								className="w-full rounded-2xl object-cover"
-								src={videoInfo?.thumbnail}
+								src={videoInfo.thumbnail}
 							/>
 						</div>
-						{/* 비디오 정보 */}
 						<div className="flex flex-col gap-8 w-1/2 ">
 							<div className="flex flex-col justify-between h-full p-6 rounded-2xl bg-main-00 border border-neutral-05 ">
 								<div className="flex flex-col h-full gap-3">
 									<div className="font-medium text-neutral-05 text-ellipsis overflow-hidden whitespace-nowrap">
-										{videoInfo?.title}
+										{videoInfo.title}
 									</div>
 									<div className="text-sm text-neutral-10 font-medium text-right">
-										{videoInfo?.durationString}
+										{videoInfo.durationString}
 									</div>
 								</div>
 
-								{/* 다운로드 버튼 */}
-								{!infoParameter && (
+								{!isTagMode && (
 									<YoutubeDownloadButton
 										allowResolutions={allowResolutions}
 										format={format}
@@ -470,40 +393,22 @@ export const YoutubeDownloader = (): FunctionComponent => {
 								)}
 							</div>
 
-							{/* 태그 */}
-							{infoParameter === "tags" && (
+							{isTagMode && (
 								<div className="flex flex-col gap-8">
 									<div className="flex gap-3 items-center">
-										{videoInfo?.tags.length > 0 ? (
+										{videoInfo.tags.length > 0 ? (
 											<>
 												<div className="text-neutral-05 font-medium">TAGS</div>
 												<CopyIcon iconSize="18" onClick={copyTags} />
 											</>
 										) : (
-											<>
-												<div className="text-neutral-05 font-medium">
-													No tags found
-												</div>
-												<svg
-													fill="none"
-													height="19"
-													viewBox="0 0 18 19"
-													width="18"
-													xmlns="http://www.w3.org/2000/svg"
-												>
-													<path
-														d="M1.5 2.15523L16.5 17.0007M4.9215 2.38623C6.426 1.93473 10.737 1.84398 13.293 2.29773C13.9118 2.40798 14.508 2.80698 14.8335 3.33648C15.378 4.22373 15.3488 5.25648 15.3488 6.29298L15.2587 12.6342M3 3.62898C2.526 5.32923 2.58975 8.44998 2.6205 13.0565C2.625 13.649 2.65275 14.249 2.83125 14.8152C3.108 15.6927 3.5685 16.2252 4.58025 16.6527C5.0115 16.8357 5.48475 16.8957 5.955 16.8957H8.98725C11.8342 16.8267 12.9833 16.5297 14.2418 14.8872M7.86525 16.8957C9.651 15.9905 10.5712 15.8645 10.3372 13.5875C10.2922 12.998 10.6298 12.2937 11.2328 12.1047M15.3038 9.53373C15.1215 10.6107 14.9993 11.0112 14.2725 11.6345"
-														stroke="#F7F7F7"
-														strokeLinecap="round"
-														strokeLinejoin="round"
-														strokeWidth="1.125"
-													/>
-												</svg>
-											</>
+											<div className="text-neutral-05 font-medium">
+												No tags found
+											</div>
 										)}
 									</div>
 									<div className="flex flex-wrap gap-4">
-										{videoInfo?.tags.map((tag) => (
+										{videoInfo.tags.map((tag) => (
 											<TAG
 												key={tag}
 												tag={tag}
@@ -523,25 +428,21 @@ export const YoutubeDownloader = (): FunctionComponent => {
 						</div>
 					</div>
 
-					{/* 다운로드 진행 바 */}
-					{/* {!infoParameter && (
-							<div className="progress_bar_area">
-								<div className="progress_bar">
-									<div
-										className="progress"
-										style={{ width: `${progress}%` }}
-									></div>
-									<div className="progress_text">{progress}%</div>
-								</div>
-								<div className="stats text-sm text-neutral-10 font-medium text-right">
-									{isConverting ? (
-										<p>Converting audio to mp3...</p>
-									) : (
-										<p>Download speed: {speed} MB/s</p>
-									)}
-								</div>
+					{!isTagMode && downloadProgress && (
+						<div className="flex flex-col gap-2">
+							<div className="w-full h-3 bg-main-05 rounded-full overflow-hidden">
+								<div
+									className="h-full bg-green-05 transition-all duration-200"
+									style={{ width: `${downloadProgress.progress}%` }}
+								></div>
 							</div>
-						)} */}
+							<div className="text-neutral-15 text-sm text-right">
+								{downloadProgress.phase} · {downloadProgress.progress}%
+								{downloadProgress.speed > 0 &&
+									` · ${downloadProgress.speed} MB/s`}
+							</div>
+						</div>
+					)}
 				</div>
 			)}
 		</Content>

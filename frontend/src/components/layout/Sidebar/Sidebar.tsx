@@ -1,28 +1,28 @@
 import type { FunctionComponent } from "../../../common/types";
-import { useYoutubeStore } from "../../../store/youtubeStore";
 import { useSidebarStore } from "../../../store/Sidebar";
 import SidebarItems from "./SidebarItem/SidebarItems";
 import SidebarItem from "./SidebarItem/SidebarItem";
 import { useEffect } from "react";
 
 export const Sidebar = (): FunctionComponent => {
-	const setCurrentYoutubeInfo = useYoutubeStore(
-		(state) => state.setCurrentYoutubeInfo
-	);
 	const sidebarOpen = useSidebarStore((state) => state.sidebarOpen);
 	const setSidebarOpen = useSidebarStore((state) => state.setSidebarOpen);
 
-	const setSidebarHeight = (): void => {
-		const header = document.getElementById("header");
-		const sidebar = document.getElementById("sidebar");
-		if (header && sidebar) {
-			sidebar.style.height = `${window.innerHeight - header.clientHeight + 1}px`;
-		}
-	};
-
-	window.addEventListener("resize", setSidebarHeight);
+	// 렌더 중에 리스너를 등록하면 렌더마다 쌓이므로 effect에서 등록하고 정리한다.
 	useEffect(() => {
+		const setSidebarHeight = (): void => {
+			const header = document.getElementById("header");
+			const sidebar = document.getElementById("sidebar");
+			if (header && sidebar) {
+				sidebar.style.height = `${window.innerHeight - header.clientHeight + 1}px`;
+			}
+		};
+
 		setSidebarHeight();
+		window.addEventListener("resize", setSidebarHeight);
+		return (): void => {
+			window.removeEventListener("resize", setSidebarHeight);
+		};
 	}, []);
 	return (
 		<div
@@ -63,7 +63,6 @@ export const Sidebar = (): FunctionComponent => {
 							name: "video downloader",
 							link: "/youtube-downloader",
 							onClick: () => {
-								setCurrentYoutubeInfo("");
 								setSidebarOpen(false);
 							},
 						}}
@@ -71,9 +70,9 @@ export const Sidebar = (): FunctionComponent => {
 					<SidebarItem
 						item={{
 							name: "tag explorer",
-							link: "/youtube-downloader?info=tags",
+							link: "/youtube-downloader",
+							search: { info: "tags" },
 							onClick: () => {
-								setCurrentYoutubeInfo("tags");
 								setSidebarOpen(false);
 							},
 						}}
