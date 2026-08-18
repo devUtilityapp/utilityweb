@@ -28,6 +28,9 @@ export const Tools = (): FunctionComponent => {
 						}}
 					/>
 				</ToolCards>
+				<ToolCards title="PDF">
+					<ToolCard to="/pdf-to-pptx" toolName="PDF to PPTX" />
+				</ToolCards>
 				<ToolCards title="Calculator">
 					<ToolCard to="/calculator/gcd" toolName="Greatest Common Divisor" />
 					<ToolCard to="/calculator/lcm" toolName="Least Common Multiple" />

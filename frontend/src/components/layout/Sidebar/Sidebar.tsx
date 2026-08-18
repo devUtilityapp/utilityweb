@@ -79,6 +79,17 @@ export const Sidebar = (): FunctionComponent => {
 						}}
 					/>
 				</SidebarItems>
+				<SidebarItems title="PDF">
+					<SidebarItem
+						item={{
+							name: "pdf to pptx",
+							link: "/pdf-to-pptx",
+							onClick: () => {
+								setSidebarOpen(false);
+							},
+						}}
+					/>
+				</SidebarItems>
 				<SidebarItems title="Calculator">
 					<SidebarItem
 						item={{
