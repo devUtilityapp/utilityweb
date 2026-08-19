@@ -203,7 +203,8 @@ frontend/storybook-static
 # tests
 frontend//coverage/
 
-.firebaserc
-firebase.json
-functions
-functions/
+.firebaserc.local
+firebase-debug.log
+functions/venv/
+functions/.venv/
+functions/__pycache__/
