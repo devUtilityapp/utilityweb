@@ -12,6 +12,8 @@ interface ImportMetaEnv {
 	readonly VITE_VIDEO_INFO_URL?: string;
 	/** 영상 다운로드 백엔드 주소(예: https://api.example.com). 없으면 기능 비활성화. */
 	readonly VITE_DOWNLOAD_API_BASE_URL?: string;
+	/** "true"면 YouTube 도구(다운로더/태그 탐색기)를 노출한다. */
+	readonly VITE_ENABLE_YOUTUBE_TOOL?: string;
 	// more env variables...
 }
 

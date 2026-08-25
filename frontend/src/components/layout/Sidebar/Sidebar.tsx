@@ -1,5 +1,6 @@
 import type { FunctionComponent } from "../../../common/types";
 import { useSidebarStore } from "../../../store/Sidebar";
+import { isYoutubeToolEnabled } from "../../../common/features";
 import SidebarItems from "./SidebarItem/SidebarItems";
 import SidebarItem from "./SidebarItem/SidebarItem";
 import { useEffect } from "react";
@@ -57,27 +58,29 @@ export const Sidebar = (): FunctionComponent => {
 			</div>
 			<div className="border-b border-neutral-15 w-full"></div>
 			<div className="flex flex-col gap-10">
-				<SidebarItems title="Youtube">
-					<SidebarItem
-						item={{
-							name: "video downloader",
-							link: "/youtube-downloader",
-							onClick: () => {
-								setSidebarOpen(false);
-							},
-						}}
-					/>
-					<SidebarItem
-						item={{
-							name: "tag explorer",
-							link: "/youtube-downloader",
-							search: { info: "tags" },
-							onClick: () => {
-								setSidebarOpen(false);
-							},
-						}}
-					/>
-				</SidebarItems>
+				{isYoutubeToolEnabled && (
+					<SidebarItems title="Youtube">
+						<SidebarItem
+							item={{
+								name: "video downloader",
+								link: "/youtube-downloader",
+								onClick: () => {
+									setSidebarOpen(false);
+								},
+							}}
+						/>
+						<SidebarItem
+							item={{
+								name: "tag explorer",
+								link: "/youtube-downloader",
+								search: { info: "tags" },
+								onClick: () => {
+									setSidebarOpen(false);
+								},
+							}}
+						/>
+					</SidebarItems>
+				)}
 				<SidebarItems title="PDF">
 					<SidebarItem
 						item={{
