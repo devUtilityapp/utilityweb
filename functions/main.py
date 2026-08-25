@@ -56,10 +56,10 @@ def _describe(error, logger):
     return str(error) or (logger.errors[-1] if logger.errors else repr(error))
 
 
-def _extract_info(url, logger):
+def _extract_info(url, logger, player_clients=None):
     last_error = None
 
-    for player_client in PLAYER_CLIENTS:
+    for player_client in (player_clients or PLAYER_CLIENTS):
         opts = {**YDL_OPTS, 'logger': logger}
         if player_client:
             opts['extractor_args'] = {'youtube': {'player_client': [player_client]}}
@@ -124,7 +124,18 @@ def get_video_info(req: https_fn.Request) -> https_fn.Response:
         if not video_id:
             return {'error': 'video_id is required', 'status': 400}
 
-        info = _extract_info(f"https://www.youtube.com/watch?v={video_id}", logger)
+        # ?client=tv,ios 로 추출 클라이언트를 지정할 수 있다(진단용).
+        requested = req.args.get('client')
+        player_clients = None
+        if requested:
+            player_clients = [
+                None if name.strip() == 'default' else name.strip()
+                for name in requested.split(',') if name.strip()
+            ]
+
+        info = _extract_info(
+            f"https://www.youtube.com/watch?v={video_id}", logger, player_clients
+        )
 
         return {
             "info": info,
