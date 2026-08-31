@@ -5,7 +5,7 @@ import type { FunctionComponent } from "../../common/types";
 import type { RenderQuality, SlideSize } from "../../common/pdfToPptx";
 import { Content } from "../../components/ui/Content";
 import { Select } from "../../components/ui/Select";
-import { PdfDropzone } from "../../components/page/PdfToPptx/PdfDropzone";
+import { FileDropzone } from "../../components/ui/FileDropzone";
 import {
 	PdfFileList,
 	type PdfItem,
@@ -172,7 +172,14 @@ export const PdfToPptx = (): FunctionComponent => {
 	return (
 		<Content categoryName="PDF" title="PDF TO PPTX">
 			<form className="flex flex-col gap-8" onSubmit={convert}>
-				<PdfDropzone disabled={processLoading} onFilesAdded={addFiles} />
+				<FileDropzone
+					multiple
+					accept="application/pdf,.pdf"
+					disabled={processLoading}
+					hint="or click to select files (multiple files supported)"
+					title="Drop PDF files here"
+					onFilesAdded={addFiles}
+				/>
 
 				{items.length > 0 && (
 					<PdfFileList

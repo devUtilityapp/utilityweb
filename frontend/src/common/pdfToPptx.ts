@@ -2,6 +2,7 @@
 import * as pdfjsLib from "pdfjs-dist";
 import PdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?worker";
 import PptxGenJS from "pptxgenjs";
+import { removeDanglingOverrides } from "./pptxPackage";
 
 pdfjsLib.GlobalWorkerOptions.workerPort = new PdfWorker();
 
@@ -175,7 +176,25 @@ export const convertPdfsToPptx = async (
 			}
 		}
 
-		await pptx.writeFile({ fileName, compression: true });
+		const raw = (await pptx.write({
+			outputType: "arraybuffer",
+			compression: true,
+		})) as ArrayBuffer;
+
+		// pptxgenjs가 남기는 잘못된 파트 선언을 걷어내고 내려받는다.
+		const data = await removeDanglingOverrides(raw);
+		const downloadUrl = URL.createObjectURL(
+			new Blob([data], {
+				type: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+			})
+		);
+		const link = document.createElement("a");
+		link.href = downloadUrl;
+		link.download = fileName;
+		document.body.append(link);
+		link.click();
+		link.remove();
+		URL.revokeObjectURL(downloadUrl);
 	} finally {
 		canvas.width = 0;
 		canvas.height = 0;

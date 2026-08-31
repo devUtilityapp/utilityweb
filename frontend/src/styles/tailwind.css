@@ -100,3 +100,10 @@ body {
 		width: calc(50% - calc((var(--tool-items-gap) * 1) / 2));
 	}
 }
+
+/* pptx-preview는 자체 이동 버튼과 페이지 표시를 그린다.
+   페이지에서 같은 역할의 컨트롤을 제공하므로 숨긴다. */
+.pptx_slide_view .pptx-preview-wrapper-next,
+.pptx_slide_view .pptx-preview-wrapper-pagination {
+	display: none !important;
+}

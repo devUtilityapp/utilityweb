@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as YoutubeDownloaderImport } from './routes/youtube-downloader'
 import { Route as ToolsImport } from './routes/tools'
+import { Route as PptxViewerImport } from './routes/pptx-viewer'
 import { Route as PdfToPptxImport } from './routes/pdf-to-pptx'
 import { Route as IndexImport } from './routes/index'
 import { Route as CalculatorLcmImport } from './routes/calculator/lcm'
@@ -27,6 +28,11 @@ const YoutubeDownloaderRoute = YoutubeDownloaderImport.update({
 
 const ToolsRoute = ToolsImport.update({
   path: '/tools',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PptxViewerRoute = PptxViewerImport.update({
+  path: '/pptx-viewer',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -68,6 +74,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PdfToPptxImport
       parentRoute: typeof rootRoute
     }
+    '/pptx-viewer': {
+      id: '/pptx-viewer'
+      path: '/pptx-viewer'
+      fullPath: '/pptx-viewer'
+      preLoaderRoute: typeof PptxViewerImport
+      parentRoute: typeof rootRoute
+    }
     '/tools': {
       id: '/tools'
       path: '/tools'
@@ -104,6 +117,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
   PdfToPptxRoute,
+  PptxViewerRoute,
   ToolsRoute,
   YoutubeDownloaderRoute,
   CalculatorGcdRoute,
@@ -120,6 +134,7 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/",
         "/pdf-to-pptx",
+        "/pptx-viewer",
         "/tools",
         "/youtube-downloader",
         "/calculator/gcd",
@@ -131,6 +146,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/pdf-to-pptx": {
       "filePath": "pdf-to-pptx.ts"
+    },
+    "/pptx-viewer": {
+      "filePath": "pptx-viewer.ts"
     },
     "/tools": {
       "filePath": "tools.ts"

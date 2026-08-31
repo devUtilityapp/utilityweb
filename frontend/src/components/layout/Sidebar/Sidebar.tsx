@@ -92,6 +92,17 @@ export const Sidebar = (): FunctionComponent => {
 						}}
 					/>
 				</SidebarItems>
+				<SidebarItems title="PPTX">
+					<SidebarItem
+						item={{
+							name: "pptx viewer",
+							link: "/pptx-viewer",
+							onClick: () => {
+								setSidebarOpen(false);
+							},
+						}}
+					/>
+				</SidebarItems>
 				<SidebarItems title="Calculator">
 					<SidebarItem
 						item={{

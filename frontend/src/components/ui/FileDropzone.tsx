@@ -1,10 +1,18 @@
 import { useRef, useState } from "react";
-import type { FunctionComponent } from "../../../common/types";
+import type { FunctionComponent } from "../../common/types";
 
-export const PdfDropzone = ({
+export const FileDropzone = ({
+	accept,
+	title,
+	hint,
+	multiple = false,
 	disabled = false,
 	onFilesAdded,
 }: {
+	accept: string;
+	title: string;
+	hint: string;
+	multiple?: boolean;
 	disabled?: boolean;
 	onFilesAdded: (files: Array<File>) => void;
 }): FunctionComponent => {
@@ -63,18 +71,16 @@ export const PdfDropzone = ({
 				/>
 			</svg>
 			<div className="text-neutral-05 lg:text-2xl text-xl font-medium">
-				Drop PDF files here
+				{title}
 			</div>
-			<div className="text-neutral-15 text-sm lg:text-md">
-				or click to select files (multiple files supported)
-			</div>
+			<div className="text-neutral-15 text-sm lg:text-md">{hint}</div>
 
 			<input
 				ref={inputRef}
-				multiple
-				accept="application/pdf,.pdf"
+				accept={accept}
 				className="hidden"
 				disabled={disabled}
+				multiple={multiple}
 				type="file"
 				onChange={(event) => {
 					onFilesAdded([...(event.target.files ?? [])]);
