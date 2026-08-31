@@ -2,6 +2,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import type { FunctionComponent } from "../../common/types";
 import { useSeo } from "../../common/useSeo";
+import { useAppUpdate } from "../../hooks/useAppUpdate";
 import { Header } from "./Header/Header";
 import { Sidebar } from "./Sidebar/Sidebar";
 
@@ -15,6 +16,7 @@ export const AppLayout = ({
 	children: React.ReactNode;
 }): FunctionComponent => {
 	useSeo();
+	useAppUpdate();
 
 	return (
 		<div className="min-h-screen bg-main-00">

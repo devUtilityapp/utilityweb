@@ -548,5 +548,8 @@
     "lead": "This address does not point at anything. The link may be out of date, or the page may have been renamed.",
     "browse": "Browse all tools",
     "home": "Go to the home page"
+  },
+  "update": {
+    "ready": "A new version is available. Click here to refresh."
   }
 }
