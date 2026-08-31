@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import type { RenderQuality, SlideSize } from "../../common/pdfToPptx";
 import { Content } from "../../components/ui/Content";
+import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { findPageSeo } from "../../common/seo";
 import { Select } from "../../components/ui/Select";
 import { FileDropzone } from "../../components/ui/FileDropzone";
 import {
@@ -166,6 +168,8 @@ export const PdfToPptx = (): FunctionComponent => {
 		}
 	};
 
+	const guide = findPageSeo("/pdf-to-pptx").guide;
+
 	const progressPercent =
 		progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
 
@@ -274,6 +278,8 @@ export const PdfToPptx = (): FunctionComponent => {
 					{processLoading ? "Converting..." : "Convert to PPTX"}
 				</button>
 			</form>
+
+			{guide && <PageGuideSection guide={guide} />}
 		</Content>
 	);
 };

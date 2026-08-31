@@ -18,6 +18,59 @@ const escapeHtml = (value: string): string =>
 		.replace(/>/g, "&gt;")
 		.replace(/"/g, "&quot;");
 
+// 자바스크립트를 실행하지 않는 크롤러도 페이지 본문을 볼 수 있도록,
+// 같은 문구를 #root 안에 정적으로 넣어둔다. 앱이 뜨면 React가 이 내용을 지우고
+// 실제 화면을 그린다.
+const WRAPPER_STYLE =
+	"max-width:56rem;margin:0 auto;padding:4rem 2rem;color:#aaa;font-family:system-ui,-apple-system,sans-serif;line-height:1.7";
+const HEADING_STYLE = "color:#f7f7f7;font-size:1.5rem;margin-bottom:1.5rem";
+const SUBHEADING_STYLE = "color:#f7f7f7;font-size:1.25rem;margin:2rem 0 1rem";
+
+// 링크가 있어야 자바스크립트를 실행하지 않는 크롤러도 나머지 페이지를 찾아간다.
+const otherToolLinks = (page: PageSeo, title: string): Array<string> => [
+	`<h2 style="${SUBHEADING_STYLE}">${title}</h2>`,
+	"<ul>",
+	...PAGE_SEO.filter(
+		(entry) => entry.path !== "/" && entry.path !== page.path
+	).map(
+		(entry) =>
+			`<li><a href="${entry.path}" style="color:#f7f7f7">${escapeHtml(entry.title.split(" - ")[0] ?? entry.title)}</a></li>`
+	),
+	"</ul>",
+];
+
+// 가이드가 없는 페이지(목록/계산기)는 설명과 내부 링크만 남긴다.
+const linkListBody = (page: PageSeo): string =>
+	[
+		`<div style="${WRAPPER_STYLE}">`,
+		`<h1 style="${HEADING_STYLE}">${escapeHtml(SITE_NAME)}</h1>`,
+		`<p>${escapeHtml(page.description)}</p>`,
+		...otherToolLinks(page, "Tools"),
+		"</div>",
+	].join("");
+
+const bodyFor = (page: PageSeo): string => {
+	if (!page.guide) return linkListBody(page);
+	const guide = page.guide;
+
+	return [
+		`<div style="${WRAPPER_STYLE}">`,
+		`<h1 style="${HEADING_STYLE}">${escapeHtml(guide.heading)}</h1>`,
+		`<p>${escapeHtml(guide.lead)}</p>`,
+		`<h2 style="${SUBHEADING_STYLE}">${escapeHtml(guide.stepsTitle)}</h2>`,
+		"<ol>",
+		...guide.steps.map((step) => `<li>${escapeHtml(step)}</li>`),
+		"</ol>",
+		`<h2 style="${SUBHEADING_STYLE}">${escapeHtml(guide.faqTitle)}</h2>`,
+		...guide.faq.flatMap((entry) => [
+			`<h3 style="color:#f7f7f7;font-size:1rem;margin:1.5rem 0 0.5rem">${escapeHtml(entry.question)}</h3>`,
+			`<p>${escapeHtml(entry.answer)}</p>`,
+		]),
+		...otherToolLinks(page, "Other tools"),
+		"</div>",
+	].join("");
+};
+
 const headFor = (page: PageSeo): string => {
 	const url = canonicalUrl(page.path);
 	const image = `${SITE_URL}${OG_IMAGE_PATH}`;
@@ -45,7 +98,8 @@ const renderHtml = (template: string, page: PageSeo): string =>
 	template
 		.replace(/<title>[^<]*<\/title>/, "")
 		.replace(/<meta\s+name="description"[\s\S]*?\/>/, "")
-		.replace("</head>", `  ${headFor(page)}\n  </head>`);
+		.replace("</head>", `  ${headFor(page)}\n  </head>`)
+		.replace('<div id="root"></div>', `<div id="root">${bodyFor(page)}</div>`);
 
 const sitemap = (lastModified: string): string =>
 	[

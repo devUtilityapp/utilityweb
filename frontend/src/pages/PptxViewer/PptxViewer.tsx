@@ -3,6 +3,8 @@ import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import { Content } from "../../components/ui/Content";
 import { FileDropzone } from "../../components/ui/FileDropzone";
+import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { findPageSeo } from "../../common/seo";
 import { PptxSlideView } from "../../components/page/PptxViewer/PptxSlideView";
 
 interface LoadedFile {
@@ -106,6 +108,8 @@ export const PptxViewer = (): FunctionComponent => {
 			toast.error("Fullscreen is not available");
 		}
 	};
+
+	const guide = findPageSeo("/pptx-viewer").guide;
 
 	const closeFile = (): void => {
 		setFile(null);
@@ -228,6 +232,8 @@ export const PptxViewer = (): FunctionComponent => {
 						</div>
 					</div>
 				)}
+
+				{guide && <PageGuideSection guide={guide} />}
 			</div>
 		</Content>
 	);

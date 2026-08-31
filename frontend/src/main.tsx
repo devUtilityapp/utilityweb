@@ -16,7 +16,13 @@ declare module "@tanstack/react-router" {
 }
 
 const rootElement = document.querySelector("#root") as Element;
-if (!rootElement.innerHTML) {
+
+// 빌드 시점에 넣어둔 정적 SEO 본문이 들어 있을 수 있다(vite-seo-plugin.ts).
+// 비운 뒤 앱을 그린다. 이미 마운트된 뒤에는 다시 그리지 않는다.
+if (!rootElement.hasAttribute("data-mounted")) {
+	rootElement.setAttribute("data-mounted", "true");
+	rootElement.innerHTML = "";
+
 	const root = ReactDOM.createRoot(rootElement);
 	root.render(
 		<React.StrictMode>
