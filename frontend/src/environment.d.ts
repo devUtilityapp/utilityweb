@@ -14,6 +14,8 @@ interface ImportMetaEnv {
 	readonly VITE_DOWNLOAD_API_BASE_URL?: string;
 	/** "true"면 YouTube 도구(다운로더/태그 탐색기)를 노출한다. */
 	readonly VITE_ENABLE_YOUTUBE_TOOL?: string;
+	/** Cloudflare Web Analytics 토큰. 없으면 통계 스크립트를 싣지 않는다. */
+	readonly VITE_CF_BEACON_TOKEN?: string;
 	// more env variables...
 }
 

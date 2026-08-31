@@ -5,6 +5,7 @@ import type { FunctionComponent } from "../../common/types";
 import { withExtension } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { FileDropzone } from "../../components/ui/FileDropzone";
 import { OrderedFileList } from "../../components/ui/OrderedFileList";
 import { ProgressBar } from "../../components/ui/ProgressBar";
@@ -136,6 +137,7 @@ export const MergePdf = (): FunctionComponent => {
 				/>
 			</form>
 
+			<RelatedTools path="/merge-pdf" />
 			<PageGuideSection path="/merge-pdf" />
 		</Content>
 	);

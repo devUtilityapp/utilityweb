@@ -12,6 +12,7 @@ import {
 import { downloadBlob } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { Select } from "../../components/ui/Select";
 import { LabeledField } from "../../components/ui/LabeledField";
 import { ActionButton } from "../../components/ui/ActionButton";
@@ -258,6 +259,7 @@ export const CsvToJson = (): FunctionComponent => {
 				</div>
 			)}
 
+			<RelatedTools path="/csv-to-json" />
 			<PageGuideSection path="/csv-to-json" />
 		</Content>
 	);

@@ -10,6 +10,7 @@ import {
 } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { ToolTextArea } from "../../components/ui/ToolTextArea";
 import { ActionButton } from "../../components/ui/ActionButton";
 import { FileDropzone } from "../../components/ui/FileDropzone";
@@ -306,6 +307,7 @@ export const Base64 = (): FunctionComponent => {
 				</div>
 			)}
 
+			<RelatedTools path="/base64" />
 			<PageGuideSection path="/base64" />
 		</Content>
 	);

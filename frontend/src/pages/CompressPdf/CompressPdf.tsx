@@ -14,6 +14,7 @@ import {
 } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { FileDropzone } from "../../components/ui/FileDropzone";
 import { Select } from "../../components/ui/Select";
 import { ProgressBar } from "../../components/ui/ProgressBar";
@@ -202,6 +203,7 @@ export const CompressPdf = (): FunctionComponent => {
 				</div>
 			)}
 
+			<RelatedTools path="/compress-pdf" />
 			<PageGuideSection path="/compress-pdf" />
 		</Content>
 	);

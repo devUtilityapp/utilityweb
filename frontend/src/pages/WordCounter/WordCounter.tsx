@@ -4,6 +4,7 @@ import type { FunctionComponent } from "../../common/types";
 import { analyzeText, formatDuration } from "../../common/textStats";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 
 const StatCard = ({
 	label,
@@ -107,6 +108,7 @@ export const WordCounter = (): FunctionComponent => {
 				</div>
 			)}
 
+			<RelatedTools path="/word-counter" />
 			<PageGuideSection path="/word-counter" />
 		</Content>
 	);

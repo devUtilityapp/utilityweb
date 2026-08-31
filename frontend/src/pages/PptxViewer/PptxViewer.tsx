@@ -5,6 +5,7 @@ import type { FunctionComponent } from "../../common/types";
 import { Content } from "../../components/ui/Content";
 import { FileDropzone } from "../../components/ui/FileDropzone";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { PptxSlideView } from "../../components/page/PptxViewer/PptxSlideView";
 
 interface LoadedFile {
@@ -235,6 +236,7 @@ export const PptxViewer = (): FunctionComponent => {
 					</div>
 				)}
 
+				<RelatedTools path="/pptx-viewer" />
 				<PageGuideSection path="/pptx-viewer" />
 			</div>
 		</Content>

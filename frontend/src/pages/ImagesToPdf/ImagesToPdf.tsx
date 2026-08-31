@@ -8,6 +8,7 @@ import type { PageOrientation, PageSize } from "../../common/imagesToPdf";
 import { withExtension } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { FileDropzone } from "../../components/ui/FileDropzone";
 import { OrderedFileList } from "../../components/ui/OrderedFileList";
 import { Select } from "../../components/ui/Select";
@@ -239,6 +240,7 @@ export const ImagesToPdf = (): FunctionComponent => {
 				/>
 			</form>
 
+			<RelatedTools path="/images-to-pdf" />
 			<PageGuideSection path="/images-to-pdf" />
 		</Content>
 	);

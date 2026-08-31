@@ -8,6 +8,7 @@ import type { SplitMode } from "../../common/pdfEdit";
 import { stripExtension } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { FileDropzone } from "../../components/ui/FileDropzone";
 import { Select } from "../../components/ui/Select";
 import { ToolButton } from "../../components/ui/ToolButton";
@@ -196,6 +197,7 @@ export const SplitPdf = (): FunctionComponent => {
 				/>
 			</form>
 
+			<RelatedTools path="/split-pdf" />
 			<PageGuideSection path="/split-pdf" />
 		</Content>
 	);

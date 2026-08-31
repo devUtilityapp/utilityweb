@@ -6,6 +6,7 @@ import type { FunctionComponent } from "../../common/types";
 import { buildShades, describeColor, parseColor } from "../../common/color";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { CopyField } from "../../components/ui/CopyField";
 import { copyToClipboard } from "../../common/clipboard";
 
@@ -155,6 +156,7 @@ export const ColorConverter = (): FunctionComponent => {
 				</div>
 			)}
 
+			<RelatedTools path="/color-converter" />
 			<PageGuideSection path="/color-converter" />
 		</Content>
 	);

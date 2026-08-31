@@ -13,6 +13,7 @@ import {
 import { downloadBlob, formatBytes } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { Select } from "../../components/ui/Select";
 import { LabeledField } from "../../components/ui/LabeledField";
 import { ActionButton } from "../../components/ui/ActionButton";
@@ -259,6 +260,7 @@ export const JsonFormatter = (): FunctionComponent => {
 				</div>
 			)}
 
+			<RelatedTools path="/json-formatter" />
 			<PageGuideSection path="/json-formatter" />
 		</Content>
 	);

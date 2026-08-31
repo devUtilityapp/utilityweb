@@ -6,6 +6,7 @@ import { HASH_ALGORITHMS, type HashAlgorithm } from "../../common/hash";
 import { formatBytes } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { ToolTextArea } from "../../components/ui/ToolTextArea";
 import { FileDropzone } from "../../components/ui/FileDropzone";
 import { CopyField } from "../../components/ui/CopyField";
@@ -204,6 +205,7 @@ export const HashGenerator = (): FunctionComponent => {
 				</div>
 			)}
 
+			<RelatedTools path="/hash-generator" />
 			<PageGuideSection path="/hash-generator" />
 		</Content>
 	);

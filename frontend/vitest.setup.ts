@@ -1,11 +1,10 @@
-import { expect, afterEach } from "vitest";
+import { afterEach } from "vitest";
 import { cleanup } from "@testing-library/react";
-import matchers from "@testing-library/jest-dom/matchers";
+// jest-dom 6부터는 matchers를 직접 넘기지 않고 vitest용 진입점을 불러오면
+// expect가 알아서 확장된다. 기본 내보내기를 쓰던 예전 방식은 undefined를 준다.
+import "@testing-library/jest-dom/vitest";
 
-// extends Vitest's expect method with methods from react-testing-library
-expect.extend(matchers);
-
-// runs a cleanup after each test case (e.g. clearing jsdom)
+// 테스트마다 jsdom에 남은 것을 치운다.
 afterEach(() => {
 	cleanup();
 });

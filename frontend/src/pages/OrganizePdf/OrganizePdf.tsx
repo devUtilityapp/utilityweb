@@ -7,6 +7,7 @@ import type { PageItem } from "../../common/pdfOrganize";
 import { stripExtension, withExtension } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { FileDropzone } from "../../components/ui/FileDropzone";
 import { ProgressBar } from "../../components/ui/ProgressBar";
 import { ToolButton } from "../../components/ui/ToolButton";
@@ -205,6 +206,7 @@ export const OrganizePdf = (): FunctionComponent => {
 				/>
 			</form>
 
+			<RelatedTools path="/organize-pdf" />
 			<PageGuideSection path="/organize-pdf" />
 		</Content>
 	);

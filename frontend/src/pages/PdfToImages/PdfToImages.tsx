@@ -8,6 +8,7 @@ import type { ImageFormat, RenderQuality } from "../../common/pdfToImages";
 import { stripExtension } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { FileDropzone } from "../../components/ui/FileDropzone";
 import { Select } from "../../components/ui/Select";
 import { ProgressBar } from "../../components/ui/ProgressBar";
@@ -185,6 +186,7 @@ export const PdfToImages = (): FunctionComponent => {
 				/>
 			</form>
 
+			<RelatedTools path="/pdf-to-images" />
 			<PageGuideSection path="/pdf-to-images" />
 		</Content>
 	);

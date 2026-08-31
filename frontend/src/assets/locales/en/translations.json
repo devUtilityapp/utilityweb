@@ -150,7 +150,9 @@
     "moveUp": "Move up",
     "moveDown": "Move down",
     "remove": "Remove",
-    "clearAll": "Clear all"
+    "clearAll": "Clear all",
+    "fileTooLarge": "{{name}} is larger than {{limit}} and would run your browser out of memory.",
+    "relatedTools": "Other tools"
   },
   "pdfToPptx": {
     "category": "PDF",

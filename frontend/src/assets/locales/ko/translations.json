@@ -150,7 +150,9 @@
     "cannotReadFile": "파일을 읽을 수 없습니다",
     "cannotReadPdf": "PDF를 읽을 수 없습니다: {{name}}",
     "cannotReadImage": "이미지를 읽을 수 없습니다: {{name}}",
-    "downloaded": "{{name}} 내려받았습니다"
+    "downloaded": "{{name}} 내려받았습니다",
+    "fileTooLarge": "{{name}}이(가) {{limit}}를 넘습니다. 브라우저 메모리가 모자랄 수 있어 넣지 않았습니다.",
+    "relatedTools": "다른 도구"
   },
   "pdfToPptx": {
     "category": "PDF",

@@ -8,6 +8,7 @@ import type { FunctionComponent } from "../../common/types";
 import type { RenderQuality, SlideSize } from "../../common/pdfToPptx";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { Select } from "../../components/ui/Select";
 import { FileDropzone } from "../../components/ui/FileDropzone";
 import {
@@ -300,6 +301,7 @@ export const PdfToPptx = (): FunctionComponent => {
 				</button>
 			</form>
 
+			<RelatedTools path="/pdf-to-pptx" />
 			<PageGuideSection path="/pdf-to-pptx" />
 		</Content>
 	);

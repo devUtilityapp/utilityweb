@@ -1,5 +1,8 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
+import { MAX_FILE_LABEL, isWithinSizeLimit } from "../../common/limits";
 
 export const FileDropzone = ({
 	accept,
@@ -16,8 +19,22 @@ export const FileDropzone = ({
 	disabled?: boolean;
 	onFilesAdded: (files: Array<File>) => void;
 }): FunctionComponent => {
+	const { t } = useTranslation();
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [dragging, setDragging] = useState(false);
+
+	// 모든 도구가 이 상자를 거치므로, 크기 확인도 여기서 한 번만 한다.
+	const acceptFiles = (files: Array<File>): void => {
+		const withinLimit = files.filter((file) => isWithinSizeLimit(file));
+		for (const file of files) {
+			if (!isWithinSizeLimit(file)) {
+				toast.error(
+					t("common.fileTooLarge", { name: file.name, limit: MAX_FILE_LABEL })
+				);
+			}
+		}
+		if (withinLimit.length > 0) onFilesAdded(withinLimit);
+	};
 
 	const openFileDialog = (): void => {
 		if (disabled) return;
@@ -28,7 +45,7 @@ export const FileDropzone = ({
 		event.preventDefault();
 		setDragging(false);
 		if (disabled) return;
-		onFilesAdded([...event.dataTransfer.files]);
+		acceptFiles([...event.dataTransfer.files]);
 	};
 
 	return (
@@ -83,7 +100,7 @@ export const FileDropzone = ({
 				multiple={multiple}
 				type="file"
 				onChange={(event) => {
-					onFilesAdded([...(event.target.files ?? [])]);
+					acceptFiles([...(event.target.files ?? [])]);
 					event.target.value = "";
 				}}
 			/>

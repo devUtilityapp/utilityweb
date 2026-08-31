@@ -185,6 +185,32 @@ export const TOOL_CATEGORIES: Array<ToolCategory> = CATEGORIES.filter(
 	(category) => category.tools.length > 0
 );
 
+/** 경로로 도구를 찾는다. */
+export const findTool = (path: string): ToolEntry | undefined =>
+	TOOL_CATEGORIES.flatMap((category) => category.tools).find(
+		(tool) => tool.to === path
+	);
+
+/**
+ * 지금 보고 있는 도구 옆에 놓을 만한 도구들.
+ * 같은 분류를 먼저 채우고, 모자라면 다른 분류에서 이어 붙인다.
+ * 한 도구를 끝낸 사람이 다음에 뭘 할지 찾아 사이드바를 뒤지지 않게 하려는 것이다.
+ */
+export const relatedTools = (path: string, count = 4): Array<ToolEntry> => {
+	const own = TOOL_CATEGORIES.find((category) =>
+		category.tools.some((tool) => tool.to === path)
+	);
+
+	const sameCategory = (own?.tools ?? []).filter((tool) => tool.to !== path);
+	if (sameCategory.length >= count) return sameCategory.slice(0, count);
+
+	const others = TOOL_CATEGORIES.filter(
+		(category) => category.key !== own?.key
+	).flatMap((category) => category.tools);
+
+	return [...sameCategory, ...others].slice(0, count);
+};
+
 /**
  * 이름과 검색어에 질의가 들어간 도구만 남긴다. 빈 카테고리는 지운다.
  * 이름은 언어마다 달라서 화면 쪽에서 번역한 문자열을 넘겨준다.

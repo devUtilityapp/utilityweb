@@ -150,7 +150,9 @@
     "cannotReadFile": "ファイルを読めません",
     "cannotReadPdf": "PDF を読めません: {{name}}",
     "cannotReadImage": "画像を読めません: {{name}}",
-    "downloaded": "{{name}} をダウンロードしました"
+    "downloaded": "{{name}} をダウンロードしました",
+    "fileTooLarge": "{{name}} は {{limit}} を超えています。ブラウザのメモリが足りなくなるため追加しませんでした。",
+    "relatedTools": "ほかのツール"
   },
   "pdfToPptx": {
     "category": "PDF",

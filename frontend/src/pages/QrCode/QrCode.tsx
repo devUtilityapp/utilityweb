@@ -14,6 +14,7 @@ import {
 import { downloadBlob } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { Select } from "../../components/ui/Select";
 import { LabeledField } from "../../components/ui/LabeledField";
 
@@ -411,6 +412,7 @@ export const QrCode = (): FunctionComponent => {
 				</div>
 			</div>
 
+			<RelatedTools path="/qr-code" />
 			<PageGuideSection path="/qr-code" />
 		</Content>
 	);

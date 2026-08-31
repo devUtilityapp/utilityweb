@@ -150,7 +150,9 @@
     "cannotReadFile": "无法读取文件",
     "cannotReadPdf": "无法读取 PDF：{{name}}",
     "cannotReadImage": "无法读取图片：{{name}}",
-    "downloaded": "已下载 {{name}}"
+    "downloaded": "已下载 {{name}}",
+    "fileTooLarge": "{{name}} 超过 {{limit}}，会耗尽浏览器内存，因此没有添加。",
+    "relatedTools": "其他工具"
   },
   "pdfToPptx": {
     "category": "PDF",

@@ -10,6 +10,7 @@ import {
 } from "../../common/textDiff";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
+import { RelatedTools } from "../../components/ui/RelatedTools";
 import { ToolTextArea } from "../../components/ui/ToolTextArea";
 import { ActionButton } from "../../components/ui/ActionButton";
 
@@ -172,6 +173,7 @@ export const TextDiff = (): FunctionComponent => {
 				</div>
 			)}
 
+			<RelatedTools path="/text-diff" />
 			<PageGuideSection path="/text-diff" />
 		</Content>
 	);
