@@ -4,8 +4,11 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import type { FunctionComponent } from "../common/types";
 import { Sidebar } from "../components/layout/Sidebar/Sidebar";
+import { useSeo } from "../common/useSeo";
 
 function RootComponent(): FunctionComponent {
+	useSeo();
+
 	return (
 		<div className="min-h-screen bg-main-00">
 			<Header />

@@ -118,6 +118,12 @@ export const PptxViewer = (): FunctionComponent => {
 	return (
 		<Content categoryName="PPTX" title="PPTX VIEWER">
 			<div className="flex flex-col gap-8">
+				<p className="text-neutral-15 text-sm lg:text-md">
+					Open a PowerPoint (.pptx) file and page through its slides without
+					installing anything. The file is read in your browser and never leaves
+					your device.
+				</p>
+
 				{!file && (
 					<FileDropzone
 						accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation"

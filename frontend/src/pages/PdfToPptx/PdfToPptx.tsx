@@ -171,6 +171,12 @@ export const PdfToPptx = (): FunctionComponent => {
 
 	return (
 		<Content categoryName="PDF" title="PDF TO PPTX">
+			<p className="text-neutral-15 text-sm lg:text-md">
+				Turn PDF files into a PowerPoint presentation. Every page becomes a
+				slide, several PDFs can be merged into one deck, and the conversion runs
+				in your browser — nothing is uploaded.
+			</p>
+
 			<form className="flex flex-col gap-8" onSubmit={convert}>
 				<FileDropzone
 					multiple
