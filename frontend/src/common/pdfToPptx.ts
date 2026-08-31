@@ -1,10 +1,13 @@
 /* eslint-disable no-await-in-loop -- 페이지 렌더링은 메모리 사용량을 낮추기 위해 순차 처리한다 */
-import * as pdfjsLib from "pdfjs-dist";
-import PdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?worker";
 import PptxGenJS from "pptxgenjs";
 import { removeDanglingOverrides } from "./pptxPackage";
-
-pdfjsLib.GlobalWorkerOptions.workerPort = new PdfWorker();
+import {
+	loadPdfDocument,
+	renderPdfPage,
+	type PDFDocumentProxy,
+	type PDFPageProxy,
+} from "./pdfDocument";
+import { downloadBlob } from "./download";
 
 export type SlideSize = "16:9" | "4:3" | "fit";
 export type RenderQuality = "high" | "medium" | "low";
@@ -31,27 +34,6 @@ export interface ConvertOptions {
 	onProgress?: (rendered: number, total: number) => void;
 }
 
-const readFileAsArrayBuffer = async (file: File): Promise<ArrayBuffer> =>
-	file.arrayBuffer();
-
-const loadDocument = async (file: File): Promise<pdfjsLib.PDFDocumentProxy> => {
-	const data = await readFileAsArrayBuffer(file);
-	return pdfjsLib.getDocument({
-		data: new Uint8Array(data),
-		// vite.config.ts의 static copy로 배포되는 pdf.js 리소스 위치.
-		standardFontDataUrl: "/pdfjs/standard_fonts/",
-		cMapUrl: "/pdfjs/cmaps/",
-		cMapPacked: true,
-	}).promise;
-};
-
-export const getPdfPageCount = async (file: File): Promise<number> => {
-	const pdfDocument = await loadDocument(file);
-	const pageCount = pdfDocument.numPages;
-	await pdfDocument.loadingTask.destroy();
-	return pageCount;
-};
-
 interface RenderedPage {
 	dataUrl: string;
 	width: number;
@@ -59,27 +41,16 @@ interface RenderedPage {
 }
 
 const renderPage = async (
-	page: pdfjsLib.PDFPageProxy,
+	page: PDFPageProxy,
 	scale: number,
 	canvas: HTMLCanvasElement
 ): Promise<RenderedPage> => {
-	const viewport = page.getViewport({ scale });
-	const context = canvas.getContext("2d");
-	if (!context) {
-		throw new Error("Canvas 2D context is not available");
-	}
-
-	canvas.width = Math.floor(viewport.width);
-	canvas.height = Math.floor(viewport.height);
-	context.fillStyle = "#ffffff";
-	context.fillRect(0, 0, canvas.width, canvas.height);
-
-	await page.render({ canvas, canvasContext: context, viewport }).promise;
+	const { width, height } = await renderPdfPage(page, scale, canvas);
 
 	return {
 		dataUrl: canvas.toDataURL("image/jpeg", JPEG_QUALITY),
-		width: viewport.width,
-		height: viewport.height,
+		width,
+		height,
 	};
 };
 
@@ -111,11 +82,11 @@ export const convertPdfsToPptx = async (
 
 	const scale = RENDER_SCALES[quality];
 	const canvas = document.createElement("canvas");
-	const documents: Array<pdfjsLib.PDFDocumentProxy> = [];
+	const documents: Array<PDFDocumentProxy> = [];
 
 	try {
 		for (const file of files) {
-			documents.push(await loadDocument(file));
+			documents.push(await loadPdfDocument(file));
 		}
 
 		const totalPages = documents.reduce(
@@ -183,18 +154,12 @@ export const convertPdfsToPptx = async (
 
 		// pptxgenjs가 남기는 잘못된 파트 선언을 걷어내고 내려받는다.
 		const data = await removeDanglingOverrides(raw);
-		const downloadUrl = URL.createObjectURL(
+		downloadBlob(
 			new Blob([data], {
 				type: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-			})
+			}),
+			fileName
 		);
-		const link = document.createElement("a");
-		link.href = downloadUrl;
-		link.download = fileName;
-		document.body.append(link);
-		link.click();
-		link.remove();
-		URL.revokeObjectURL(downloadUrl);
 	} finally {
 		canvas.width = 0;
 		canvas.height = 0;

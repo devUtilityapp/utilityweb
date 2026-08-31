@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { LCM } from "../../pages/Calculator/LCM";
+import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/calculator/lcm")({
-	component: LCM,
+	component: lazyRouteComponent(
+		async () => import("../../pages/Calculator/LCM"),
+		"LCM"
+	),
 });

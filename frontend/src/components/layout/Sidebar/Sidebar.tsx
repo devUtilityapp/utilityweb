@@ -1,6 +1,6 @@
 import type { FunctionComponent } from "../../../common/types";
 import { useSidebarStore } from "../../../store/Sidebar";
-import { isYoutubeToolEnabled } from "../../../common/features";
+import { TOOL_CATEGORIES } from "../../../common/toolCatalog";
 import SidebarItems from "./SidebarItem/SidebarItems";
 import SidebarItem from "./SidebarItem/SidebarItem";
 import { useEffect } from "react";
@@ -57,72 +57,24 @@ export const Sidebar = (): FunctionComponent => {
 				</div>
 			</div>
 			<div className="border-b border-neutral-15 w-full"></div>
-			<div className="flex flex-col gap-10">
-				{isYoutubeToolEnabled && (
-					<SidebarItems title="Youtube">
-						<SidebarItem
-							item={{
-								name: "video downloader",
-								link: "/youtube-downloader",
-								onClick: () => {
-									setSidebarOpen(false);
-								},
-							}}
-						/>
-						<SidebarItem
-							item={{
-								name: "tag explorer",
-								link: "/youtube-downloader",
-								search: { info: "tags" },
-								onClick: () => {
-									setSidebarOpen(false);
-								},
-							}}
-						/>
+			<div className="flex flex-col gap-10 overflow-y-auto pb-10">
+				{TOOL_CATEGORIES.map((category) => (
+					<SidebarItems key={category.title} title={category.title}>
+						{category.tools.map((tool) => (
+							<SidebarItem
+								key={`${tool.to}-${tool.shortName}`}
+								item={{
+									name: tool.shortName,
+									link: tool.to,
+									search: tool.search,
+									onClick: () => {
+										setSidebarOpen(false);
+									},
+								}}
+							/>
+						))}
 					</SidebarItems>
-				)}
-				<SidebarItems title="PDF">
-					<SidebarItem
-						item={{
-							name: "pdf to pptx",
-							link: "/pdf-to-pptx",
-							onClick: () => {
-								setSidebarOpen(false);
-							},
-						}}
-					/>
-				</SidebarItems>
-				<SidebarItems title="PPTX">
-					<SidebarItem
-						item={{
-							name: "pptx viewer",
-							link: "/pptx-viewer",
-							onClick: () => {
-								setSidebarOpen(false);
-							},
-						}}
-					/>
-				</SidebarItems>
-				<SidebarItems title="Calculator">
-					<SidebarItem
-						item={{
-							name: "greatest common divisor",
-							link: "/calculator/gcd",
-							onClick: () => {
-								setSidebarOpen(false);
-							},
-						}}
-					/>
-					<SidebarItem
-						item={{
-							name: "least common multiple",
-							link: "/calculator/lcm",
-							onClick: () => {
-								setSidebarOpen(false);
-							},
-						}}
-					/>
-				</SidebarItems>
+				))}
 			</div>
 		</div>
 	);

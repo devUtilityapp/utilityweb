@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PptxViewer } from "../pages/PptxViewer/PptxViewer";
+import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/pptx-viewer")({
-	component: PptxViewer,
+	component: lazyRouteComponent(
+		async () => import("../pages/PptxViewer/PptxViewer"),
+		"PptxViewer"
+	),
 });

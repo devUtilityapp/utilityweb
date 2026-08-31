@@ -8,9 +8,18 @@
 		}
 	],
 	"rewrites": [
-		{ "source": "/tools", "destination": "/tools/index.html" },
-		{ "source": "/pdf-to-pptx", "destination": "/pdf-to-pptx/index.html" },
-		{ "source": "/pptx-viewer", "destination": "/pptx-viewer/index.html" },
+		{
+			"source": "/tools",
+			"destination": "/tools/index.html"
+		},
+		{
+			"source": "/pdf-to-pptx",
+			"destination": "/pdf-to-pptx/index.html"
+		},
+		{
+			"source": "/pptx-viewer",
+			"destination": "/pptx-viewer/index.html"
+		},
 		{
 			"source": "/calculator/gcd",
 			"destination": "/calculator/gcd/index.html"
@@ -19,6 +28,73 @@
 			"source": "/calculator/lcm",
 			"destination": "/calculator/lcm/index.html"
 		},
-		{ "source": "/(.*)", "destination": "/index.html" }
+		{
+			"source": "/pdf-to-images",
+			"destination": "/pdf-to-images/index.html"
+		},
+		{
+			"source": "/merge-pdf",
+			"destination": "/merge-pdf/index.html"
+		},
+		{
+			"source": "/split-pdf",
+			"destination": "/split-pdf/index.html"
+		},
+		{
+			"source": "/images-to-pdf",
+			"destination": "/images-to-pdf/index.html"
+		},
+		{
+			"source": "/image-converter",
+			"destination": "/image-converter/index.html"
+		},
+		{
+			"source": "/qr-code",
+			"destination": "/qr-code/index.html"
+		},
+		{
+			"source": "/json-formatter",
+			"destination": "/json-formatter/index.html"
+		},
+		{
+			"source": "/word-counter",
+			"destination": "/word-counter/index.html"
+		},
+		{
+			"source": "/compress-pdf",
+			"destination": "/compress-pdf/index.html"
+		},
+		{
+			"source": "/organize-pdf",
+			"destination": "/organize-pdf/index.html"
+		},
+		{
+			"source": "/base64",
+			"destination": "/base64/index.html"
+		},
+		{
+			"source": "/hash-generator",
+			"destination": "/hash-generator/index.html"
+		},
+		{
+			"source": "/uuid-generator",
+			"destination": "/uuid-generator/index.html"
+		},
+		{
+			"source": "/csv-to-json",
+			"destination": "/csv-to-json/index.html"
+		},
+		{
+			"source": "/text-diff",
+			"destination": "/text-diff/index.html"
+		},
+		{
+			"source": "/color-converter",
+			"destination": "/color-converter/index.html"
+		},
+		{
+			"source": "/(.*)",
+			"destination": "/index.html"
+		}
 	]
 }

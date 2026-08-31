@@ -12,9 +12,25 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as YoutubeDownloaderImport } from './routes/youtube-downloader'
+import { Route as WordCounterImport } from './routes/word-counter'
+import { Route as UuidGeneratorImport } from './routes/uuid-generator'
 import { Route as ToolsImport } from './routes/tools'
+import { Route as TextDiffImport } from './routes/text-diff'
+import { Route as SplitPdfImport } from './routes/split-pdf'
+import { Route as QrCodeImport } from './routes/qr-code'
 import { Route as PptxViewerImport } from './routes/pptx-viewer'
 import { Route as PdfToPptxImport } from './routes/pdf-to-pptx'
+import { Route as PdfToImagesImport } from './routes/pdf-to-images'
+import { Route as OrganizePdfImport } from './routes/organize-pdf'
+import { Route as MergePdfImport } from './routes/merge-pdf'
+import { Route as JsonFormatterImport } from './routes/json-formatter'
+import { Route as ImagesToPdfImport } from './routes/images-to-pdf'
+import { Route as ImageConverterImport } from './routes/image-converter'
+import { Route as HashGeneratorImport } from './routes/hash-generator'
+import { Route as CsvToJsonImport } from './routes/csv-to-json'
+import { Route as CompressPdfImport } from './routes/compress-pdf'
+import { Route as ColorConverterImport } from './routes/color-converter'
+import { Route as Base64Import } from './routes/base64'
 import { Route as IndexImport } from './routes/index'
 import { Route as CalculatorLcmImport } from './routes/calculator/lcm'
 import { Route as CalculatorGcdImport } from './routes/calculator/gcd'
@@ -26,8 +42,33 @@ const YoutubeDownloaderRoute = YoutubeDownloaderImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const WordCounterRoute = WordCounterImport.update({
+  path: '/word-counter',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const UuidGeneratorRoute = UuidGeneratorImport.update({
+  path: '/uuid-generator',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const ToolsRoute = ToolsImport.update({
   path: '/tools',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TextDiffRoute = TextDiffImport.update({
+  path: '/text-diff',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SplitPdfRoute = SplitPdfImport.update({
+  path: '/split-pdf',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const QrCodeRoute = QrCodeImport.update({
+  path: '/qr-code',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -38,6 +79,61 @@ const PptxViewerRoute = PptxViewerImport.update({
 
 const PdfToPptxRoute = PdfToPptxImport.update({
   path: '/pdf-to-pptx',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PdfToImagesRoute = PdfToImagesImport.update({
+  path: '/pdf-to-images',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const OrganizePdfRoute = OrganizePdfImport.update({
+  path: '/organize-pdf',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const MergePdfRoute = MergePdfImport.update({
+  path: '/merge-pdf',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const JsonFormatterRoute = JsonFormatterImport.update({
+  path: '/json-formatter',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ImagesToPdfRoute = ImagesToPdfImport.update({
+  path: '/images-to-pdf',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ImageConverterRoute = ImageConverterImport.update({
+  path: '/image-converter',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const HashGeneratorRoute = HashGeneratorImport.update({
+  path: '/hash-generator',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CsvToJsonRoute = CsvToJsonImport.update({
+  path: '/csv-to-json',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CompressPdfRoute = CompressPdfImport.update({
+  path: '/compress-pdf',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ColorConverterRoute = ColorConverterImport.update({
+  path: '/color-converter',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const Base64Route = Base64Import.update({
+  path: '/base64',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -67,6 +163,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/base64': {
+      id: '/base64'
+      path: '/base64'
+      fullPath: '/base64'
+      preLoaderRoute: typeof Base64Import
+      parentRoute: typeof rootRoute
+    }
+    '/color-converter': {
+      id: '/color-converter'
+      path: '/color-converter'
+      fullPath: '/color-converter'
+      preLoaderRoute: typeof ColorConverterImport
+      parentRoute: typeof rootRoute
+    }
+    '/compress-pdf': {
+      id: '/compress-pdf'
+      path: '/compress-pdf'
+      fullPath: '/compress-pdf'
+      preLoaderRoute: typeof CompressPdfImport
+      parentRoute: typeof rootRoute
+    }
+    '/csv-to-json': {
+      id: '/csv-to-json'
+      path: '/csv-to-json'
+      fullPath: '/csv-to-json'
+      preLoaderRoute: typeof CsvToJsonImport
+      parentRoute: typeof rootRoute
+    }
+    '/hash-generator': {
+      id: '/hash-generator'
+      path: '/hash-generator'
+      fullPath: '/hash-generator'
+      preLoaderRoute: typeof HashGeneratorImport
+      parentRoute: typeof rootRoute
+    }
+    '/image-converter': {
+      id: '/image-converter'
+      path: '/image-converter'
+      fullPath: '/image-converter'
+      preLoaderRoute: typeof ImageConverterImport
+      parentRoute: typeof rootRoute
+    }
+    '/images-to-pdf': {
+      id: '/images-to-pdf'
+      path: '/images-to-pdf'
+      fullPath: '/images-to-pdf'
+      preLoaderRoute: typeof ImagesToPdfImport
+      parentRoute: typeof rootRoute
+    }
+    '/json-formatter': {
+      id: '/json-formatter'
+      path: '/json-formatter'
+      fullPath: '/json-formatter'
+      preLoaderRoute: typeof JsonFormatterImport
+      parentRoute: typeof rootRoute
+    }
+    '/merge-pdf': {
+      id: '/merge-pdf'
+      path: '/merge-pdf'
+      fullPath: '/merge-pdf'
+      preLoaderRoute: typeof MergePdfImport
+      parentRoute: typeof rootRoute
+    }
+    '/organize-pdf': {
+      id: '/organize-pdf'
+      path: '/organize-pdf'
+      fullPath: '/organize-pdf'
+      preLoaderRoute: typeof OrganizePdfImport
+      parentRoute: typeof rootRoute
+    }
+    '/pdf-to-images': {
+      id: '/pdf-to-images'
+      path: '/pdf-to-images'
+      fullPath: '/pdf-to-images'
+      preLoaderRoute: typeof PdfToImagesImport
+      parentRoute: typeof rootRoute
+    }
     '/pdf-to-pptx': {
       id: '/pdf-to-pptx'
       path: '/pdf-to-pptx'
@@ -81,11 +254,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PptxViewerImport
       parentRoute: typeof rootRoute
     }
+    '/qr-code': {
+      id: '/qr-code'
+      path: '/qr-code'
+      fullPath: '/qr-code'
+      preLoaderRoute: typeof QrCodeImport
+      parentRoute: typeof rootRoute
+    }
+    '/split-pdf': {
+      id: '/split-pdf'
+      path: '/split-pdf'
+      fullPath: '/split-pdf'
+      preLoaderRoute: typeof SplitPdfImport
+      parentRoute: typeof rootRoute
+    }
+    '/text-diff': {
+      id: '/text-diff'
+      path: '/text-diff'
+      fullPath: '/text-diff'
+      preLoaderRoute: typeof TextDiffImport
+      parentRoute: typeof rootRoute
+    }
     '/tools': {
       id: '/tools'
       path: '/tools'
       fullPath: '/tools'
       preLoaderRoute: typeof ToolsImport
+      parentRoute: typeof rootRoute
+    }
+    '/uuid-generator': {
+      id: '/uuid-generator'
+      path: '/uuid-generator'
+      fullPath: '/uuid-generator'
+      preLoaderRoute: typeof UuidGeneratorImport
+      parentRoute: typeof rootRoute
+    }
+    '/word-counter': {
+      id: '/word-counter'
+      path: '/word-counter'
+      fullPath: '/word-counter'
+      preLoaderRoute: typeof WordCounterImport
       parentRoute: typeof rootRoute
     }
     '/youtube-downloader': {
@@ -116,9 +324,25 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
+  Base64Route,
+  ColorConverterRoute,
+  CompressPdfRoute,
+  CsvToJsonRoute,
+  HashGeneratorRoute,
+  ImageConverterRoute,
+  ImagesToPdfRoute,
+  JsonFormatterRoute,
+  MergePdfRoute,
+  OrganizePdfRoute,
+  PdfToImagesRoute,
   PdfToPptxRoute,
   PptxViewerRoute,
+  QrCodeRoute,
+  SplitPdfRoute,
+  TextDiffRoute,
   ToolsRoute,
+  UuidGeneratorRoute,
+  WordCounterRoute,
   YoutubeDownloaderRoute,
   CalculatorGcdRoute,
   CalculatorLcmRoute,
@@ -133,9 +357,25 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/base64",
+        "/color-converter",
+        "/compress-pdf",
+        "/csv-to-json",
+        "/hash-generator",
+        "/image-converter",
+        "/images-to-pdf",
+        "/json-formatter",
+        "/merge-pdf",
+        "/organize-pdf",
+        "/pdf-to-images",
         "/pdf-to-pptx",
         "/pptx-viewer",
+        "/qr-code",
+        "/split-pdf",
+        "/text-diff",
         "/tools",
+        "/uuid-generator",
+        "/word-counter",
         "/youtube-downloader",
         "/calculator/gcd",
         "/calculator/lcm"
@@ -144,14 +384,62 @@ export const routeTree = rootRoute.addChildren({
     "/": {
       "filePath": "index.ts"
     },
+    "/base64": {
+      "filePath": "base64.ts"
+    },
+    "/color-converter": {
+      "filePath": "color-converter.ts"
+    },
+    "/compress-pdf": {
+      "filePath": "compress-pdf.ts"
+    },
+    "/csv-to-json": {
+      "filePath": "csv-to-json.ts"
+    },
+    "/hash-generator": {
+      "filePath": "hash-generator.ts"
+    },
+    "/image-converter": {
+      "filePath": "image-converter.ts"
+    },
+    "/images-to-pdf": {
+      "filePath": "images-to-pdf.ts"
+    },
+    "/json-formatter": {
+      "filePath": "json-formatter.ts"
+    },
+    "/merge-pdf": {
+      "filePath": "merge-pdf.ts"
+    },
+    "/organize-pdf": {
+      "filePath": "organize-pdf.ts"
+    },
+    "/pdf-to-images": {
+      "filePath": "pdf-to-images.ts"
+    },
     "/pdf-to-pptx": {
       "filePath": "pdf-to-pptx.ts"
     },
     "/pptx-viewer": {
       "filePath": "pptx-viewer.ts"
     },
+    "/qr-code": {
+      "filePath": "qr-code.ts"
+    },
+    "/split-pdf": {
+      "filePath": "split-pdf.ts"
+    },
+    "/text-diff": {
+      "filePath": "text-diff.ts"
+    },
     "/tools": {
       "filePath": "tools.ts"
+    },
+    "/uuid-generator": {
+      "filePath": "uuid-generator.ts"
+    },
+    "/word-counter": {
+      "filePath": "word-counter.ts"
     },
     "/youtube-downloader": {
       "filePath": "youtube-downloader.ts"

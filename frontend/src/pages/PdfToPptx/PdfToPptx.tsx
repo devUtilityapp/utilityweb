@@ -75,8 +75,9 @@ export const PdfToPptx = (): FunctionComponent => {
 
 		// 페이지 수는 파일마다 비동기로 읽어 목록에 채운다.
 		// pdfjs/pptxgenjs는 용량이 커서 필요한 시점에만 동적으로 불러온다.
+		// 페이지 수만 필요한 단계에서는 pptxgenjs가 없는 pdfDocument만 부른다.
 		for (const item of newItems) {
-			import("../../common/pdfToPptx")
+			import("../../common/pdfDocument")
 				.then(async ({ getPdfPageCount }) => getPdfPageCount(item.file))
 				.then((pageCount) => {
 					setItems((previousItems) =>

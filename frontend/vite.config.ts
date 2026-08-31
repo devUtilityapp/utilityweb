@@ -5,6 +5,7 @@ import { normalizePath } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { defineConfig } from "vitest/config";
 import { seoPlugin } from "./vite-seo-plugin";
+import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,6 +13,67 @@ export default defineConfig({
 		react(),
 		TanStackRouterVite(),
 		seoPlugin(new Date().toISOString().slice(0, 10)),
+		// 도구가 전부 브라우저 안에서 도는 만큼, 한 번 열어본 도구는
+		// 네트워크가 없어도 다시 쓸 수 있어야 한다.
+		VitePWA({
+			registerType: "autoUpdate",
+			includeAssets: ["favicon.svg", "og-image.png"],
+			manifest: {
+				name: "Utility web",
+				short_name: "Utility web",
+				description:
+					"Free browser based file, image and developer tools. Nothing is uploaded.",
+				start_url: "/",
+				scope: "/",
+				display: "standalone",
+				background_color: "#171110",
+				theme_color: "#171110",
+				icons: [
+					{ src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+					{ src: "/icon-512.png", sizes: "512x512", type: "image/png" },
+					{
+						src: "/icon-512.png",
+						sizes: "512x512",
+						type: "image/png",
+						purpose: "maskable",
+					},
+				],
+			},
+			workbox: {
+				// 앱 껍데기와 작은 청크만 미리 받는다. pdf.js 워커나 pptx 뷰어처럼
+				// 큰 파일까지 미리 받으면 첫 방문에 몇 MB를 쓰게 된다.
+				globPatterns: ["**/*.{css,html,svg,png,ico,woff2}", "assets/*.js"],
+				globIgnores: [
+					"**/pdf.worker*",
+					"**/pptx-preview*",
+					"**/pdfDocument*",
+					"**/PDFButton*",
+					"pdfjs/**",
+					"**/vite-react-boilerplate.png",
+				],
+				maximumFileSizeToCacheInBytes: 600_000,
+				// SPA 경로는 앱 껍데기가 받아서 그린다.
+				navigateFallback: "/index.html",
+				navigateFallbackDenylist: [/^\/pdfjs\//, /^\/locales\//],
+				cleanupOutdatedCaches: true,
+				runtimeCaching: [
+					{
+						// 미리 받지 않은 무거운 청크(pdf.js 등)는 한 번 쓰면 남겨둔다.
+						urlPattern: /\/(assets|pdfjs)\/.*\.(js|mjs|bcmap|pfb|ttf)$/,
+						handler: "CacheFirst",
+						options: {
+							cacheName: "heavy-assets",
+							expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 },
+						},
+					},
+					{
+						urlPattern: /\/locales\/.*\.json$/,
+						handler: "StaleWhileRevalidate",
+						options: { cacheName: "locales" },
+					},
+				],
+			},
+		}),
 		viteStaticCopy({
 			targets: [
 				{

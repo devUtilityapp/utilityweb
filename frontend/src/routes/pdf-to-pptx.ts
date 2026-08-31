@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PdfToPptx } from "../pages/PdfToPptx/PdfToPptx";
+import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/pdf-to-pptx")({
-	component: PdfToPptx,
+	component: lazyRouteComponent(
+		async () => import("../pages/PdfToPptx/PdfToPptx"),
+		"PdfToPptx"
+	),
 });

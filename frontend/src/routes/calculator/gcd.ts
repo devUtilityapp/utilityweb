@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { GCD } from "../../pages/Calculator/GCD";
+import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/calculator/gcd")({
-	component: GCD,
+	component: lazyRouteComponent(
+		async () => import("../../pages/Calculator/GCD"),
+		"GCD"
+	),
 });
