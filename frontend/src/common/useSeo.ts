@@ -9,6 +9,7 @@ import {
 	alternateUrls,
 	canonicalUrl,
 	findPageSeo,
+	isKnownPath,
 	loadPageGuide,
 	structuredData,
 } from "./seo";
@@ -27,6 +28,11 @@ const setMeta = (
 		document.head.append(element);
 	}
 	element.content = content;
+};
+
+/** 앞 페이지에서 붙인 태그가 남지 않도록 지운다. */
+const removeMeta = (key: string): void => {
+	document.head.querySelector(`meta[name="${key}"]`)?.remove();
 };
 
 const setLink = (relation: string, href: string): void => {
@@ -88,15 +94,31 @@ export const useSeo = (): void => {
 
 	useEffect(() => {
 		const { language, path } = splitLanguagePath(pathname);
-		const page = findPageSeo(path, language);
-		const url = canonicalUrl(page.path, language);
-		const image = `${SITE_URL}${OG_IMAGE_PATH}`;
 
-		// 화면 문구도 주소의 언어를 따른다. 브라우저 설정보다 주소가 우선이다.
+		// 화면 문구는 주소의 언어를 따른다. 브라우저 설정보다 주소가 우선이다.
 		if (i18n.language !== language) {
 			void i18n.changeLanguage(language);
 		}
 		document.documentElement.lang = LANGUAGE_TAGS[language];
+
+		// 없는 주소를 홈 페이지의 제목과 설명으로 채우면, 색인에 없는 페이지가
+		// 있는 것처럼 남는다. 404로 표시하고 색인에서 빼 달라고 알린다.
+		if (!isKnownPath(path)) {
+			document.title = i18n.t("notFound.title");
+			setMeta("name", "description", i18n.t("notFound.lead"));
+			setMeta("name", "robots", "noindex");
+			for (const element of document.head.querySelectorAll(
+				'link[rel="alternate"], link[rel="canonical"]'
+			)) {
+				element.remove();
+			}
+			return;
+		}
+
+		removeMeta("robots");
+		const page = findPageSeo(path, language);
+		const url = canonicalUrl(page.path, language);
+		const image = `${SITE_URL}${OG_IMAGE_PATH}`;
 
 		document.title = page.title;
 		setMeta("name", "description", page.description);

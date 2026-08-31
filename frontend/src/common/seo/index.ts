@@ -31,6 +31,10 @@ const META: Record<Language, Record<string, PageMeta>> = {
 
 export const DEFAULT_PATH = "/";
 
+/** 우리가 아는 경로인지. 모르는 주소는 404로 다뤄야 한다. */
+export const isKnownPath = (path: string): boolean =>
+	SEO_ROUTES.some((route) => route.path === path);
+
 /** 아직 번역되지 않은 페이지는 영어를 쓴다. */
 export const findPageMeta = (path: string, language: Language): PageMeta =>
 	META[language][path] ??

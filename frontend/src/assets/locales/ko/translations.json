@@ -1,6 +1,9 @@
 {
-  "nav": { "home": "홈", "tools": "도구" },
-
+  "nav": {
+    "home": "홈",
+    "tools": "도구",
+    "language": "언어"
+  },
   "categories": {
     "youtube": "유튜브",
     "pdf": "PDF",
@@ -11,38 +14,101 @@
     "text": "텍스트",
     "calculator": "계산기"
   },
-
   "tools": {
-    "youtubeVideo": { "name": "영상 다운로더", "short": "영상 다운로더" },
-    "youtubeTags": { "name": "태그 추출기", "short": "태그 추출기" },
-    "pdfToPptx": { "name": "PDF → PPTX", "short": "pdf → pptx" },
-    "pdfToImages": { "name": "PDF → 이미지", "short": "pdf → 이미지" },
-    "mergePdf": { "name": "PDF 합치기", "short": "pdf 합치기" },
-    "splitPdf": { "name": "PDF 나누기", "short": "pdf 나누기" },
-    "compressPdf": { "name": "PDF 용량 줄이기", "short": "pdf 용량 줄이기" },
-    "organizePdf": { "name": "PDF 페이지 정리", "short": "pdf 페이지 정리" },
-    "imagesToPdf": { "name": "이미지 → PDF", "short": "이미지 → pdf" },
-    "imageConverter": { "name": "이미지 변환·리사이즈", "short": "이미지 변환" },
-    "pptxViewer": { "name": "PPTX 뷰어", "short": "pptx 뷰어" },
-    "qrCode": { "name": "QR 코드 생성", "short": "qr 코드" },
-    "uuidGenerator": { "name": "UUID 생성", "short": "uuid 생성" },
-    "base64": { "name": "Base64 인코딩·디코딩", "short": "base64" },
-    "hashGenerator": { "name": "해시 생성", "short": "해시 생성" },
-    "colorConverter": { "name": "색상 변환", "short": "색상 변환" },
-    "jsonFormatter": { "name": "JSON 정리", "short": "json 정리" },
-    "csvToJson": { "name": "CSV ↔ JSON", "short": "csv ↔ json" },
-    "textDiff": { "name": "텍스트 비교", "short": "텍스트 비교" },
-    "wordCounter": { "name": "글자 수 세기", "short": "글자 수 세기" },
-    "gcd": { "name": "최대공약수", "short": "최대공약수" },
-    "lcm": { "name": "최소공배수", "short": "최소공배수" }
+    "youtubeVideo": {
+      "name": "영상 다운로더",
+      "short": "영상 다운로더"
+    },
+    "youtubeTags": {
+      "name": "태그 추출기",
+      "short": "태그 추출기"
+    },
+    "pdfToPptx": {
+      "name": "PDF → PPTX",
+      "short": "pdf → pptx"
+    },
+    "pdfToImages": {
+      "name": "PDF → 이미지",
+      "short": "pdf → 이미지"
+    },
+    "mergePdf": {
+      "name": "PDF 합치기",
+      "short": "pdf 합치기"
+    },
+    "splitPdf": {
+      "name": "PDF 나누기",
+      "short": "pdf 나누기"
+    },
+    "compressPdf": {
+      "name": "PDF 용량 줄이기",
+      "short": "pdf 용량 줄이기"
+    },
+    "organizePdf": {
+      "name": "PDF 페이지 정리",
+      "short": "pdf 페이지 정리"
+    },
+    "imagesToPdf": {
+      "name": "이미지 → PDF",
+      "short": "이미지 → pdf"
+    },
+    "imageConverter": {
+      "name": "이미지 변환·리사이즈",
+      "short": "이미지 변환"
+    },
+    "pptxViewer": {
+      "name": "PPTX 뷰어",
+      "short": "pptx 뷰어"
+    },
+    "qrCode": {
+      "name": "QR 코드 생성",
+      "short": "qr 코드"
+    },
+    "uuidGenerator": {
+      "name": "UUID 생성",
+      "short": "uuid 생성"
+    },
+    "base64": {
+      "name": "Base64 인코딩·디코딩",
+      "short": "base64"
+    },
+    "hashGenerator": {
+      "name": "해시 생성",
+      "short": "해시 생성"
+    },
+    "colorConverter": {
+      "name": "색상 변환",
+      "short": "색상 변환"
+    },
+    "jsonFormatter": {
+      "name": "JSON 정리",
+      "short": "json 정리"
+    },
+    "csvToJson": {
+      "name": "CSV ↔ JSON",
+      "short": "csv ↔ json"
+    },
+    "textDiff": {
+      "name": "텍스트 비교",
+      "short": "텍스트 비교"
+    },
+    "wordCounter": {
+      "name": "글자 수 세기",
+      "short": "글자 수 세기"
+    },
+    "gcd": {
+      "name": "최대공약수",
+      "short": "최대공약수"
+    },
+    "lcm": {
+      "name": "최소공배수",
+      "short": "최소공배수"
+    }
   },
-
   "toolsPage": {
     "intro": "모두 브라우저 안에서 도는 무료 도구입니다. 파일이 서버로 올라가지 않습니다.",
     "searchPlaceholder": "도구 검색 — pdf, 이미지, qr, json...",
     "noResults": "“{{query}}”에 맞는 도구가 없습니다."
   },
-
   "common": {
     "fileName": "파일 이름",
     "format": "형식",
@@ -86,7 +152,6 @@
     "cannotReadImage": "이미지를 읽을 수 없습니다: {{name}}",
     "downloaded": "{{name}} 내려받았습니다"
   },
-
   "pdfToPptx": {
     "category": "PDF",
     "title": "PDF → PPTX",
@@ -107,7 +172,6 @@
     "stillReading": "아직 PDF를 읽고 있습니다. 잠시만 기다려 주세요",
     "failed": "PDF 변환에 실패했습니다"
   },
-
   "pdfToImages": {
     "category": "PDF",
     "title": "PDF → 이미지",
@@ -124,7 +188,6 @@
     "working": "변환 중...",
     "failed": "PDF 변환에 실패했습니다"
   },
-
   "mergePdf": {
     "category": "PDF",
     "title": "PDF 합치기",
@@ -137,7 +200,6 @@
     "done": "{{name}} 내려받았습니다 ({{count}}쪽)",
     "failed": "PDF를 합치지 못했습니다"
   },
-
   "splitPdf": {
     "category": "PDF",
     "title": "PDF 나누기",
@@ -159,7 +221,6 @@
     "done": "{{name}} 내려받았습니다 ({{count}}쪽)",
     "failed": "PDF를 나누지 못했습니다"
   },
-
   "compressPdf": {
     "category": "PDF",
     "title": "PDF 용량 줄이기",
@@ -178,7 +239,6 @@
     "alreadySmall": "이 문서는 이미 효율적입니다. 이미지보다 글자가 많아서 쪽을 그림으로 바꿔도 도움이 되지 않습니다. 원본을 그대로 쓰세요.",
     "failed": "PDF 압축에 실패했습니다"
   },
-
   "organizePdf": {
     "category": "PDF",
     "title": "PDF 페이지 정리",
@@ -199,7 +259,6 @@
     "done": "{{name}} 내려받았습니다 ({{count}}쪽)",
     "failed": "PDF 저장에 실패했습니다"
   },
-
   "imagesToPdf": {
     "category": "이미지",
     "title": "이미지 → PDF",
@@ -224,7 +283,6 @@
     "done": "{{name}} 내려받았습니다 ({{count}}쪽)",
     "failed": "PDF를 만들지 못했습니다"
   },
-
   "imageConverter": {
     "category": "이미지",
     "title": "이미지 변환",
@@ -248,7 +306,6 @@
     "done": "{{count}}장을 변환했습니다",
     "failed": "이미지 변환에 실패했습니다"
   },
-
   "pptxViewer": {
     "category": "PPTX",
     "title": "PPTX 뷰어",
@@ -262,7 +319,6 @@
     "fullscreenFailed": "전체 화면을 쓸 수 없습니다",
     "slideNumber": "슬라이드 번호"
   },
-
   "qrCode": {
     "category": "생성기",
     "title": "QR 코드",
@@ -304,7 +360,6 @@
     "empty": "값을 채우면 QR 코드가 나타납니다",
     "failed": "QR 코드를 만들지 못했습니다"
   },
-
   "uuidGenerator": {
     "category": "생성기",
     "title": "UUID 생성",
@@ -326,7 +381,6 @@
     "badCount": "만들 개수를 정수로 적어 주세요",
     "tooMany": "한 번에 최대 {{max}}개까지 만들 수 있습니다"
   },
-
   "base64": {
     "category": "개발자",
     "title": "BASE64",
@@ -346,7 +400,6 @@
     "addFile": "파일을 먼저 넣어 주세요",
     "cannotConvert": "변환할 수 없습니다"
   },
-
   "hashGenerator": {
     "category": "개발자",
     "title": "해시 생성",
@@ -363,7 +416,6 @@
     "failedText": "이 텍스트의 해시를 구할 수 없습니다",
     "failedFile": "이 파일의 해시를 구할 수 없습니다"
   },
-
   "colorConverter": {
     "category": "개발자",
     "title": "색상 변환",
@@ -379,7 +431,6 @@
     "gradeFails": "기준 미달",
     "gradeLarge": "큰 글씨만 AA"
   },
-
   "jsonFormatter": {
     "category": "텍스트",
     "title": "JSON 정리",
@@ -402,7 +453,6 @@
     "invalid": "올바른 JSON이 아닙니다",
     "invalidDetail": "{{line}}행 {{column}}칸에서 JSON이 잘못되었습니다"
   },
-
   "csvToJson": {
     "category": "텍스트",
     "title": "CSV → JSON",
@@ -421,7 +471,6 @@
     "pasteFirst": "자료를 먼저 붙여 넣어 주세요",
     "failed": "이 자료는 변환할 수 없습니다"
   },
-
   "textDiff": {
     "category": "텍스트",
     "title": "텍스트 비교",
@@ -440,7 +489,6 @@
     "unchanged": "{{count}}줄 그대로",
     "hidden_other": "같은 {{count}}줄을 접었습니다"
   },
-
   "wordCounter": {
     "category": "텍스트",
     "title": "글자 수 세기",
@@ -456,7 +504,6 @@
     "speakingTime": "말하는 시간",
     "topWords": "자주 쓴 낱말"
   },
-
   "calculator": {
     "category": "계산기",
     "gcdTitle": "최대공약수",
@@ -475,14 +522,12 @@
     "integer": "정수",
     "smallest": "{{lcm}}은 {{a}}와 {{b}} 둘 다로 나누어떨어지는 가장 작은 수입니다"
   },
-
   "input": {
     "numbersOnly": "숫자와 쉼표만 넣을 수 있습니다",
     "doubleComma": "쉼표를 연달아 쓸 수 없습니다",
     "edgeComma": "쉼표로 시작하거나 끝낼 수 없습니다",
     "badPaste": "붙여 넣은 값의 형식이 맞지 않습니다"
   },
-
   "youtube": {
     "category": "유튜브",
     "urlPlaceholder": "https://www.youtube.com/watch?v=...",
@@ -495,5 +540,12 @@
     "noTags": "태그가 없습니다",
     "selectFormat": "영상 형식 고르기",
     "selectQuality": "화질 고르기"
+  },
+  "notFound": {
+    "title": "페이지를 찾을 수 없습니다",
+    "code": "404",
+    "lead": "이 주소는 가리키는 곳이 없습니다. 링크가 오래됐거나 페이지 이름이 바뀌었을 수 있습니다.",
+    "browse": "전체 도구 보기",
+    "home": "첫 화면으로"
   }
 }

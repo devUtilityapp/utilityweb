@@ -1,7 +1,8 @@
 {
   "nav": {
     "home": "Home",
-    "tools": "Tools"
+    "tools": "Tools",
+    "language": "Language"
   },
   "categories": {
     "youtube": "Youtube",
@@ -540,5 +541,12 @@
     "noTags": "No tags found",
     "selectFormat": "Select video format",
     "selectQuality": "Select video quality"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "code": "404",
+    "lead": "This address does not point at anything. The link may be out of date, or the page may have been renamed.",
+    "browse": "Browse all tools",
+    "home": "Go to the home page"
   }
 }

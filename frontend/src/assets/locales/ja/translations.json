@@ -1,6 +1,9 @@
 {
-  "nav": { "home": "ホーム", "tools": "ツール" },
-
+  "nav": {
+    "home": "ホーム",
+    "tools": "ツール",
+    "language": "言語"
+  },
   "categories": {
     "youtube": "YouTube",
     "pdf": "PDF",
@@ -11,38 +14,101 @@
     "text": "テキスト",
     "calculator": "計算"
   },
-
   "tools": {
-    "youtubeVideo": { "name": "動画ダウンローダー", "short": "動画ダウンローダー" },
-    "youtubeTags": { "name": "タグ抽出", "short": "タグ抽出" },
-    "pdfToPptx": { "name": "PDF → PPTX", "short": "pdf → pptx" },
-    "pdfToImages": { "name": "PDF → 画像", "short": "pdf → 画像" },
-    "mergePdf": { "name": "PDF 結合", "short": "pdf 結合" },
-    "splitPdf": { "name": "PDF 分割", "short": "pdf 分割" },
-    "compressPdf": { "name": "PDF 圧縮", "short": "pdf 圧縮" },
-    "organizePdf": { "name": "PDF ページ整理", "short": "pdf ページ整理" },
-    "imagesToPdf": { "name": "画像 → PDF", "short": "画像 → pdf" },
-    "imageConverter": { "name": "画像変換・リサイズ", "short": "画像変換" },
-    "pptxViewer": { "name": "PPTX ビューア", "short": "pptx ビューア" },
-    "qrCode": { "name": "QR コード作成", "short": "qr コード" },
-    "uuidGenerator": { "name": "UUID 生成", "short": "uuid 生成" },
-    "base64": { "name": "Base64 変換", "short": "base64" },
-    "hashGenerator": { "name": "ハッシュ生成", "short": "ハッシュ生成" },
-    "colorConverter": { "name": "カラー変換", "short": "カラー変換" },
-    "jsonFormatter": { "name": "JSON 整形", "short": "json 整形" },
-    "csvToJson": { "name": "CSV ↔ JSON", "short": "csv ↔ json" },
-    "textDiff": { "name": "テキスト比較", "short": "テキスト比較" },
-    "wordCounter": { "name": "文字数カウント", "short": "文字数カウント" },
-    "gcd": { "name": "最大公約数", "short": "最大公約数" },
-    "lcm": { "name": "最小公倍数", "short": "最小公倍数" }
+    "youtubeVideo": {
+      "name": "動画ダウンローダー",
+      "short": "動画ダウンローダー"
+    },
+    "youtubeTags": {
+      "name": "タグ抽出",
+      "short": "タグ抽出"
+    },
+    "pdfToPptx": {
+      "name": "PDF → PPTX",
+      "short": "pdf → pptx"
+    },
+    "pdfToImages": {
+      "name": "PDF → 画像",
+      "short": "pdf → 画像"
+    },
+    "mergePdf": {
+      "name": "PDF 結合",
+      "short": "pdf 結合"
+    },
+    "splitPdf": {
+      "name": "PDF 分割",
+      "short": "pdf 分割"
+    },
+    "compressPdf": {
+      "name": "PDF 圧縮",
+      "short": "pdf 圧縮"
+    },
+    "organizePdf": {
+      "name": "PDF ページ整理",
+      "short": "pdf ページ整理"
+    },
+    "imagesToPdf": {
+      "name": "画像 → PDF",
+      "short": "画像 → pdf"
+    },
+    "imageConverter": {
+      "name": "画像変換・リサイズ",
+      "short": "画像変換"
+    },
+    "pptxViewer": {
+      "name": "PPTX ビューア",
+      "short": "pptx ビューア"
+    },
+    "qrCode": {
+      "name": "QR コード作成",
+      "short": "qr コード"
+    },
+    "uuidGenerator": {
+      "name": "UUID 生成",
+      "short": "uuid 生成"
+    },
+    "base64": {
+      "name": "Base64 変換",
+      "short": "base64"
+    },
+    "hashGenerator": {
+      "name": "ハッシュ生成",
+      "short": "ハッシュ生成"
+    },
+    "colorConverter": {
+      "name": "カラー変換",
+      "short": "カラー変換"
+    },
+    "jsonFormatter": {
+      "name": "JSON 整形",
+      "short": "json 整形"
+    },
+    "csvToJson": {
+      "name": "CSV ↔ JSON",
+      "short": "csv ↔ json"
+    },
+    "textDiff": {
+      "name": "テキスト比較",
+      "short": "テキスト比較"
+    },
+    "wordCounter": {
+      "name": "文字数カウント",
+      "short": "文字数カウント"
+    },
+    "gcd": {
+      "name": "最大公約数",
+      "short": "最大公約数"
+    },
+    "lcm": {
+      "name": "最小公倍数",
+      "short": "最小公倍数"
+    }
   },
-
   "toolsPage": {
     "intro": "すべてブラウザ内で動く無料ツールです。ファイルがサーバーに送られることはありません。",
     "searchPlaceholder": "ツールを検索 — pdf、画像、qr、json...",
     "noResults": "「{{query}}」に一致するツールはありません。"
   },
-
   "common": {
     "fileName": "ファイル名",
     "format": "形式",
@@ -86,7 +152,6 @@
     "cannotReadImage": "画像を読めません: {{name}}",
     "downloaded": "{{name}} をダウンロードしました"
   },
-
   "pdfToPptx": {
     "category": "PDF",
     "title": "PDF → PPTX",
@@ -107,7 +172,6 @@
     "stillReading": "まだ PDF を読み込んでいます。少しお待ちください",
     "failed": "PDF の変換に失敗しました"
   },
-
   "pdfToImages": {
     "category": "PDF",
     "title": "PDF → 画像",
@@ -124,7 +188,6 @@
     "working": "変換中...",
     "failed": "PDF の変換に失敗しました"
   },
-
   "mergePdf": {
     "category": "PDF",
     "title": "PDF 結合",
@@ -137,7 +200,6 @@
     "done": "{{name}} をダウンロードしました（{{count}} ページ）",
     "failed": "PDF を結合できませんでした"
   },
-
   "splitPdf": {
     "category": "PDF",
     "title": "PDF 分割",
@@ -159,7 +221,6 @@
     "done": "{{name}} をダウンロードしました（{{count}} ページ）",
     "failed": "PDF を分割できませんでした"
   },
-
   "compressPdf": {
     "category": "PDF",
     "title": "PDF 圧縮",
@@ -178,7 +239,6 @@
     "alreadySmall": "この文書はすでに効率的です。画像より文字が多いため、ページを絵に変えても得になりません。元のファイルをそのままお使いください。",
     "failed": "PDF の圧縮に失敗しました"
   },
-
   "organizePdf": {
     "category": "PDF",
     "title": "PDF ページ整理",
@@ -199,7 +259,6 @@
     "done": "{{name}} をダウンロードしました（{{count}} ページ）",
     "failed": "PDF の保存に失敗しました"
   },
-
   "imagesToPdf": {
     "category": "画像",
     "title": "画像 → PDF",
@@ -224,7 +283,6 @@
     "done": "{{name}} をダウンロードしました（{{count}} ページ）",
     "failed": "PDF を作成できませんでした"
   },
-
   "imageConverter": {
     "category": "画像",
     "title": "画像変換",
@@ -248,7 +306,6 @@
     "done": "{{count}} 枚を変換しました",
     "failed": "画像の変換に失敗しました"
   },
-
   "pptxViewer": {
     "category": "PPTX",
     "title": "PPTX ビューア",
@@ -262,7 +319,6 @@
     "fullscreenFailed": "全画面にできません",
     "slideNumber": "スライド番号"
   },
-
   "qrCode": {
     "category": "ジェネレーター",
     "title": "QR コード",
@@ -304,7 +360,6 @@
     "empty": "内容を入力すると QR コードが出ます",
     "failed": "QR コードを作成できませんでした"
   },
-
   "uuidGenerator": {
     "category": "ジェネレーター",
     "title": "UUID 生成",
@@ -326,7 +381,6 @@
     "badCount": "作る個数を整数で入力してください",
     "tooMany": "一度に作れるのは最大 {{max}} 個です"
   },
-
   "base64": {
     "category": "開発者",
     "title": "BASE64",
@@ -346,7 +400,6 @@
     "addFile": "先にファイルを追加してください",
     "cannotConvert": "変換できません"
   },
-
   "hashGenerator": {
     "category": "開発者",
     "title": "ハッシュ生成",
@@ -363,7 +416,6 @@
     "failedText": "このテキストのハッシュを求められません",
     "failedFile": "このファイルのハッシュを求められません"
   },
-
   "colorConverter": {
     "category": "開発者",
     "title": "カラー変換",
@@ -379,7 +431,6 @@
     "gradeFails": "基準未満",
     "gradeLarge": "大きな文字のみ AA"
   },
-
   "jsonFormatter": {
     "category": "テキスト",
     "title": "JSON 整形",
@@ -402,7 +453,6 @@
     "invalid": "正しい JSON ではありません",
     "invalidDetail": "{{line}} 行 {{column}} 文字目の JSON が不正です"
   },
-
   "csvToJson": {
     "category": "テキスト",
     "title": "CSV → JSON",
@@ -421,7 +471,6 @@
     "pasteFirst": "先にデータを貼り付けてください",
     "failed": "このデータは変換できません"
   },
-
   "textDiff": {
     "category": "テキスト",
     "title": "テキスト比較",
@@ -440,7 +489,6 @@
     "unchanged": "{{count}} 行 変化なし",
     "hidden_other": "同じ {{count}} 行を折りたたみました"
   },
-
   "wordCounter": {
     "category": "テキスト",
     "title": "文字数カウント",
@@ -456,7 +504,6 @@
     "speakingTime": "話す時間",
     "topWords": "よく使った語"
   },
-
   "calculator": {
     "category": "計算",
     "gcdTitle": "最大公約数",
@@ -475,14 +522,12 @@
     "integer": "整数",
     "smallest": "{{lcm}} は {{a}} と {{b}} の両方で割り切れる最小の数です"
   },
-
   "input": {
     "numbersOnly": "数字とカンマだけ入力できます",
     "doubleComma": "カンマを続けて入力することはできません",
     "edgeComma": "カンマで始めたり終えたりできません",
     "badPaste": "貼り付けた値の形式が正しくありません"
   },
-
   "youtube": {
     "category": "YouTube",
     "urlPlaceholder": "https://www.youtube.com/watch?v=...",
@@ -495,5 +540,12 @@
     "noTags": "タグがありません",
     "selectFormat": "動画形式を選ぶ",
     "selectQuality": "画質を選ぶ"
+  },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "code": "404",
+    "lead": "このアドレスは何も指していません。リンクが古いか、ページの名前が変わった可能性があります。",
+    "browse": "すべてのツールを見る",
+    "home": "ホームへ"
   }
 }

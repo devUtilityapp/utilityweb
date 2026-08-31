@@ -161,6 +161,49 @@ const renderHtml = (
 			`<div id="root">${bodyFor(page, language, guide, titleOf)}</div>`
 		);
 
+/**
+ * 어떤 경로에도 맞지 않을 때 내보내는 페이지.
+ * Vercel은 출력 루트의 404.html을 못 찾은 주소에 404 상태와 함께 돌려준다.
+ * 색인에서 빼 달라고 알리고, 크롤러가 여기서 막히지 않도록 도구 링크를 남긴다.
+ */
+const notFoundHtml = (
+	template: string,
+	titleOf: (path: string) => string
+): string => {
+	const body = [
+		`<div style="${WRAPPER_STYLE}">`,
+		`<h1 style="${HEADING_STYLE}">404 &mdash; Page not found</h1>`,
+		"<p>This address does not point at anything. The link may be out of date, or the page may have been renamed.</p>",
+		`<h2 style="${SUBHEADING_STYLE}">Tools</h2>`,
+		"<ul>",
+		...SEO_ROUTES.filter((entry) => entry.path !== "/").map((entry) => {
+			const label = titleOf(entry.path).split(" - ")[0] ?? entry.path;
+			return `<li><a href="${entry.path}" style="color:#f7f7f7">${escapeHtml(label)}</a></li>`;
+		}),
+		"</ul>",
+		`<h2 style="${SUBHEADING_STYLE}">Languages</h2>`,
+		"<ul>",
+		...LANGUAGES.map(
+			(language) =>
+				`<li><a href="${localizePath("/", language)}" hreflang="${LANGUAGE_TAGS[language]}" style="color:#f7f7f7">${escapeHtml(LANGUAGE_NAMES[language])}</a></li>`
+		),
+		"</ul>",
+		"</div>",
+	].join("");
+
+	const head = [
+		"<title>Page not found - Utility web</title>",
+		'<meta name="robots" content="noindex" />',
+		'<meta name="description" content="This address does not point at anything." />',
+	].join("\n    ");
+
+	return template
+		.replace(/<title>[^<]*<\/title>/, "")
+		.replace(/<meta\s+name="description"[\s\S]*?\/>/, "")
+		.replace("</head>", `  ${head}\n  </head>`)
+		.replace('<div id="root"></div>', `<div id="root">${body}</div>`);
+};
+
 // 한 페이지의 모든 언어판을 <xhtml:link>로 서로 가리키게 한다.
 // 구글은 사이트맵의 이 표기를 hreflang 태그와 동등하게 읽는다.
 const sitemap = (lastModified: string): string =>
@@ -236,6 +279,12 @@ export const seoPlugin = (buildDate: string): Plugin => ({
 			}
 		}
 
+		await writeFile(
+			path.join(outDir, "404.html"),
+			notFoundHtml(template, (target) =>
+				findPageSeo(target, DEFAULT_LANGUAGE).title
+			)
+		);
 		await writeFile(path.join(outDir, "sitemap.xml"), sitemap(buildDate));
 		await writeFile(path.join(outDir, "robots.txt"), robots());
 	},

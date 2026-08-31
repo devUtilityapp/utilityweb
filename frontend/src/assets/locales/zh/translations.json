@@ -1,6 +1,9 @@
 {
-  "nav": { "home": "首页", "tools": "工具" },
-
+  "nav": {
+    "home": "首页",
+    "tools": "工具",
+    "language": "语言"
+  },
   "categories": {
     "youtube": "YouTube",
     "pdf": "PDF",
@@ -11,38 +14,101 @@
     "text": "文本",
     "calculator": "计算器"
   },
-
   "tools": {
-    "youtubeVideo": { "name": "视频下载", "short": "视频下载" },
-    "youtubeTags": { "name": "标签提取", "short": "标签提取" },
-    "pdfToPptx": { "name": "PDF 转 PPTX", "short": "pdf 转 pptx" },
-    "pdfToImages": { "name": "PDF 转图片", "short": "pdf 转图片" },
-    "mergePdf": { "name": "合并 PDF", "short": "合并 pdf" },
-    "splitPdf": { "name": "拆分 PDF", "short": "拆分 pdf" },
-    "compressPdf": { "name": "压缩 PDF", "short": "压缩 pdf" },
-    "organizePdf": { "name": "整理 PDF 页面", "short": "整理 pdf 页面" },
-    "imagesToPdf": { "name": "图片转 PDF", "short": "图片转 pdf" },
-    "imageConverter": { "name": "图片转换与缩放", "short": "图片转换" },
-    "pptxViewer": { "name": "PPTX 阅读器", "short": "pptx 阅读器" },
-    "qrCode": { "name": "二维码生成", "short": "二维码" },
-    "uuidGenerator": { "name": "UUID 生成", "short": "uuid 生成" },
-    "base64": { "name": "Base64 编解码", "short": "base64" },
-    "hashGenerator": { "name": "哈希生成", "short": "哈希生成" },
-    "colorConverter": { "name": "颜色转换", "short": "颜色转换" },
-    "jsonFormatter": { "name": "JSON 格式化", "short": "json 格式化" },
-    "csvToJson": { "name": "CSV ↔ JSON", "short": "csv ↔ json" },
-    "textDiff": { "name": "文本比较", "short": "文本比较" },
-    "wordCounter": { "name": "字数统计", "short": "字数统计" },
-    "gcd": { "name": "最大公约数", "short": "最大公约数" },
-    "lcm": { "name": "最小公倍数", "short": "最小公倍数" }
+    "youtubeVideo": {
+      "name": "视频下载",
+      "short": "视频下载"
+    },
+    "youtubeTags": {
+      "name": "标签提取",
+      "short": "标签提取"
+    },
+    "pdfToPptx": {
+      "name": "PDF 转 PPTX",
+      "short": "pdf 转 pptx"
+    },
+    "pdfToImages": {
+      "name": "PDF 转图片",
+      "short": "pdf 转图片"
+    },
+    "mergePdf": {
+      "name": "合并 PDF",
+      "short": "合并 pdf"
+    },
+    "splitPdf": {
+      "name": "拆分 PDF",
+      "short": "拆分 pdf"
+    },
+    "compressPdf": {
+      "name": "压缩 PDF",
+      "short": "压缩 pdf"
+    },
+    "organizePdf": {
+      "name": "整理 PDF 页面",
+      "short": "整理 pdf 页面"
+    },
+    "imagesToPdf": {
+      "name": "图片转 PDF",
+      "short": "图片转 pdf"
+    },
+    "imageConverter": {
+      "name": "图片转换与缩放",
+      "short": "图片转换"
+    },
+    "pptxViewer": {
+      "name": "PPTX 阅读器",
+      "short": "pptx 阅读器"
+    },
+    "qrCode": {
+      "name": "二维码生成",
+      "short": "二维码"
+    },
+    "uuidGenerator": {
+      "name": "UUID 生成",
+      "short": "uuid 生成"
+    },
+    "base64": {
+      "name": "Base64 编解码",
+      "short": "base64"
+    },
+    "hashGenerator": {
+      "name": "哈希生成",
+      "short": "哈希生成"
+    },
+    "colorConverter": {
+      "name": "颜色转换",
+      "short": "颜色转换"
+    },
+    "jsonFormatter": {
+      "name": "JSON 格式化",
+      "short": "json 格式化"
+    },
+    "csvToJson": {
+      "name": "CSV ↔ JSON",
+      "short": "csv ↔ json"
+    },
+    "textDiff": {
+      "name": "文本比较",
+      "short": "文本比较"
+    },
+    "wordCounter": {
+      "name": "字数统计",
+      "short": "字数统计"
+    },
+    "gcd": {
+      "name": "最大公约数",
+      "short": "最大公约数"
+    },
+    "lcm": {
+      "name": "最小公倍数",
+      "short": "最小公倍数"
+    }
   },
-
   "toolsPage": {
     "intro": "全部在浏览器里运行的免费工具，文件不会上传到服务器。",
     "searchPlaceholder": "搜索工具 — pdf、图片、二维码、json...",
     "noResults": "没有与“{{query}}”匹配的工具。"
   },
-
   "common": {
     "fileName": "文件名",
     "format": "格式",
@@ -86,7 +152,6 @@
     "cannotReadImage": "无法读取图片：{{name}}",
     "downloaded": "已下载 {{name}}"
   },
-
   "pdfToPptx": {
     "category": "PDF",
     "title": "PDF 转 PPTX",
@@ -107,7 +172,6 @@
     "stillReading": "还在读取 PDF，请稍候",
     "failed": "PDF 转换失败"
   },
-
   "pdfToImages": {
     "category": "PDF",
     "title": "PDF 转图片",
@@ -124,7 +188,6 @@
     "working": "转换中...",
     "failed": "PDF 转换失败"
   },
-
   "mergePdf": {
     "category": "PDF",
     "title": "合并 PDF",
@@ -137,7 +200,6 @@
     "done": "已下载 {{name}}（{{count}} 页）",
     "failed": "合并 PDF 失败"
   },
-
   "splitPdf": {
     "category": "PDF",
     "title": "拆分 PDF",
@@ -159,7 +221,6 @@
     "done": "已下载 {{name}}（{{count}} 页）",
     "failed": "拆分 PDF 失败"
   },
-
   "compressPdf": {
     "category": "PDF",
     "title": "压缩 PDF",
@@ -178,7 +239,6 @@
     "alreadySmall": "这份文档本来就很紧凑：它以文字为主而非图片，把页面变成图反而没有好处。请继续使用原文件。",
     "failed": "PDF 压缩失败"
   },
-
   "organizePdf": {
     "category": "PDF",
     "title": "整理 PDF 页面",
@@ -199,7 +259,6 @@
     "done": "已下载 {{name}}（{{count}} 页）",
     "failed": "保存 PDF 失败"
   },
-
   "imagesToPdf": {
     "category": "图片",
     "title": "图片转 PDF",
@@ -224,7 +283,6 @@
     "done": "已下载 {{name}}（{{count}} 页）",
     "failed": "生成 PDF 失败"
   },
-
   "imageConverter": {
     "category": "图片",
     "title": "图片转换",
@@ -248,7 +306,6 @@
     "done": "已转换 {{count}} 张",
     "failed": "图片转换失败"
   },
-
   "pptxViewer": {
     "category": "PPTX",
     "title": "PPTX 阅读器",
@@ -262,7 +319,6 @@
     "fullscreenFailed": "无法进入全屏",
     "slideNumber": "幻灯片编号"
   },
-
   "qrCode": {
     "category": "生成器",
     "title": "二维码",
@@ -304,7 +360,6 @@
     "empty": "填写内容后即可看到二维码",
     "failed": "二维码生成失败"
   },
-
   "uuidGenerator": {
     "category": "生成器",
     "title": "UUID 生成",
@@ -326,7 +381,6 @@
     "badCount": "请用整数填写要生成的数量",
     "tooMany": "一次最多生成 {{max}} 个"
   },
-
   "base64": {
     "category": "开发者",
     "title": "BASE64",
@@ -346,7 +400,6 @@
     "addFile": "请先添加文件",
     "cannotConvert": "无法转换"
   },
-
   "hashGenerator": {
     "category": "开发者",
     "title": "哈希生成",
@@ -363,7 +416,6 @@
     "failedText": "无法计算这段文本的哈希",
     "failedFile": "无法计算这个文件的哈希"
   },
-
   "colorConverter": {
     "category": "开发者",
     "title": "颜色转换",
@@ -379,7 +431,6 @@
     "gradeFails": "未达标",
     "gradeLarge": "仅大号文字达 AA"
   },
-
   "jsonFormatter": {
     "category": "文本",
     "title": "JSON 格式化",
@@ -402,7 +453,6 @@
     "invalid": "不是有效的 JSON",
     "invalidDetail": "第 {{line}} 行第 {{column}} 列的 JSON 有误"
   },
-
   "csvToJson": {
     "category": "文本",
     "title": "CSV 转 JSON",
@@ -421,7 +471,6 @@
     "pasteFirst": "请先粘贴数据",
     "failed": "这份数据无法转换"
   },
-
   "textDiff": {
     "category": "文本",
     "title": "文本比较",
@@ -440,7 +489,6 @@
     "unchanged": "{{count}} 行未改动",
     "hidden_other": "已折叠 {{count}} 行未改动内容"
   },
-
   "wordCounter": {
     "category": "文本",
     "title": "字数统计",
@@ -456,7 +504,6 @@
     "speakingTime": "朗读时间",
     "topWords": "最常用的词"
   },
-
   "calculator": {
     "category": "计算器",
     "gcdTitle": "最大公约数",
@@ -475,14 +522,12 @@
     "integer": "整数",
     "smallest": "{{lcm}} 是能同时被 {{a}} 和 {{b}} 整除的最小的数"
   },
-
   "input": {
     "numbersOnly": "只能输入数字和逗号",
     "doubleComma": "不能连续输入逗号",
     "edgeComma": "不能以逗号开头或结尾",
     "badPaste": "粘贴的内容格式不正确"
   },
-
   "youtube": {
     "category": "YouTube",
     "urlPlaceholder": "https://www.youtube.com/watch?v=...",
@@ -495,5 +540,12 @@
     "noTags": "没有找到标签",
     "selectFormat": "选择视频格式",
     "selectQuality": "选择画质"
+  },
+  "notFound": {
+    "title": "找不到该页面",
+    "code": "404",
+    "lead": "这个地址没有指向任何内容。可能是链接已过时，或者页面被改名了。",
+    "browse": "浏览全部工具",
+    "home": "回到首页"
   }
 }

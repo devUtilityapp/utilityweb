@@ -9,14 +9,17 @@ export const Header = (): FunctionComponent => {
 
 	return (
 		<header
-			className="flex fixed top-0 left-0 right-0 px-8 lg:px-10 bg-main-00 shadow-md w-full z-40"
+			className="flex fixed top-0 left-0 right-0 px-4 lg:px-10 bg-main-00 shadow-md w-full z-40"
 			id="header"
 		>
 			<div className="flex lg:px-5 border-b border-neutral-50 w-full">
-				<div className="flex justify-between items-center h-16 w-full">
+				<div className="flex justify-between items-center gap-3 h-16 w-full">
 					{/* 로고 및 네비게이션 */}
-					<div className="flex items-center space-x-8">
-						<LocalizedLink className="flex items-center gap-5" to="/">
+					<div className="flex items-center min-w-0">
+						<LocalizedLink
+							className="flex items-center gap-3 lg:gap-5 min-w-0"
+							to="/"
+						>
 							<svg
 								fill="none"
 								height="18"
@@ -37,12 +40,14 @@ export const Header = (): FunctionComponent => {
 									fill="#F7F7F7"
 								/>
 							</svg>
-							<div className="text-2xl text-neutral-05">Utility web</div>
+							<div className="text-lg lg:text-2xl text-neutral-05 whitespace-nowrap">
+								Utility web
+							</div>
 						</LocalizedLink>
 					</div>
 
-					<nav className="gap-7 flex">
-						<div className="flex gap-8 text-lg font-semibold">
+					<nav className="flex ml-auto mr-3 lg:mr-0">
+						<div className="flex gap-4 lg:gap-8 text-base lg:text-lg font-semibold whitespace-nowrap">
 							<NavItem name={t("nav.home")} to="/" />
 							<NavItem name={t("nav.tools")} to="/tools" />
 						</div>

@@ -355,10 +355,6 @@
 		{
 			"source": "/zh/calculator/lcm",
 			"destination": "/zh/calculator/lcm/index.html"
-		},
-		{
-			"source": "/(.*)",
-			"destination": "/index.html"
 		}
 	]
 }

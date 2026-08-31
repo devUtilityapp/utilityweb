@@ -1,31 +1,18 @@
 import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { Header } from "../components/layout/Header/Header";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import type { FunctionComponent } from "../common/types";
-import { Sidebar } from "../components/layout/Sidebar/Sidebar";
-import { useSeo } from "../common/useSeo";
-
-function RootComponent(): FunctionComponent {
-	useSeo();
-
-	return (
-		<div className="min-h-screen bg-main-00">
-			<Header />
-			<main className="mt-16 flex justify-center">
-				<Sidebar />
-				<div className="lg:w-1/6 lg:block sm:hidden"></div>
-				<div className="container lg:py-20 py-10 lg:px-14 px-8 box-border lg:w-2/3 sm:w-full">
-					<Outlet />
-				</div>
-				<div className="lg:w-1/6 lg:block sm:hidden"></div>
-			</main>
-
-			<ToastContainer />
-		</div>
-	);
-}
+import { AppLayout } from "../components/layout/AppLayout";
+import { NotFound } from "../pages/NotFound/NotFound";
 
 export const Route = createRootRoute({
-	component: RootComponent,
+	component: (): FunctionComponent => (
+		<AppLayout>
+			<Outlet />
+		</AppLayout>
+	),
+	// 루트의 notFoundComponent는 component를 통째로 대신하므로 껍데기를 다시 씌운다.
+	notFoundComponent: (): FunctionComponent => (
+		<AppLayout>
+			<NotFound />
+		</AppLayout>
+	),
 });
