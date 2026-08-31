@@ -14,6 +14,8 @@ export interface PageSeo {
 	priority: string;
 }
 
+// 경로를 추가하면 vercel.json의 rewrites에도 같은 경로를 넣어야
+// 크롤러가 그 경로의 정적 HTML을 받는다.
 export const PAGE_SEO: Array<PageSeo> = [
 	{
 		path: "/",

@@ -1,5 +1,24 @@
 {
-	"cleanUrls": true,
 	"trailingSlash": false,
-	"rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+	"redirects": [
+		{
+			"source": "/youtube-downloader",
+			"destination": "/tools",
+			"permanent": true
+		}
+	],
+	"rewrites": [
+		{ "source": "/tools", "destination": "/tools/index.html" },
+		{ "source": "/pdf-to-pptx", "destination": "/pdf-to-pptx/index.html" },
+		{ "source": "/pptx-viewer", "destination": "/pptx-viewer/index.html" },
+		{
+			"source": "/calculator/gcd",
+			"destination": "/calculator/gcd/index.html"
+		},
+		{
+			"source": "/calculator/lcm",
+			"destination": "/calculator/lcm/index.html"
+		},
+		{ "source": "/(.*)", "destination": "/index.html" }
+	]
 }

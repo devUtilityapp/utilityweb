@@ -64,13 +64,12 @@ const sitemap = (lastModified: string): string =>
 		"",
 	].join("\n");
 
+// 숨긴 /youtube-downloader는 vercel.json에서 /tools로 301 처리한다.
+// robots.txt로 막으면 크롤러가 그 리다이렉트를 못 보고 옛 주소를 계속 들고 있다.
 const robots = (): string =>
 	[
 		"User-agent: *",
 		"Allow: /",
-		"",
-		"# 사용할 수 없는 상태의 도구는 색인하지 않는다",
-		"Disallow: /youtube-downloader",
 		"",
 		`Sitemap: ${SITE_URL}/sitemap.xml`,
 		"",
@@ -98,8 +97,6 @@ export const seoPlugin = (buildDate: string): Plugin => ({
 			const directory = path.join(outDir, page.path.replace(/^\//, ""));
 			await mkdir(directory, { recursive: true });
 			await writeFile(path.join(directory, "index.html"), html);
-			// 정적 호스팅이 디렉터리 색인을 안 쓰는 경우를 위해 파일도 함께 둔다.
-			await writeFile(`${directory}.html`, html);
 		}
 
 		await writeFile(path.join(outDir, "sitemap.xml"), sitemap(buildDate));
