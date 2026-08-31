@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { useSearch } from "@tanstack/react-router";
 import axios, { type AxiosResponse } from "axios";
@@ -113,6 +114,7 @@ const parseFilename = (
 };
 
 export const YoutubeDownloader = (): FunctionComponent => {
+	const { t } = useTranslation();
 	// 현재 모드는 URL(?info=tags)에서 읽는다. 새로고침이나 링크 공유에도 유지된다.
 	const { info } = useSearch({ from: "/youtube-downloader" });
 	const isTagMode = info === "tags";
@@ -169,7 +171,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 
 	const videoDownload = async (): Promise<void> => {
 		if (!isDownloadApiConfigured) {
-			toast.error("Download server is not configured");
+			toast.error(t("youtube.notConfigured"));
 			return;
 		}
 
@@ -207,7 +209,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 			console.error(caughtError);
 			const message = axios.isAxiosError(caughtError)
 				? readErrorMessage(caughtError.response?.data, caughtError.message)
-				: "An unexpected error occurred";
+				: t("youtube.unexpected");
 			setError(message);
 			toast.error(message);
 		} finally {
@@ -224,7 +226,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 
 		const videoId = getYoutubeVideoId(url);
 		if (!videoId) {
-			toast.error("Invalid YouTube URL");
+			toast.error(t("youtube.invalidUrl"));
 			return;
 		}
 
@@ -243,7 +245,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 
 			// 서버가 200으로 에러 본문을 돌려주는 경우까지 여기서 걸러낸다.
 			if (!videoDetails) {
-				const message = readErrorMessage(data, "Failed to get video info");
+				const message = readErrorMessage(data, t("youtube.failedInfo"));
 				setError(message);
 				toast.error(message);
 				return;
@@ -291,13 +293,13 @@ export const YoutubeDownloader = (): FunctionComponent => {
 			...videoTags.filter((tag) => !previousTags.includes(tag)),
 		]);
 		await navigator.clipboard.writeText(videoTags.join(","));
-		toast.success("Copied to clipboard");
+		toast.success(t("common.copied"));
 	};
 
 	const copyMyTags = async (): Promise<void> => {
 		if (myTags.length === 0) return;
 		await navigator.clipboard.writeText(myTags.join(","));
-		toast.success("Copied to clipboard");
+		toast.success(t("common.copied"));
 	};
 
 	const tagHandler = (tag: string): void => {
@@ -309,7 +311,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 	};
 
 	return (
-		<Content categoryName="Youtube" title={title}>
+		<Content categoryName={t("youtube.category")} title={title}>
 			<MainSearchParameterForm
 				parameter={isTagMode ? "tags" : ""}
 				onSubmit={getVideoInfo}
@@ -317,7 +319,7 @@ export const YoutubeDownloader = (): FunctionComponent => {
 				<div className="w-full h-full">
 					<MainInput
 						id="url"
-						placeholder="https://www.youtube.com/watch?v=..."
+						placeholder={t("youtube.urlPlaceholder")}
 						setValue={setUrl}
 						value={url}
 					/>
@@ -340,7 +342,9 @@ export const YoutubeDownloader = (): FunctionComponent => {
 			{myTags.length > 0 && isTagMode && (
 				<div className="flex flex-col gap-4 border border-neutral-05 rounded-2xl py-6 px-8">
 					<div className="flex gap-3 items-center">
-						<div className="text-neutral-05 font-medium text-2xl">MY TAGS</div>
+						<div className="text-neutral-05 font-medium text-2xl">
+							{t("youtube.myTags")}
+						</div>
 						<CopyIcon iconSize="26" onClick={copyMyTags} />
 					</div>
 					<div className="rounded text-neutral-05 flex flex-wrap gap-4">
@@ -398,12 +402,14 @@ export const YoutubeDownloader = (): FunctionComponent => {
 									<div className="flex gap-3 items-center">
 										{videoInfo.tags.length > 0 ? (
 											<>
-												<div className="text-neutral-05 font-medium">TAGS</div>
+												<div className="text-neutral-05 font-medium">
+													{t("youtube.tags")}
+												</div>
 												<CopyIcon iconSize="18" onClick={copyTags} />
 											</>
 										) : (
 											<div className="text-neutral-05 font-medium">
-												No tags found
+												{t("youtube.noTags")}
 											</div>
 										)}
 									</div>

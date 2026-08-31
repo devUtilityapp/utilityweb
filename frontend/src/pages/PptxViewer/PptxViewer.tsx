@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import { Content } from "../../components/ui/Content";
 import { FileDropzone } from "../../components/ui/FileDropzone";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
-import { findPageSeo } from "../../common/seo";
 import { PptxSlideView } from "../../components/page/PptxViewer/PptxSlideView";
 
 interface LoadedFile {
@@ -18,6 +18,7 @@ const isPptxFile = (file: File): boolean =>
 		"application/vnd.openxmlformats-officedocument.presentationml.presentation";
 
 export const PptxViewer = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [file, setFile] = useState<LoadedFile | null>(null);
 	const [slideCount, setSlideCount] = useState(0);
 	const [slideIndex, setSlideIndex] = useState(0);
@@ -28,7 +29,7 @@ export const PptxViewer = (): FunctionComponent => {
 	const openFiles = (files: Array<File>): void => {
 		const pptxFile = files.find((candidate) => isPptxFile(candidate));
 		if (!pptxFile) {
-			toast.error("Only .pptx files are supported");
+			toast.error(t("pptxViewer.onlyPptx"));
 			return;
 		}
 
@@ -105,11 +106,9 @@ export const PptxViewer = (): FunctionComponent => {
 			}
 		} catch (fullscreenError) {
 			console.error(fullscreenError);
-			toast.error("Fullscreen is not available");
+			toast.error(t("pptxViewer.fullscreenFailed"));
 		}
 	};
-
-	const guide = findPageSeo("/pptx-viewer").guide;
 
 	const closeFile = (): void => {
 		setFile(null);
@@ -120,19 +119,20 @@ export const PptxViewer = (): FunctionComponent => {
 	};
 
 	return (
-		<Content categoryName="PPTX" title="PPTX VIEWER">
+		<Content
+			categoryName={t("pptxViewer.category")}
+			title={t("pptxViewer.title")}
+		>
 			<div className="flex flex-col gap-8">
 				<p className="text-neutral-15 text-sm lg:text-md">
-					Open a PowerPoint (.pptx) file and page through its slides without
-					installing anything. The file is read in your browser and never leaves
-					your device.
+					{t("pptxViewer.intro")}
 				</p>
 
 				{!file && (
 					<FileDropzone
 						accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation"
-						hint="or click to select a file. Everything stays in your browser"
-						title="Drop a PPTX file here"
+						hint={t("pptxViewer.hint")}
+						title={t("pptxViewer.drop")}
 						onFilesAdded={openFiles}
 					/>
 				)}
@@ -155,7 +155,7 @@ export const PptxViewer = (): FunctionComponent => {
 									type="button"
 									onClick={closeFile}
 								>
-									Open another file
+									{t("pptxViewer.openAnother")}
 								</button>
 							</div>
 						</div>
@@ -170,7 +170,9 @@ export const PptxViewer = (): FunctionComponent => {
 						</div>
 
 						{loading && (
-							<div className="text-neutral-15 text-sm">Rendering slides...</div>
+							<div className="text-neutral-15 text-sm">
+								{t("pptxViewer.rendering")}
+							</div>
 						)}
 
 						{slideCount > 0 && (
@@ -188,7 +190,7 @@ export const PptxViewer = (): FunctionComponent => {
 
 								<div className="flex items-center gap-2 text-neutral-05">
 									<input
-										aria-label="Slide number"
+										aria-label={t("pptxViewer.slideNumber")}
 										className="w-16 h-10 text-center bg-main-00 border border-neutral-05 rounded-xl outline-none"
 										max={slideCount}
 										min={1}
@@ -220,7 +222,7 @@ export const PptxViewer = (): FunctionComponent => {
 										void toggleFullscreen();
 									}}
 								>
-									Fullscreen
+									{t("pptxViewer.fullscreen")}
 								</button>
 							</div>
 						)}
@@ -233,7 +235,7 @@ export const PptxViewer = (): FunctionComponent => {
 					</div>
 				)}
 
-				{guide && <PageGuideSection guide={guide} />}
+				<PageGuideSection path="/pptx-viewer" />
 			</div>
 		</Content>
 	);

@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { tDynamic } from "../../common/translate";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import type {
 	CompressionLevel,
 	CompressResult,
 } from "../../common/pdfCompress";
-import { findPageSeo } from "../../common/seo";
 import {
 	formatBytes,
 	stripExtension,
@@ -20,14 +21,15 @@ import { ToolButton } from "../../components/ui/ToolButton";
 import { FileNameInput, LabeledField } from "../../components/ui/LabeledField";
 import { useProcessLoadingStore } from "../../store/ProcessLoading";
 
-const LEVEL_LABELS: Record<CompressionLevel, string> = {
-	light: "Light (sharpest)",
-	balanced: "Balanced",
-	strong: "Strong (smallest)",
+const LEVEL_KEYS: Record<CompressionLevel, string> = {
+	light: "compressPdf.levelLight",
+	balanced: "compressPdf.levelBalanced",
+	strong: "compressPdf.levelStrong",
 };
 
+/** Select는 문구만 주고받으므로, 고른 문구를 원래 값으로 되돌린다. */
 const labelToValue = <T extends string>(
-	labels: Record<T, string>,
+	labels: Record<string, string>,
 	label: string,
 	fallback: T
 ): T => {
@@ -39,9 +41,12 @@ const isPdfFile = (file: File): boolean =>
 	file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
 
 export const CompressPdf = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [file, setFile] = useState<File | null>(null);
 	const [level, setLevel] = useState<CompressionLevel>("balanced");
-	const [fileName, setFileName] = useState<string>("compressed");
+	const [fileName, setFileName] = useState<string>(
+		t("compressPdf.defaultName")
+	);
 	const [progress, setProgress] = useState({ done: 0, total: 0 });
 	const [result, setResult] = useState<CompressResult | null>(null);
 	const { processLoading, setProcessLoading } = useProcessLoadingStore();
@@ -49,7 +54,7 @@ export const CompressPdf = (): FunctionComponent => {
 	const addFiles = (files: Array<File>): void => {
 		const [first] = files.filter((candidate) => isPdfFile(candidate));
 		if (!first) {
-			toast.error("Only PDF files are allowed");
+			toast.error(t("common.onlyPdf"));
 			return;
 		}
 		setFile(first);
@@ -62,7 +67,7 @@ export const CompressPdf = (): FunctionComponent => {
 	): Promise<void> => {
 		event.preventDefault();
 		if (!file) {
-			toast.error("Please add a PDF file");
+			toast.error(t("common.addPdf"));
 			return;
 		}
 
@@ -81,11 +86,11 @@ export const CompressPdf = (): FunctionComponent => {
 				},
 			});
 			setResult(compressed);
-			toast.success(`${outputName} downloaded`);
+			toast.success(t("common.downloaded", { name: outputName }));
 		} catch (error) {
 			console.error(error);
 			toast.error(
-				error instanceof Error ? error.message : "Failed to compress the PDF"
+				error instanceof Error ? error.message : t("compressPdf.failed")
 			);
 		} finally {
 			setProcessLoading(false);
@@ -93,53 +98,63 @@ export const CompressPdf = (): FunctionComponent => {
 		}
 	};
 
-	const guide = findPageSeo("/compress-pdf").guide;
+	const levelLabels: Record<string, string> = Object.fromEntries(
+		Object.entries(LEVEL_KEYS).map(([value, key]) => [value, tDynamic(t, key)])
+	);
 	const saved =
 		result === null
 			? 0
 			: Math.round(((result.before - result.after) / result.before) * 100);
 
 	return (
-		<Content categoryName="PDF" title="COMPRESS PDF">
+		<Content
+			categoryName={t("compressPdf.category")}
+			title={t("compressPdf.title")}
+		>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Make a PDF small enough to email or upload. Pages are re-drawn as
-				compressed images, so scans shrink a lot — and nothing is uploaded.
+				{t("compressPdf.intro")}
 			</p>
 
 			<form className="flex flex-col gap-8" onSubmit={compress}>
 				<FileDropzone
 					accept="application/pdf,.pdf"
 					disabled={processLoading}
-					hint="or click to select a file"
-					title={file ? file.name : "Drop a PDF file here"}
+					hint={t("common.clickToSelectFile")}
+					title={file ? file.name : t("common.dropPdf")}
 					onFilesAdded={addFiles}
 				/>
 
 				{file && (
 					<div className="text-neutral-15 text-sm">
-						Current size: {formatBytes(file.size)}
+						{t("compressPdf.currentSize", { size: formatBytes(file.size) })}
 					</div>
 				)}
 
 				<div className="flex flex-wrap gap-6 items-end">
-					<LabeledField label="Compression">
+					<LabeledField label={t("compressPdf.compression")}>
 						<div className="h-12 w-[220px]">
 							<Select
-								currentValue={LEVEL_LABELS[level]}
-								options={Object.values(LEVEL_LABELS)}
+								currentValue={levelLabels[level] ?? ""}
+								options={Object.values(levelLabels)}
 								width="220px"
 								onChange={(value) => {
-									setLevel(labelToValue(LEVEL_LABELS, value, "balanced"));
+									setLevel(
+										labelToValue(
+											levelLabels,
+											value,
+											"balanced"
+										) as CompressionLevel
+									);
 								}}
 							/>
 						</div>
 					</LabeledField>
 
-					<LabeledField grow label="File name">
+					<LabeledField grow label={t("common.fileName")}>
 						<FileNameInput
 							extension="pdf"
 							id="compressed-file-name"
-							placeholder="compressed"
+							placeholder={t("compressPdf.defaultName")}
 							value={fileName}
 							onChange={setFileName}
 						/>
@@ -150,22 +165,22 @@ export const CompressPdf = (): FunctionComponent => {
 					<ProgressBar
 						done={progress.done}
 						total={progress.total}
-						unit="pages"
+						unit={t("common.pages")}
 					/>
 				)}
 
 				<ToolButton
 					disabled={!file}
-					label="Compress PDF"
+					label={t("compressPdf.action")}
 					loading={processLoading}
-					loadingLabel="Compressing..."
+					loadingLabel={t("compressPdf.working")}
 				/>
 			</form>
 
 			{result && (
 				<div className="flex flex-col gap-3 border border-neutral-05 rounded-xl p-5">
 					<div className="text-neutral-05 font-medium text-xl">
-						{result.pages} pages compressed
+						{t("compressPdf.resultPages", { count: result.pages })}
 					</div>
 					<div className="text-neutral-10">
 						{formatBytes(result.before)} → {formatBytes(result.after)}{" "}
@@ -174,20 +189,20 @@ export const CompressPdf = (): FunctionComponent => {
 								saved > 0 ? "text-green-05 font-medium" : "text-neutral-15"
 							}
 						>
-							({saved > 0 ? `${saved}% smaller` : `${-saved}% larger`})
+							{saved > 0
+								? t("compressPdf.smaller", { percent: saved })
+								: t("compressPdf.larger", { percent: -saved })}
 						</span>
 					</div>
 					{saved <= 0 && (
 						<div className="text-neutral-15 text-sm">
-							This document was already efficient — it is mostly text rather
-							than images, so turning the pages into pictures does not help.
-							Keep the original.
+							{t("compressPdf.alreadySmall")}
 						</div>
 					)}
 				</div>
 			)}
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/compress-pdf" />
 		</Content>
 	);
 };

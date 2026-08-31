@@ -1,5 +1,5 @@
-import { Link } from "@tanstack/react-router";
 import type { FunctionComponent } from "../../../../common/types";
+import { LocalizedLink } from "../../../ui/LocalizedLink";
 
 export const NavItem = ({
 	name,
@@ -9,13 +9,13 @@ export const NavItem = ({
 	to: string;
 }): FunctionComponent => {
 	return (
-		<Link
-			activeProps={{ className: "text-neutral-00" }}
+		<LocalizedLink
+			activeClassName="text-neutral-00"
 			className="text-neutral-15 hover:text-neutral-00 transition-colors"
 			to={to}
 		>
 			{name}
-		</Link>
+		</LocalizedLink>
 	);
 };
 
@@ -27,12 +27,12 @@ export const CircleNavItem = ({
 	to: string;
 }): FunctionComponent => {
 	return (
-		<Link
+		<LocalizedLink
 			className="text-sm text-neutral-05 border border-neutral-15 rounded-full px-3 h-full flex justify-center items-center"
 			to={to}
 		>
 			{name}
-		</Link>
+		</LocalizedLink>
 	);
 };
 

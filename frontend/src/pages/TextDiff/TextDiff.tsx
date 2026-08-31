@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import {
@@ -7,7 +8,6 @@ import {
 	type DiffChunk,
 	type DiffResult,
 } from "../../common/textDiff";
-import { findPageSeo } from "../../common/seo";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
 import { ToolTextArea } from "../../components/ui/ToolTextArea";
@@ -24,6 +24,7 @@ const ROW_STYLES = {
 } as const;
 
 export const TextDiff = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [left, setLeft] = useState<string>("");
 	const [right, setRight] = useState<string>("");
 	const [ignoreCase, setIgnoreCase] = useState(false);
@@ -33,7 +34,7 @@ export const TextDiff = (): FunctionComponent => {
 
 	const compare = (): void => {
 		if (left === "" && right === "") {
-			toast.error("Paste something into both boxes first");
+			toast.error(t("textDiff.pasteFirst"));
 			return;
 		}
 
@@ -42,36 +43,35 @@ export const TextDiff = (): FunctionComponent => {
 		setChunks(collapseUnchanged(diff.lines, CONTEXT_LINES));
 
 		if (diff.added === 0 && diff.removed === 0) {
-			toast.success("The two texts are identical");
+			toast.success(t("textDiff.identical"));
 		}
 	};
 
-	const guide = findPageSeo("/text-diff").guide;
-
 	return (
-		<Content categoryName="Text" title="TEXT COMPARE">
+		<Content categoryName={t("textDiff.category")} title={t("textDiff.title")}>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Compare two versions line by line and see exactly what was added,
-				removed and left alone. Both texts stay in your browser.
+				{t("textDiff.intro")}
 			</p>
 
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 				<div className="flex flex-col gap-2">
 					<div className="text-neutral-15 text-sm">
-						Original — drop a text file here to load it
+						{t("textDiff.originalLabel")}
 					</div>
 					<ToolTextArea
 						id="diff-left"
-						placeholder="Paste the first version"
+						placeholder={t("textDiff.originalPlaceholder")}
 						value={left}
 						onChange={setLeft}
 					/>
 				</div>
 				<div className="flex flex-col gap-2">
-					<div className="text-neutral-15 text-sm">Changed</div>
+					<div className="text-neutral-15 text-sm">
+						{t("textDiff.changedLabel")}
+					</div>
 					<ToolTextArea
 						id="diff-right"
-						placeholder="Paste the second version"
+						placeholder={t("textDiff.changedPlaceholder")}
 						value={right}
 						onChange={setRight}
 					/>
@@ -92,7 +92,7 @@ export const TextDiff = (): FunctionComponent => {
 							setIgnoreCase(event.target.checked);
 						}}
 					/>
-					Ignore case
+					{t("textDiff.ignoreCase")}
 				</label>
 				<label
 					className="flex items-center gap-3 text-neutral-10 cursor-pointer"
@@ -107,14 +107,14 @@ export const TextDiff = (): FunctionComponent => {
 							setIgnoreWhitespace(event.target.checked);
 						}}
 					/>
-					Ignore whitespace
+					{t("textDiff.ignoreWhitespace")}
 				</label>
 
 				<div className="flex gap-4 flex-wrap">
-					<ActionButton label="Compare" onClick={compare} />
+					<ActionButton label={t("textDiff.compare")} onClick={compare} />
 					<ActionButton
 						disabled={left === "" && right === ""}
-						label="Clear"
+						label={t("common.clear")}
 						onClick={() => {
 							setLeft("");
 							setRight("");
@@ -130,15 +130,15 @@ export const TextDiff = (): FunctionComponent => {
 					<div className="flex flex-wrap gap-6 text-neutral-10">
 						<span>
 							<span className="text-green-05 font-medium">+{result.added}</span>{" "}
-							added
+							{t("textDiff.added")}
 						</span>
 						<span>
 							<span className="text-neutral-05 font-medium">
 								−{result.removed}
 							</span>{" "}
-							removed
+							{t("textDiff.removed")}
 						</span>
-						<span>{result.unchanged} unchanged</span>
+						<span>{t("textDiff.unchanged", { count: result.unchanged })}</span>
 					</div>
 
 					<div className="border border-neutral-05 rounded-xl overflow-x-auto">
@@ -146,8 +146,7 @@ export const TextDiff = (): FunctionComponent => {
 							<div key={`chunk-${chunkIndex}`}>
 								{chunk.skipped > 0 && (
 									<div className="text-neutral-15 text-sm px-4 py-2 border-y border-neutral-50 bg-main-00">
-										{chunk.skipped} unchanged{" "}
-										{chunk.skipped === 1 ? "line" : "lines"} hidden
+										{t("textDiff.hidden", { count: chunk.skipped })}
 									</div>
 								)}
 								{chunk.lines.map((line, lineIndex) => (
@@ -173,7 +172,7 @@ export const TextDiff = (): FunctionComponent => {
 				</div>
 			)}
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/text-diff" />
 		</Content>
 	);
 };

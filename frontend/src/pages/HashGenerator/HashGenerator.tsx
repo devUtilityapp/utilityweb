@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import { HASH_ALGORITHMS, type HashAlgorithm } from "../../common/hash";
-import { findPageSeo } from "../../common/seo";
 import { formatBytes } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
@@ -32,6 +32,7 @@ const TabButton = ({
 );
 
 export const HashGenerator = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [mode, setMode] = useState<Mode>("text");
 	const [text, setText] = useState<string>("");
 	const [file, setFile] = useState<File | null>(null);
@@ -59,7 +60,9 @@ export const HashGenerator = (): FunctionComponent => {
 			.catch((error: unknown) => {
 				if (!cancelled) {
 					toast.error(
-						error instanceof Error ? error.message : "Cannot hash this text"
+						error instanceof Error
+							? error.message
+							: t("hashGenerator.failedText")
 					);
 				}
 			});
@@ -67,7 +70,7 @@ export const HashGenerator = (): FunctionComponent => {
 		return (): void => {
 			cancelled = true;
 		};
-	}, [mode, text]);
+	}, [mode, text, t]);
 
 	const hashFile = (picked: File): void => {
 		setFile(picked);
@@ -79,15 +82,13 @@ export const HashGenerator = (): FunctionComponent => {
 			.then(setHashes)
 			.catch((error: unknown) => {
 				toast.error(
-					error instanceof Error ? error.message : "Cannot hash this file"
+					error instanceof Error ? error.message : t("hashGenerator.failedFile")
 				);
 			})
 			.finally(() => {
 				setWorking(false);
 			});
 	};
-
-	const guide = findPageSeo("/hash-generator").guide;
 
 	// 붙여넣은 체크섬이 어느 알고리즘의 결과와 같은지 찾는다.
 	const normalizedExpected = expected.trim().toLowerCase();
@@ -99,16 +100,18 @@ export const HashGenerator = (): FunctionComponent => {
 				) ?? false);
 
 	return (
-		<Content categoryName="Developer" title="HASH GENERATOR">
+		<Content
+			categoryName={t("hashGenerator.category")}
+			title={t("hashGenerator.title")}
+		>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Generate SHA-1, SHA-256, SHA-384 and SHA-512 for text or a file, and
-				check a download against its published checksum. Hashed on your device.
+				{t("hashGenerator.intro")}
 			</p>
 
 			<div className="flex gap-2">
 				<TabButton
 					active={mode === "text"}
-					label="Text"
+					label={t("common.text")}
 					onClick={() => {
 						setMode("text");
 						setHashes(null);
@@ -116,7 +119,7 @@ export const HashGenerator = (): FunctionComponent => {
 				/>
 				<TabButton
 					active={mode === "file"}
-					label="File"
+					label={t("common.file")}
 					onClick={() => {
 						setMode("file");
 						setHashes(null);
@@ -128,7 +131,7 @@ export const HashGenerator = (): FunctionComponent => {
 				<ToolTextArea
 					height="h-[200px]"
 					id="hash-input"
-					placeholder="Type or paste the text to hash"
+					placeholder={t("hashGenerator.textPlaceholder")}
 					value={text}
 					onChange={setText}
 				/>
@@ -137,8 +140,8 @@ export const HashGenerator = (): FunctionComponent => {
 					<FileDropzone
 						accept="*/*"
 						disabled={working}
-						hint="any file — large files are handled at full speed"
-						title={file ? file.name : "Drop a file here"}
+						hint={t("hashGenerator.anyFile")}
+						title={file ? file.name : t("common.dropFile")}
 						onFilesAdded={(files) => {
 							const [first] = files;
 							if (first) hashFile(first);
@@ -147,7 +150,7 @@ export const HashGenerator = (): FunctionComponent => {
 					{file && (
 						<div className="text-neutral-15 text-sm">
 							{formatBytes(file.size)}
-							{working ? " · hashing..." : ""}
+							{working ? ` · ${t("hashGenerator.hashing")}` : ""}
 						</div>
 					)}
 				</div>
@@ -168,13 +171,13 @@ export const HashGenerator = (): FunctionComponent => {
 			{hashes && (
 				<div className="flex flex-col gap-3">
 					<div className="text-neutral-05 font-medium text-xl">
-						Compare with a published checksum
+						{t("hashGenerator.compare")}
 					</div>
 					<div className="flex items-center h-12 border border-neutral-05 rounded-xl px-4">
 						<input
 							className="w-full bg-transparent text-neutral-05 outline-none font-mono text-sm"
 							id="expected-hash"
-							placeholder="Paste the checksum you were given"
+							placeholder={t("hashGenerator.comparePlaceholder")}
 							type="text"
 							value={expected}
 							onChange={(event) => {
@@ -185,19 +188,23 @@ export const HashGenerator = (): FunctionComponent => {
 					{matched !== null &&
 						(matched === false ? (
 							<div className="text-neutral-05">
-								No match. Download the file again — an interrupted transfer is
-								the usual cause.
+								{t("hashGenerator.noMatch")}
 							</div>
 						) : (
 							<div className="text-green-05 font-medium">
-								Match — this is the {matched} checksum of your{" "}
-								{mode === "file" ? "file" : "text"}.
+								{t("hashGenerator.match", {
+									algorithm: matched,
+									source:
+										mode === "file"
+											? t("hashGenerator.sourceFile")
+											: t("hashGenerator.sourceText"),
+								})}
 							</div>
 						))}
 				</div>
 			)}
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/hash-generator" />
 		</Content>
 	);
 };

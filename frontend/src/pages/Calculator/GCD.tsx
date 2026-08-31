@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { FunctionComponent } from "../../common/types";
 import { Content } from "../../components/ui/Content";
 import { MainForm } from "../../components/ui/MainForm";
@@ -16,6 +17,7 @@ interface GCDDetail {
 }
 
 export const GCD = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [gcdString, setGcdString] = useState<string>("");
 	const [result, setResult] = useState<number | undefined>(undefined);
 	const [gcdDetails, setGcdDetails] = useState<Array<GCDDetail>>([]);
@@ -46,13 +48,13 @@ export const GCD = (): FunctionComponent => {
 		// 중복 검사
 		const uniqueNumbers = [...new Set(numbers)];
 		if (numbers.length !== uniqueNumbers.length) {
-			toast.error("Duplicate numbers are not allowed");
+			toast.error(t("calculator.duplicate"));
 			return;
 		}
 
 		// 최소 2개 이상의 숫자 검사
 		if (uniqueNumbers.length < 2) {
-			toast.error("Please enter at least two different numbers");
+			toast.error(t("calculator.atLeastTwo"));
 			return;
 		}
 
@@ -105,13 +107,16 @@ export const GCD = (): FunctionComponent => {
 	};
 
 	return (
-		<Content categoryName="Calculator" title="Greatest Common Divisor">
-			<MainForm buttonText="calculate" onSubmit={calculateGCD}>
+		<Content
+			categoryName={t("calculator.category")}
+			title={t("calculator.gcdTitle")}
+		>
+			<MainForm buttonText={t("calculator.calculate")} onSubmit={calculateGCD}>
 				<div className="w-5/6 h-full">
 					<MainInput
 						id="number"
 						pattern="numbers-only"
-						placeholder="75,90,135,625,7895"
+						placeholder={t("calculator.placeholder")}
 						setValue={setGcdString}
 						value={gcdString}
 					/>
@@ -133,10 +138,10 @@ export const GCD = (): FunctionComponent => {
 								className="p-4 border bg-main-00 border-neutral-05 rounded-lg"
 							>
 								<h3 className="text-lg text-neutral-05 font-semibold mb-2">
-									Number: {detail.number}
+									{t("calculator.number", { number: detail.number })}
 								</h3>
 								<div className="text-sm text-neutral-05">
-									Divisors:{" "}
+									{t("calculator.divisors")}{" "}
 									{detail.divisors.map((divisor, index) => (
 										<span key={divisor.number}>
 											{index > 0 && ", "}

@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
+import { tDynamic } from "../../common/translate";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import {
@@ -8,33 +11,41 @@ import {
 	type ErrorCorrection,
 	type QrContentType,
 } from "../../common/qrPayload";
-import { findPageSeo } from "../../common/seo";
 import { downloadBlob } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
 import { Select } from "../../components/ui/Select";
 import { LabeledField } from "../../components/ui/LabeledField";
 
-const TYPE_LABELS: Record<QrContentType, string> = {
-	url: "Link (URL)",
-	text: "Plain text",
-	wifi: "Wi-Fi network",
-	email: "Email",
-	tel: "Phone number",
+const TYPE_KEYS: Record<QrContentType, string> = {
+	url: "qrCode.typeUrl",
+	text: "qrCode.typeText",
+	wifi: "qrCode.typeWifi",
+	email: "qrCode.typeEmail",
+	tel: "qrCode.typeTel",
 };
 
-const CORRECTION_LABELS: Record<ErrorCorrection, string> = {
-	L: "Low (7%)",
-	M: "Medium (15%)",
-	Q: "Quartile (25%)",
-	H: "High (30%)",
+const CORRECTION_KEYS: Record<ErrorCorrection, string> = {
+	L: "qrCode.correctionL",
+	M: "qrCode.correctionM",
+	Q: "qrCode.correctionQ",
+	H: "qrCode.correctionH",
 };
 
-const ENCRYPTION_LABELS: Record<string, string> = {
-	WPA: "WPA / WPA2 / WPA3",
-	WEP: "WEP",
-	nopass: "Open (no password)",
+const ENCRYPTION_KEYS: Record<string, string> = {
+	WPA: "qrCode.encryptionWpa",
+	WEP: "qrCode.encryptionWep",
+	nopass: "qrCode.encryptionOpen",
 };
+
+/** 번역된 선택지 문구를 값과 짝지어 만든다. */
+const labelsOf = (
+	keys: Record<string, string>,
+	t: TFunction
+): Record<string, string> =>
+	Object.fromEntries(
+		Object.entries(keys).map(([value, key]) => [value, tDynamic(t, key)])
+	);
 
 const SIZE_LABELS: Record<string, string> = {
 	"256": "256 px",
@@ -44,7 +55,7 @@ const SIZE_LABELS: Record<string, string> = {
 };
 
 const labelToValue = <T extends string>(
-	labels: Record<T, string>,
+	labels: Record<string, string>,
 	label: string,
 	fallback: T
 ): T => {
@@ -80,6 +91,7 @@ const TextField = ({
 );
 
 export const QrCode = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [contentType, setContentType] = useState<QrContentType>("url");
 	const [url, setUrl] = useState<string>("");
 	const [text, setText] = useState<string>("");
@@ -142,10 +154,10 @@ export const QrCode = (): FunctionComponent => {
 			});
 			const response = await fetch(dataUrl);
 			downloadBlob(await response.blob(), "qr-code.png");
-			toast.success("qr-code.png downloaded");
+			toast.success(t("common.downloaded", { name: "qr-code.png" }));
 		} catch (error) {
 			console.error(error);
-			toast.error("Failed to create the QR code");
+			toast.error(t("qrCode.failed"));
 		}
 	};
 
@@ -154,43 +166,44 @@ export const QrCode = (): FunctionComponent => {
 			const { renderQrSvg } = await import("../../common/qrCode");
 			const svg = await renderQrSvg({ value: payload, errorCorrection });
 			downloadBlob(new Blob([svg], { type: "image/svg+xml" }), "qr-code.svg");
-			toast.success("qr-code.svg downloaded");
+			toast.success(t("common.downloaded", { name: "qr-code.svg" }));
 		} catch (error) {
 			console.error(error);
-			toast.error("Failed to create the QR code");
+			toast.error(t("qrCode.failed"));
 		}
 	};
 
-	const guide = findPageSeo("/qr-code").guide;
+	const typeLabels = labelsOf(TYPE_KEYS, t);
+	const correctionLabels = labelsOf(CORRECTION_KEYS, t);
+	const encryptionLabels = labelsOf(ENCRYPTION_KEYS, t);
+	const sizeLabels = Object.fromEntries(
+		Object.keys(SIZE_LABELS).map((value) => [value, `${value} px`])
+	);
 
 	return (
-		<Content categoryName="Generator" title="QR CODE">
-			<p className="text-neutral-15 text-sm lg:text-md">
-				Make a QR code for a link, text, Wi-Fi network, email or phone number.
-				The value is encoded directly, so the code never expires and no one
-				counts your scans.
-			</p>
+		<Content categoryName={t("qrCode.category")} title={t("qrCode.title")}>
+			<p className="text-neutral-15 text-sm lg:text-md">{t("qrCode.intro")}</p>
 
 			<div className="flex flex-col lg:flex-row gap-10">
 				<div className="flex flex-col gap-6 flex-1">
-					<LabeledField label="Content">
+					<LabeledField label={t("qrCode.content")}>
 						<div className="h-12 w-full max-w-[260px]">
 							<Select
-								currentValue={TYPE_LABELS[contentType]}
-								options={Object.values(TYPE_LABELS)}
+								currentValue={typeLabels[contentType] ?? ""}
+								options={Object.values(typeLabels)}
 								width="260px"
 								onChange={(value) => {
-									setContentType(labelToValue(TYPE_LABELS, value, "url"));
+									setContentType(labelToValue(typeLabels, value, "url"));
 								}}
 							/>
 						</div>
 					</LabeledField>
 
 					{contentType === "url" && (
-						<LabeledField label="URL">
+						<LabeledField label={t("qrCode.url")}>
 							<TextField
 								id="qr-url"
-								placeholder="example.com/page"
+								placeholder={t("qrCode.urlPlaceholder")}
 								value={url}
 								onChange={setUrl}
 							/>
@@ -198,11 +211,11 @@ export const QrCode = (): FunctionComponent => {
 					)}
 
 					{contentType === "text" && (
-						<LabeledField label="Text">
+						<LabeledField label={t("qrCode.text")}>
 							<textarea
 								className="w-full h-32 bg-transparent border border-neutral-05 rounded-xl p-3 text-neutral-05 outline-none resize-y"
 								id="qr-text"
-								placeholder="Anything you want the code to carry"
+								placeholder={t("qrCode.textPlaceholder")}
 								value={text}
 								onChange={(event) => {
 									setText(event.target.value);
@@ -212,10 +225,10 @@ export const QrCode = (): FunctionComponent => {
 					)}
 
 					{contentType === "tel" && (
-						<LabeledField label="Phone number">
+						<LabeledField label={t("qrCode.phone")}>
 							<TextField
 								id="qr-tel"
-								placeholder="+82 10 1234 5678"
+								placeholder={t("qrCode.phonePlaceholder")}
 								value={phone}
 								onChange={setPhone}
 							/>
@@ -224,10 +237,10 @@ export const QrCode = (): FunctionComponent => {
 
 					{contentType === "email" && (
 						<>
-							<LabeledField label="Address">
+							<LabeledField label={t("qrCode.address")}>
 								<TextField
 									id="qr-email"
-									placeholder="hello@example.com"
+									placeholder={t("qrCode.addressPlaceholder")}
 									type="email"
 									value={email.address}
 									onChange={(value) => {
@@ -235,20 +248,20 @@ export const QrCode = (): FunctionComponent => {
 									}}
 								/>
 							</LabeledField>
-							<LabeledField label="Subject (optional)">
+							<LabeledField label={t("qrCode.subject")}>
 								<TextField
 									id="qr-email-subject"
-									placeholder="Hello"
+									placeholder={t("qrCode.subjectPlaceholder")}
 									value={email.subject}
 									onChange={(value) => {
 										setEmail((previous) => ({ ...previous, subject: value }));
 									}}
 								/>
 							</LabeledField>
-							<LabeledField label="Message (optional)">
+							<LabeledField label={t("qrCode.message")}>
 								<TextField
 									id="qr-email-body"
-									placeholder="Written for you"
+									placeholder={t("qrCode.messagePlaceholder")}
 									value={email.body}
 									onChange={(value) => {
 										setEmail((previous) => ({ ...previous, body: value }));
@@ -260,29 +273,30 @@ export const QrCode = (): FunctionComponent => {
 
 					{contentType === "wifi" && (
 						<>
-							<LabeledField label="Network name (SSID)">
+							<LabeledField label={t("qrCode.ssid")}>
 								<TextField
 									id="qr-wifi-ssid"
-									placeholder="MyNetwork"
+									placeholder={t("qrCode.ssidPlaceholder")}
 									value={wifi.ssid}
 									onChange={(value) => {
 										setWifi((previous) => ({ ...previous, ssid: value }));
 									}}
 								/>
 							</LabeledField>
-							<LabeledField label="Security">
+							<LabeledField label={t("qrCode.security")}>
 								<div className="h-12 w-full max-w-[260px]">
 									<Select
-										options={Object.values(ENCRYPTION_LABELS)}
+										options={Object.values(encryptionLabels)}
 										width="260px"
 										currentValue={
-											ENCRYPTION_LABELS[wifi.encryption] ?? "WPA / WPA2 / WPA3"
+											encryptionLabels[wifi.encryption] ??
+											t("qrCode.encryptionWpa")
 										}
 										onChange={(value) => {
 											setWifi((previous) => ({
 												...previous,
 												encryption: labelToValue(
-													ENCRYPTION_LABELS,
+													encryptionLabels,
 													value,
 													"WPA"
 												) as "WPA" | "WEP" | "nopass",
@@ -292,10 +306,10 @@ export const QrCode = (): FunctionComponent => {
 								</div>
 							</LabeledField>
 							{wifi.encryption !== "nopass" && (
-								<LabeledField label="Password">
+								<LabeledField label={t("qrCode.password")}>
 									<TextField
 										id="qr-wifi-password"
-										placeholder="Network password"
+										placeholder={t("qrCode.passwordPlaceholder")}
 										value={wifi.password}
 										onChange={(value) => {
 											setWifi((previous) => ({ ...previous, password: value }));
@@ -319,35 +333,35 @@ export const QrCode = (): FunctionComponent => {
 										}));
 									}}
 								/>
-								Hidden network
+								{t("qrCode.hidden")}
 							</label>
 						</>
 					)}
 
 					<div className="flex flex-wrap gap-6 items-end">
-						<LabeledField label="Error correction">
+						<LabeledField label={t("qrCode.correction")}>
 							<div className="h-12 w-[200px]">
 								<Select
-									currentValue={CORRECTION_LABELS[errorCorrection]}
-									options={Object.values(CORRECTION_LABELS)}
+									currentValue={correctionLabels[errorCorrection] ?? ""}
+									options={Object.values(correctionLabels)}
 									width="200px"
 									onChange={(value) => {
 										setErrorCorrection(
-											labelToValue(CORRECTION_LABELS, value, "M")
+											labelToValue(correctionLabels, value, "M")
 										);
 									}}
 								/>
 							</div>
 						</LabeledField>
 
-						<LabeledField label="PNG size">
+						<LabeledField label={t("qrCode.pngSize")}>
 							<div className="h-12 w-[160px]">
 								<Select
-									currentValue={SIZE_LABELS[size] ?? "512 px"}
-									options={Object.values(SIZE_LABELS)}
+									currentValue={sizeLabels[size] ?? "512 px"}
+									options={Object.values(sizeLabels)}
 									width="160px"
 									onChange={(value) => {
-										setSize(labelToValue(SIZE_LABELS, value, "512"));
+										setSize(labelToValue(sizeLabels, value, "512"));
 									}}
 								/>
 							</div>
@@ -359,11 +373,11 @@ export const QrCode = (): FunctionComponent => {
 					<div className="w-[280px] h-[280px] flex items-center justify-center border border-neutral-50 rounded-2xl bg-main-00 overflow-hidden">
 						{preview === "" ? (
 							<div className="text-neutral-15 text-sm px-6 text-center">
-								Fill in the fields to see your QR code
+								{t("qrCode.empty")}
 							</div>
 						) : (
 							<img
-								alt="QR code preview"
+								alt={t("qrCode.preview")}
 								className="w-full h-full object-contain"
 								src={preview}
 							/>
@@ -397,7 +411,7 @@ export const QrCode = (): FunctionComponent => {
 				</div>
 			</div>
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/qr-code" />
 		</Content>
 	);
 };

@@ -21,14 +21,6 @@
 			"destination": "/pptx-viewer/index.html"
 		},
 		{
-			"source": "/calculator/gcd",
-			"destination": "/calculator/gcd/index.html"
-		},
-		{
-			"source": "/calculator/lcm",
-			"destination": "/calculator/lcm/index.html"
-		},
-		{
 			"source": "/pdf-to-images",
 			"destination": "/pdf-to-images/index.html"
 		},
@@ -91,6 +83,278 @@
 		{
 			"source": "/color-converter",
 			"destination": "/color-converter/index.html"
+		},
+		{
+			"source": "/calculator/gcd",
+			"destination": "/calculator/gcd/index.html"
+		},
+		{
+			"source": "/calculator/lcm",
+			"destination": "/calculator/lcm/index.html"
+		},
+		{
+			"source": "/ko",
+			"destination": "/ko/index.html"
+		},
+		{
+			"source": "/ko/tools",
+			"destination": "/ko/tools/index.html"
+		},
+		{
+			"source": "/ko/pdf-to-pptx",
+			"destination": "/ko/pdf-to-pptx/index.html"
+		},
+		{
+			"source": "/ko/pptx-viewer",
+			"destination": "/ko/pptx-viewer/index.html"
+		},
+		{
+			"source": "/ko/pdf-to-images",
+			"destination": "/ko/pdf-to-images/index.html"
+		},
+		{
+			"source": "/ko/merge-pdf",
+			"destination": "/ko/merge-pdf/index.html"
+		},
+		{
+			"source": "/ko/split-pdf",
+			"destination": "/ko/split-pdf/index.html"
+		},
+		{
+			"source": "/ko/images-to-pdf",
+			"destination": "/ko/images-to-pdf/index.html"
+		},
+		{
+			"source": "/ko/image-converter",
+			"destination": "/ko/image-converter/index.html"
+		},
+		{
+			"source": "/ko/qr-code",
+			"destination": "/ko/qr-code/index.html"
+		},
+		{
+			"source": "/ko/json-formatter",
+			"destination": "/ko/json-formatter/index.html"
+		},
+		{
+			"source": "/ko/word-counter",
+			"destination": "/ko/word-counter/index.html"
+		},
+		{
+			"source": "/ko/compress-pdf",
+			"destination": "/ko/compress-pdf/index.html"
+		},
+		{
+			"source": "/ko/organize-pdf",
+			"destination": "/ko/organize-pdf/index.html"
+		},
+		{
+			"source": "/ko/base64",
+			"destination": "/ko/base64/index.html"
+		},
+		{
+			"source": "/ko/hash-generator",
+			"destination": "/ko/hash-generator/index.html"
+		},
+		{
+			"source": "/ko/uuid-generator",
+			"destination": "/ko/uuid-generator/index.html"
+		},
+		{
+			"source": "/ko/csv-to-json",
+			"destination": "/ko/csv-to-json/index.html"
+		},
+		{
+			"source": "/ko/text-diff",
+			"destination": "/ko/text-diff/index.html"
+		},
+		{
+			"source": "/ko/color-converter",
+			"destination": "/ko/color-converter/index.html"
+		},
+		{
+			"source": "/ko/calculator/gcd",
+			"destination": "/ko/calculator/gcd/index.html"
+		},
+		{
+			"source": "/ko/calculator/lcm",
+			"destination": "/ko/calculator/lcm/index.html"
+		},
+		{
+			"source": "/ja",
+			"destination": "/ja/index.html"
+		},
+		{
+			"source": "/ja/tools",
+			"destination": "/ja/tools/index.html"
+		},
+		{
+			"source": "/ja/pdf-to-pptx",
+			"destination": "/ja/pdf-to-pptx/index.html"
+		},
+		{
+			"source": "/ja/pptx-viewer",
+			"destination": "/ja/pptx-viewer/index.html"
+		},
+		{
+			"source": "/ja/pdf-to-images",
+			"destination": "/ja/pdf-to-images/index.html"
+		},
+		{
+			"source": "/ja/merge-pdf",
+			"destination": "/ja/merge-pdf/index.html"
+		},
+		{
+			"source": "/ja/split-pdf",
+			"destination": "/ja/split-pdf/index.html"
+		},
+		{
+			"source": "/ja/images-to-pdf",
+			"destination": "/ja/images-to-pdf/index.html"
+		},
+		{
+			"source": "/ja/image-converter",
+			"destination": "/ja/image-converter/index.html"
+		},
+		{
+			"source": "/ja/qr-code",
+			"destination": "/ja/qr-code/index.html"
+		},
+		{
+			"source": "/ja/json-formatter",
+			"destination": "/ja/json-formatter/index.html"
+		},
+		{
+			"source": "/ja/word-counter",
+			"destination": "/ja/word-counter/index.html"
+		},
+		{
+			"source": "/ja/compress-pdf",
+			"destination": "/ja/compress-pdf/index.html"
+		},
+		{
+			"source": "/ja/organize-pdf",
+			"destination": "/ja/organize-pdf/index.html"
+		},
+		{
+			"source": "/ja/base64",
+			"destination": "/ja/base64/index.html"
+		},
+		{
+			"source": "/ja/hash-generator",
+			"destination": "/ja/hash-generator/index.html"
+		},
+		{
+			"source": "/ja/uuid-generator",
+			"destination": "/ja/uuid-generator/index.html"
+		},
+		{
+			"source": "/ja/csv-to-json",
+			"destination": "/ja/csv-to-json/index.html"
+		},
+		{
+			"source": "/ja/text-diff",
+			"destination": "/ja/text-diff/index.html"
+		},
+		{
+			"source": "/ja/color-converter",
+			"destination": "/ja/color-converter/index.html"
+		},
+		{
+			"source": "/ja/calculator/gcd",
+			"destination": "/ja/calculator/gcd/index.html"
+		},
+		{
+			"source": "/ja/calculator/lcm",
+			"destination": "/ja/calculator/lcm/index.html"
+		},
+		{
+			"source": "/zh",
+			"destination": "/zh/index.html"
+		},
+		{
+			"source": "/zh/tools",
+			"destination": "/zh/tools/index.html"
+		},
+		{
+			"source": "/zh/pdf-to-pptx",
+			"destination": "/zh/pdf-to-pptx/index.html"
+		},
+		{
+			"source": "/zh/pptx-viewer",
+			"destination": "/zh/pptx-viewer/index.html"
+		},
+		{
+			"source": "/zh/pdf-to-images",
+			"destination": "/zh/pdf-to-images/index.html"
+		},
+		{
+			"source": "/zh/merge-pdf",
+			"destination": "/zh/merge-pdf/index.html"
+		},
+		{
+			"source": "/zh/split-pdf",
+			"destination": "/zh/split-pdf/index.html"
+		},
+		{
+			"source": "/zh/images-to-pdf",
+			"destination": "/zh/images-to-pdf/index.html"
+		},
+		{
+			"source": "/zh/image-converter",
+			"destination": "/zh/image-converter/index.html"
+		},
+		{
+			"source": "/zh/qr-code",
+			"destination": "/zh/qr-code/index.html"
+		},
+		{
+			"source": "/zh/json-formatter",
+			"destination": "/zh/json-formatter/index.html"
+		},
+		{
+			"source": "/zh/word-counter",
+			"destination": "/zh/word-counter/index.html"
+		},
+		{
+			"source": "/zh/compress-pdf",
+			"destination": "/zh/compress-pdf/index.html"
+		},
+		{
+			"source": "/zh/organize-pdf",
+			"destination": "/zh/organize-pdf/index.html"
+		},
+		{
+			"source": "/zh/base64",
+			"destination": "/zh/base64/index.html"
+		},
+		{
+			"source": "/zh/hash-generator",
+			"destination": "/zh/hash-generator/index.html"
+		},
+		{
+			"source": "/zh/uuid-generator",
+			"destination": "/zh/uuid-generator/index.html"
+		},
+		{
+			"source": "/zh/csv-to-json",
+			"destination": "/zh/csv-to-json/index.html"
+		},
+		{
+			"source": "/zh/text-diff",
+			"destination": "/zh/text-diff/index.html"
+		},
+		{
+			"source": "/zh/color-converter",
+			"destination": "/zh/color-converter/index.html"
+		},
+		{
+			"source": "/zh/calculator/gcd",
+			"destination": "/zh/calculator/gcd/index.html"
+		},
+		{
+			"source": "/zh/calculator/lcm",
+			"destination": "/zh/calculator/lcm/index.html"
 		},
 		{
 			"source": "/(.*)",

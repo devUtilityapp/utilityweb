@@ -1,8 +1,10 @@
 import { useState } from "react";
+import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
+import { tDynamic } from "../../common/translate";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import type { PageOrientation, PageSize } from "../../common/imagesToPdf";
-import { findPageSeo } from "../../common/seo";
 import { withExtension } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
@@ -15,27 +17,28 @@ import { FileNameInput, LabeledField } from "../../components/ui/LabeledField";
 import { useOrderedFiles } from "../../hooks/useOrderedFiles";
 import { useProcessLoadingStore } from "../../store/ProcessLoading";
 
-const PAGE_SIZE_LABELS: Record<PageSize, string> = {
-	fit: "Fit to image",
-	a4: "A4 (210 x 297 mm)",
-	letter: "Letter (8.5 x 11 in)",
+const PAGE_SIZE_KEYS: Record<PageSize, string> = {
+	fit: "imagesToPdf.sizeFit",
+	a4: "imagesToPdf.sizeA4",
+	letter: "imagesToPdf.sizeLetter",
 };
 
-const ORIENTATION_LABELS: Record<PageOrientation, string> = {
-	auto: "Auto (per image)",
-	portrait: "Portrait",
-	landscape: "Landscape",
+const ORIENTATION_KEYS: Record<PageOrientation, string> = {
+	auto: "imagesToPdf.orientationAuto",
+	portrait: "imagesToPdf.orientationPortrait",
+	landscape: "imagesToPdf.orientationLandscape",
 };
 
-const MARGIN_LABELS: Record<string, string> = {
-	"0": "None",
-	"0.03": "Small",
-	"0.06": "Medium",
-	"0.1": "Large",
+const MARGIN_KEYS: Record<string, string> = {
+	"0": "imagesToPdf.marginNone",
+	"0.03": "imagesToPdf.marginSmall",
+	"0.06": "imagesToPdf.marginMedium",
+	"0.1": "imagesToPdf.marginLarge",
 };
 
+/** Select는 문구만 주고받으므로, 고른 문구를 원래 값으로 되돌린다. */
 const labelToValue = <T extends string>(
-	labels: Record<T, string>,
+	labels: Record<string, string>,
 	label: string,
 	fallback: T
 ): T => {
@@ -43,21 +46,33 @@ const labelToValue = <T extends string>(
 	return entry ? (entry[0] as T) : fallback;
 };
 
+/** 번역된 선택지 문구를 값과 짝지어 만든다. */
+const labelsOf = (
+	keys: Record<string, string>,
+	t: TFunction
+): Record<string, string> =>
+	Object.fromEntries(
+		Object.entries(keys).map(([value, key]) => [value, tDynamic(t, key)])
+	);
+
 const isImageFile = (file: File): boolean => file.type.startsWith("image/");
 
 export const ImagesToPdf = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const files = useOrderedFiles();
 	const [pageSize, setPageSize] = useState<PageSize>("fit");
 	const [orientation, setOrientation] = useState<PageOrientation>("auto");
 	const [margin, setMargin] = useState<string>("0.03");
-	const [fileName, setFileName] = useState<string>("images");
+	const [fileName, setFileName] = useState<string>(
+		t("imagesToPdf.defaultName")
+	);
 	const [progress, setProgress] = useState({ done: 0, total: 0 });
 	const { processLoading, setProcessLoading } = useProcessLoadingStore();
 
 	const addFiles = (added: Array<File>): void => {
 		const imageFiles = added.filter((file) => isImageFile(file));
 		if (imageFiles.length !== added.length) {
-			toast.error("Only image files are allowed");
+			toast.error(t("common.onlyImages"));
 		}
 		if (imageFiles.length === 0) return;
 
@@ -69,7 +84,7 @@ export const ImagesToPdf = (): FunctionComponent => {
 					bitmap.close();
 				})
 				.catch(() => {
-					toast.error(`Cannot read image: ${item.file.name}`);
+					toast.error(t("common.cannotReadImage", { name: item.file.name }));
 					files.remove(item.id);
 				});
 		}
@@ -80,7 +95,7 @@ export const ImagesToPdf = (): FunctionComponent => {
 	): Promise<void> => {
 		event.preventDefault();
 		if (files.items.length === 0) {
-			toast.error("Please add at least one image");
+			toast.error(t("common.addImage"));
 			return;
 		}
 
@@ -102,11 +117,11 @@ export const ImagesToPdf = (): FunctionComponent => {
 					},
 				}
 			);
-			toast.success(`${outputName} downloaded (${count} pages)`);
+			toast.success(t("imagesToPdf.done", { name: outputName, count }));
 		} catch (error) {
 			console.error(error);
 			toast.error(
-				error instanceof Error ? error.message : "Failed to create the PDF"
+				error instanceof Error ? error.message : t("imagesToPdf.failed")
 			);
 		} finally {
 			setProcessLoading(false);
@@ -114,14 +129,17 @@ export const ImagesToPdf = (): FunctionComponent => {
 		}
 	};
 
-	const guide = findPageSeo("/images-to-pdf").guide;
+	const pageSizeLabels = labelsOf(PAGE_SIZE_KEYS, t);
+	const orientationLabels = labelsOf(ORIENTATION_KEYS, t);
+	const marginLabels = labelsOf(MARGIN_KEYS, t);
 
 	return (
-		<Content categoryName="Image" title="IMAGES TO PDF">
+		<Content
+			categoryName={t("imagesToPdf.category")}
+			title={t("imagesToPdf.title")}
+		>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Put photos, scans or screenshots into a single PDF — one image per page,
-				on A4, Letter or pages shaped like the image itself. Nothing is
-				uploaded.
+				{t("imagesToPdf.intro")}
 			</p>
 
 			<form className="flex flex-col gap-8" onSubmit={convert}>
@@ -129,17 +147,17 @@ export const ImagesToPdf = (): FunctionComponent => {
 					multiple
 					accept="image/*"
 					disabled={processLoading}
-					hint="JPG, PNG, WebP, GIF, BMP and AVIF · multiple files supported"
-					title="Drop images here"
+					hint={t("common.imageFormats")}
+					title={t("common.dropImages")}
 					onFilesAdded={addFiles}
 				/>
 
 				{files.items.length > 0 && (
 					<OrderedFileList
 						disabled={processLoading}
-						hint="Drag the handle to change the page order"
+						hint={t("common.dragToReorder")}
 						items={files.items}
-						summary={`${files.items.length} pages`}
+						summary={t("imagesToPdf.pageCount", { count: files.items.length })}
 						onClear={files.clear}
 						onRemove={files.remove}
 						onReorder={files.reorder}
@@ -147,14 +165,14 @@ export const ImagesToPdf = (): FunctionComponent => {
 				)}
 
 				<div className="flex flex-wrap gap-6 items-end">
-					<LabeledField label="Page size">
+					<LabeledField label={t("imagesToPdf.pageSize")}>
 						<div className="h-12 w-[220px]">
 							<Select
-								currentValue={PAGE_SIZE_LABELS[pageSize]}
-								options={Object.values(PAGE_SIZE_LABELS)}
+								currentValue={pageSizeLabels[pageSize] ?? ""}
+								options={Object.values(pageSizeLabels)}
 								width="220px"
 								onChange={(value) => {
-									setPageSize(labelToValue(PAGE_SIZE_LABELS, value, "fit"));
+									setPageSize(labelToValue(pageSizeLabels, value, "fit"));
 								}}
 							/>
 						</div>
@@ -162,29 +180,31 @@ export const ImagesToPdf = (): FunctionComponent => {
 
 					{pageSize !== "fit" && (
 						<>
-							<LabeledField label="Orientation">
+							<LabeledField label={t("imagesToPdf.orientation")}>
 								<div className="h-12 w-[200px]">
 									<Select
-										currentValue={ORIENTATION_LABELS[orientation]}
-										options={Object.values(ORIENTATION_LABELS)}
+										currentValue={orientationLabels[orientation] ?? ""}
+										options={Object.values(orientationLabels)}
 										width="200px"
 										onChange={(value) => {
 											setOrientation(
-												labelToValue(ORIENTATION_LABELS, value, "auto")
+												labelToValue(orientationLabels, value, "auto")
 											);
 										}}
 									/>
 								</div>
 							</LabeledField>
 
-							<LabeledField label="Margin">
+							<LabeledField label={t("imagesToPdf.margin")}>
 								<div className="h-12 w-[160px]">
 									<Select
-										currentValue={MARGIN_LABELS[margin] ?? "Small"}
-										options={Object.values(MARGIN_LABELS)}
+										options={Object.values(marginLabels)}
 										width="160px"
+										currentValue={
+											marginLabels[margin] ?? t("imagesToPdf.marginSmall")
+										}
 										onChange={(value) => {
-											setMargin(labelToValue(MARGIN_LABELS, value, "0.03"));
+											setMargin(labelToValue(marginLabels, value, "0.03"));
 										}}
 									/>
 								</div>
@@ -192,11 +212,11 @@ export const ImagesToPdf = (): FunctionComponent => {
 						</>
 					)}
 
-					<LabeledField grow label="File name">
+					<LabeledField grow label={t("common.fileName")}>
 						<FileNameInput
 							extension="pdf"
 							id="images-pdf-name"
-							placeholder="images"
+							placeholder={t("imagesToPdf.defaultName")}
 							value={fileName}
 							onChange={setFileName}
 						/>
@@ -207,19 +227,19 @@ export const ImagesToPdf = (): FunctionComponent => {
 					<ProgressBar
 						done={progress.done}
 						total={progress.total}
-						unit="images"
+						unit={t("common.images")}
 					/>
 				)}
 
 				<ToolButton
 					disabled={files.items.length === 0}
-					label="Create PDF"
+					label={t("imagesToPdf.action")}
 					loading={processLoading}
-					loadingLabel="Creating..."
+					loadingLabel={t("imagesToPdf.working")}
 				/>
 			</form>
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/images-to-pdf" />
 		</Content>
 	);
 };

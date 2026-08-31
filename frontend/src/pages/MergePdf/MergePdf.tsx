@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
-import { findPageSeo } from "../../common/seo";
 import { withExtension } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
@@ -17,15 +17,16 @@ const isPdfFile = (file: File): boolean =>
 	file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
 
 export const MergePdf = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const files = useOrderedFiles();
-	const [fileName, setFileName] = useState<string>("merged");
+	const [fileName, setFileName] = useState<string>(t("mergePdf.defaultName"));
 	const [progress, setProgress] = useState({ done: 0, total: 0 });
 	const { processLoading, setProcessLoading } = useProcessLoadingStore();
 
 	const addFiles = (added: Array<File>): void => {
 		const pdfFiles = added.filter((file) => isPdfFile(file));
 		if (pdfFiles.length !== added.length) {
-			toast.error("Only PDF files are allowed");
+			toast.error(t("common.onlyPdf"));
 		}
 		if (pdfFiles.length === 0) return;
 
@@ -34,10 +35,10 @@ export const MergePdf = (): FunctionComponent => {
 			import("../../common/pdfDocument")
 				.then(async ({ getPdfPageCount }) => getPdfPageCount(item.file))
 				.then((pageCount) => {
-					files.setDetail(item.id, `${pageCount} pages`);
+					files.setDetail(item.id, t("common.pages", { count: pageCount }));
 				})
 				.catch(() => {
-					toast.error(`Cannot read PDF: ${item.file.name}`);
+					toast.error(t("common.cannotReadPdf", { name: item.file.name }));
 					files.remove(item.id);
 				});
 		}
@@ -48,7 +49,7 @@ export const MergePdf = (): FunctionComponent => {
 	): Promise<void> => {
 		event.preventDefault();
 		if (files.items.length < 2) {
-			toast.error("Please add at least two PDF files");
+			toast.error(t("mergePdf.addTwo"));
 			return;
 		}
 
@@ -67,11 +68,11 @@ export const MergePdf = (): FunctionComponent => {
 					},
 				}
 			);
-			toast.success(`${outputName} downloaded (${pageCount} pages)`);
+			toast.success(t("mergePdf.done", { name: outputName, count: pageCount }));
 		} catch (error) {
 			console.error(error);
 			toast.error(
-				error instanceof Error ? error.message : "Failed to merge the PDF files"
+				error instanceof Error ? error.message : t("mergePdf.failed")
 			);
 		} finally {
 			setProcessLoading(false);
@@ -79,13 +80,10 @@ export const MergePdf = (): FunctionComponent => {
 		}
 	};
 
-	const guide = findPageSeo("/merge-pdf").guide;
-
 	return (
-		<Content categoryName="PDF" title="MERGE PDF">
+		<Content categoryName={t("mergePdf.category")} title={t("mergePdf.title")}>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Join several PDF files into one document, in the order you choose. Pages
-				are copied without being re-encoded, and nothing is uploaded.
+				{t("mergePdf.intro")}
 			</p>
 
 			<form className="flex flex-col gap-8" onSubmit={merge}>
@@ -93,17 +91,17 @@ export const MergePdf = (): FunctionComponent => {
 					multiple
 					accept="application/pdf,.pdf"
 					disabled={processLoading}
-					hint="or click to select files (multiple files supported)"
-					title="Drop PDF files here"
+					hint={t("common.clickToSelectFiles")}
+					title={t("common.dropPdfs")}
 					onFilesAdded={addFiles}
 				/>
 
 				{files.items.length > 0 && (
 					<OrderedFileList
 						disabled={processLoading}
-						hint="Drag the handle to change the page order"
+						hint={t("common.dragToReorder")}
 						items={files.items}
-						summary={`${files.items.length} files`}
+						summary={t("mergePdf.fileCount", { count: files.items.length })}
 						onClear={files.clear}
 						onRemove={files.remove}
 						onReorder={files.reorder}
@@ -111,11 +109,11 @@ export const MergePdf = (): FunctionComponent => {
 				)}
 
 				<div className="flex flex-wrap gap-6 items-end">
-					<LabeledField grow label="File name">
+					<LabeledField grow label={t("common.fileName")}>
 						<FileNameInput
 							extension="pdf"
 							id="merged-file-name"
-							placeholder="merged"
+							placeholder={t("mergePdf.defaultName")}
 							value={fileName}
 							onChange={setFileName}
 						/>
@@ -126,19 +124,19 @@ export const MergePdf = (): FunctionComponent => {
 					<ProgressBar
 						done={progress.done}
 						total={progress.total}
-						unit="files"
+						unit={t("common.files")}
 					/>
 				)}
 
 				<ToolButton
 					disabled={files.items.length < 2}
-					label="Merge PDFs"
+					label={t("mergePdf.action")}
 					loading={processLoading}
-					loadingLabel="Merging..."
+					loadingLabel={t("mergePdf.working")}
 				/>
 			</form>
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/merge-pdf" />
 		</Content>
 	);
 };

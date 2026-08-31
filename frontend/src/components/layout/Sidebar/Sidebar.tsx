@@ -1,11 +1,14 @@
+import { useTranslation } from "react-i18next";
 import type { FunctionComponent } from "../../../common/types";
 import { useSidebarStore } from "../../../store/Sidebar";
 import { TOOL_CATEGORIES } from "../../../common/toolCatalog";
+import { tDynamic } from "../../../common/translate";
 import SidebarItems from "./SidebarItem/SidebarItems";
 import SidebarItem from "./SidebarItem/SidebarItem";
 import { useEffect } from "react";
 
 export const Sidebar = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const sidebarOpen = useSidebarStore((state) => state.sidebarOpen);
 	const setSidebarOpen = useSidebarStore((state) => state.setSidebarOpen);
 
@@ -33,7 +36,9 @@ export const Sidebar = (): FunctionComponent => {
 			}`}
 		>
 			<div className="flex justify-between items-center ">
-				<div className="text-neutral-05 text-2xl font-medium">TOOLS</div>
+				<div className="text-neutral-05 text-2xl font-medium">
+					{t("nav.tools")}
+				</div>
 				<div
 					className="cursor-pointer"
 					onClick={() => {
@@ -59,12 +64,15 @@ export const Sidebar = (): FunctionComponent => {
 			<div className="border-b border-neutral-15 w-full"></div>
 			<div className="flex flex-col gap-10 overflow-y-auto pb-10">
 				{TOOL_CATEGORIES.map((category) => (
-					<SidebarItems key={category.title} title={category.title}>
+					<SidebarItems
+						key={category.key}
+						title={tDynamic(t, `categories.${category.key}`)}
+					>
 						{category.tools.map((tool) => (
 							<SidebarItem
-								key={`${tool.to}-${tool.shortName}`}
+								key={`${tool.to}-${tool.key}`}
 								item={{
-									name: tool.shortName,
+									name: tDynamic(t, `tools.${tool.key}.short`),
 									link: tool.to,
 									search: tool.search,
 									onClick: () => {

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useRef, useState } from "react";
 import type { FunctionComponent } from "../../common/types";
 import { formatBytes } from "../../common/download";
@@ -62,7 +63,7 @@ export const OrderedFileList = ({
 	items,
 	disabled = false,
 	summary,
-	hint = "Drag the handle to change the order",
+	hint,
 	onReorder,
 	onRemove,
 	onClear,
@@ -70,11 +71,13 @@ export const OrderedFileList = ({
 	items: Array<OrderedFile>;
 	disabled?: boolean;
 	summary?: string;
+	/** 비우면 기본 안내 문구를 쓴다. */
 	hint?: string;
 	onReorder: (fromIndex: number, toIndex: number) => void;
 	onRemove: (id: string) => void;
 	onClear: () => void;
 }): FunctionComponent => {
+	const { t } = useTranslation();
 	const listRef = useRef<HTMLUListElement>(null);
 	const dragOriginRef = useRef<DragOrigin | null>(null);
 	const [dragState, setDragState] = useState<DragState | null>(null);
@@ -149,12 +152,14 @@ export const OrderedFileList = ({
 							${disabled ? "cursor-not-allowed" : "hover:text-neutral-05"}`}
 						onClick={onClear}
 					>
-						Clear all
+						{t("common.clearAll")}
 					</button>
 				</div>
 			</div>
 
-			<div className="text-neutral-15 text-sm">{hint}</div>
+			<div className="text-neutral-15 text-sm">
+				{hint ?? t("common.dragToReorder")}
+			</div>
 
 			<ul ref={listRef} className="flex flex-col gap-3">
 				{items.map((item, index) => {
@@ -180,11 +185,11 @@ export const OrderedFileList = ({
 							}
 						>
 							<div
-								aria-label="Drag to reorder"
+								aria-label={t("common.dragToReorderTitle")}
 								role="button"
 								style={{ touchAction: "none" }}
 								tabIndex={-1}
-								title="Drag to reorder"
+								title={t("common.dragToReorderTitle")}
 								className={`flex items-center justify-center -mx-1 px-1 py-2
 									${disabled ? "cursor-not-allowed" : "cursor-grab active:cursor-grabbing"}`}
 								onPointerCancel={cancelDrag}
@@ -227,7 +232,7 @@ export const OrderedFileList = ({
 							<div className="flex items-center gap-2">
 								<IconButton
 									disabled={disabled || index === 0}
-									label="Move up"
+									label={t("common.moveUp")}
 									onClick={() => {
 										onReorder(index, index - 1);
 									}}
@@ -236,7 +241,7 @@ export const OrderedFileList = ({
 								</IconButton>
 								<IconButton
 									disabled={disabled || index === items.length - 1}
-									label="Move down"
+									label={t("common.moveDown")}
 									onClick={() => {
 										onReorder(index, index + 1);
 									}}
@@ -245,7 +250,7 @@ export const OrderedFileList = ({
 								</IconButton>
 								<IconButton
 									disabled={disabled}
-									label="Remove"
+									label={t("common.remove")}
 									onClick={() => {
 										onRemove(item.id);
 									}}

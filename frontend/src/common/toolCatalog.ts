@@ -1,35 +1,34 @@
 import { isYoutubeToolEnabled } from "./features";
 
 export interface ToolEntry {
-	name: string;
-	/** 사이드바에 쓰는 짧은 이름 */
-	shortName: string;
+	/** translations.json의 tools.* 키. 이름과 사이드바용 짧은 이름을 함께 찾는다. */
+	key: string;
 	to: string;
 	search?: Record<string, string>;
-	/** 이름에 없는 말로도 찾을 수 있게 하는 검색어 */
+	/** 이름에 없는 말로도 찾을 수 있게 하는 검색어. 언어와 무관한 영문 약어. */
 	keywords: Array<string>;
 }
 
 export interface ToolCategory {
-	title: string;
+	/** translations.json의 categories.* 키 */
+	key: string;
 	tools: Array<ToolEntry>;
 }
 
 // 도구 목록의 유일한 출처. Tools 페이지와 사이드바가 같은 표를 쓴다.
+// 화면에 보이는 이름은 언어마다 다르므로 여기에는 키만 둔다.
 const CATEGORIES: Array<ToolCategory> = [
 	{
-		title: "Youtube",
+		key: "youtube",
 		tools: isYoutubeToolEnabled
 			? [
 					{
-						name: "Video Downloader",
-						shortName: "video downloader",
+						key: "youtubeVideo",
 						to: "/youtube-downloader",
 						keywords: ["youtube", "video", "download", "mp4"],
 					},
 					{
-						name: "Tags Extractor",
-						shortName: "tag explorer",
+						key: "youtubeTags",
 						to: "/youtube-downloader",
 						search: { info: "tags" },
 						keywords: ["youtube", "tags", "seo", "metadata"],
@@ -38,58 +37,50 @@ const CATEGORIES: Array<ToolCategory> = [
 			: [],
 	},
 	{
-		title: "PDF",
+		key: "pdf",
 		tools: [
 			{
-				name: "PDF to PPTX",
-				shortName: "pdf to pptx",
+				key: "pdfToPptx",
 				to: "/pdf-to-pptx",
 				keywords: ["pdf", "pptx", "powerpoint", "slides", "convert"],
 			},
 			{
-				name: "PDF to Images",
-				shortName: "pdf to images",
+				key: "pdfToImages",
 				to: "/pdf-to-images",
 				keywords: ["pdf", "png", "jpg", "jpeg", "webp", "image", "convert"],
 			},
 			{
-				name: "Merge PDF",
-				shortName: "merge pdf",
+				key: "mergePdf",
 				to: "/merge-pdf",
 				keywords: ["pdf", "merge", "combine", "join"],
 			},
 			{
-				name: "Split PDF",
-				shortName: "split pdf",
+				key: "splitPdf",
 				to: "/split-pdf",
 				keywords: ["pdf", "split", "extract", "pages", "rotate"],
 			},
 			{
-				name: "Compress PDF",
-				shortName: "compress pdf",
+				key: "compressPdf",
 				to: "/compress-pdf",
 				keywords: ["pdf", "compress", "smaller", "reduce", "size", "shrink"],
 			},
 			{
-				name: "Organize PDF",
-				shortName: "organize pdf",
+				key: "organizePdf",
 				to: "/organize-pdf",
 				keywords: ["pdf", "reorder", "rotate", "delete", "pages", "organize"],
 			},
 		],
 	},
 	{
-		title: "Image",
+		key: "image",
 		tools: [
 			{
-				name: "Images to PDF",
-				shortName: "images to pdf",
+				key: "imagesToPdf",
 				to: "/images-to-pdf",
 				keywords: ["image", "jpg", "png", "pdf", "scan", "convert"],
 			},
 			{
-				name: "Image Converter",
-				shortName: "image converter",
+				key: "imageConverter",
 				to: "/image-converter",
 				keywords: [
 					"image",
@@ -104,97 +95,85 @@ const CATEGORIES: Array<ToolCategory> = [
 		],
 	},
 	{
-		title: "PPTX",
+		key: "pptx",
 		tools: [
 			{
-				name: "PPTX Viewer",
-				shortName: "pptx viewer",
+				key: "pptxViewer",
 				to: "/pptx-viewer",
 				keywords: ["pptx", "powerpoint", "viewer", "open", "slides"],
 			},
 		],
 	},
 	{
-		title: "Generator",
+		key: "generator",
 		tools: [
 			{
-				name: "QR Code",
-				shortName: "qr code",
+				key: "qrCode",
 				to: "/qr-code",
 				keywords: ["qr", "code", "wifi", "link", "generator"],
 			},
 			{
-				name: "UUID Generator",
-				shortName: "uuid generator",
+				key: "uuidGenerator",
 				to: "/uuid-generator",
 				keywords: ["uuid", "guid", "identifier", "v4", "v7", "random"],
 			},
 		],
 	},
 	{
-		title: "Developer",
+		key: "developer",
 		tools: [
 			{
-				name: "Base64",
-				shortName: "base64",
+				key: "base64",
 				to: "/base64",
 				keywords: ["base64", "encode", "decode", "data uri"],
 			},
 			{
-				name: "Hash Generator",
-				shortName: "hash generator",
+				key: "hashGenerator",
 				to: "/hash-generator",
 				keywords: ["hash", "sha256", "sha", "checksum", "md5", "verify"],
 			},
 			{
-				name: "Color Converter",
-				shortName: "color converter",
+				key: "colorConverter",
 				to: "/color-converter",
 				keywords: ["color", "colour", "hex", "rgb", "hsl", "cmyk", "contrast"],
 			},
 		],
 	},
 	{
-		title: "Text",
+		key: "text",
 		tools: [
 			{
-				name: "JSON Formatter",
-				shortName: "json formatter",
+				key: "jsonFormatter",
 				to: "/json-formatter",
 				keywords: ["json", "format", "beautify", "minify", "validate"],
 			},
 			{
-				name: "CSV to JSON",
-				shortName: "csv to json",
+				key: "csvToJson",
 				to: "/csv-to-json",
 				keywords: ["csv", "json", "tsv", "convert", "spreadsheet"],
 			},
 			{
-				name: "Text Compare",
-				shortName: "text compare",
+				key: "textDiff",
 				to: "/text-diff",
 				keywords: ["diff", "compare", "difference", "text", "changes"],
 			},
 			{
-				name: "Word Counter",
-				shortName: "word counter",
+				key: "wordCounter",
 				to: "/word-counter",
 				keywords: ["word", "character", "count", "text", "reading time"],
 			},
 		],
 	},
 	{
-		title: "Calculator",
+		key: "calculator",
 		tools: [
 			{
-				name: "Greatest Common Divisor",
-				shortName: "greatest common divisor",
+				key: "gcd",
 				to: "/calculator/gcd",
 				keywords: ["gcd", "divisor", "math", "calculator"],
 			},
 			{
-				name: "Least Common Multiple",
-				shortName: "least common multiple",
+				key: "lcm",
 				to: "/calculator/lcm",
 				keywords: ["lcm", "multiple", "math", "calculator"],
 			},
@@ -206,18 +185,21 @@ export const TOOL_CATEGORIES: Array<ToolCategory> = CATEGORIES.filter(
 	(category) => category.tools.length > 0
 );
 
-/** 이름과 검색어에 질의가 들어간 도구만 남긴다. 빈 카테고리는 지운다. */
-export const filterCategories = (query: string): Array<ToolCategory> => {
+/**
+ * 이름과 검색어에 질의가 들어간 도구만 남긴다. 빈 카테고리는 지운다.
+ * 이름은 언어마다 달라서 화면 쪽에서 번역한 문자열을 넘겨준다.
+ */
+export const filterCategories = (
+	query: string,
+	searchTextOf: (category: ToolCategory, tool: ToolEntry) => string
+): Array<ToolCategory> => {
 	const needle = query.trim().toLowerCase();
 	if (needle === "") return TOOL_CATEGORIES;
 
 	return TOOL_CATEGORIES.map((category) => ({
-		title: category.title,
+		key: category.key,
 		tools: category.tools.filter((tool) =>
-			[tool.name, category.title, ...tool.keywords]
-				.join(" ")
-				.toLowerCase()
-				.includes(needle)
+			searchTextOf(category, tool).toLowerCase().includes(needle)
 		),
 	})).filter((category) => category.tools.length > 0);
 };

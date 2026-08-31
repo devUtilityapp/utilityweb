@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { tDynamic } from "../../common/translate";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import {
@@ -7,7 +9,6 @@ import {
 	jsonToCsv,
 	type Delimiter,
 } from "../../common/csvJson";
-import { findPageSeo } from "../../common/seo";
 import { downloadBlob } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
@@ -39,6 +40,7 @@ const TabButton = ({
 );
 
 export const CsvToJson = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [direction, setDirection] = useState<Direction>("csvToJson");
 	const [delimiterName, setDelimiterName] = useState<string>("Comma");
 	const [header, setHeader] = useState(true);
@@ -51,7 +53,7 @@ export const CsvToJson = (): FunctionComponent => {
 
 	const convert = (): void => {
 		if (input.trim() === "") {
-			toast.error("Please paste some data first");
+			toast.error(t("csvToJson.pasteFirst"));
 			return;
 		}
 
@@ -69,28 +71,28 @@ export const CsvToJson = (): FunctionComponent => {
 		} catch (caught) {
 			setOutput("");
 			const message =
-				caught instanceof Error ? caught.message : "Cannot convert this data";
+				caught instanceof Error ? caught.message : t("csvToJson.failed");
 			setError(message);
 			toast.error(message);
 		}
 	};
 
-	const guide = findPageSeo("/csv-to-json").guide;
 	const toJson = direction === "csvToJson";
 
 	return (
-		<Content categoryName="Text" title="CSV TO JSON">
+		<Content
+			categoryName={t("csvToJson.category")}
+			title={t("csvToJson.title")}
+		>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Turn a CSV or TSV export into JSON, or a JSON array back into CSV.
-				Quoted fields and custom delimiters are handled, and nothing is
-				uploaded.
+				{t("csvToJson.intro")}
 			</p>
 
 			<div className="flex flex-wrap gap-6 items-center">
 				<div className="flex gap-2">
 					<TabButton
 						active={toJson}
-						label="CSV to JSON"
+						label={t("csvToJson.csvToJson")}
 						onClick={() => {
 							setDirection("csvToJson");
 							setOutput("");
@@ -99,7 +101,7 @@ export const CsvToJson = (): FunctionComponent => {
 					/>
 					<TabButton
 						active={!toJson}
-						label="JSON to CSV"
+						label={t("csvToJson.jsonToCsv")}
 						onClick={() => {
 							setDirection("jsonToCsv");
 							setOutput("");
@@ -108,13 +110,24 @@ export const CsvToJson = (): FunctionComponent => {
 					/>
 				</div>
 
-				<LabeledField label="Delimiter">
+				<LabeledField label={t("csvToJson.delimiter")}>
 					<div className="h-12 w-[160px]">
 						<Select
-							currentValue={delimiterName}
-							options={Object.keys(DELIMITERS)}
 							width="160px"
-							onChange={setDelimiterName}
+							currentValue={tDynamic(
+								t,
+								`csvToJson.${delimiterName.toLowerCase()}`
+							)}
+							options={Object.keys(DELIMITERS).map((name) =>
+								tDynamic(t, `csvToJson.${name.toLowerCase()}`)
+							)}
+							onChange={(value) => {
+								const found = Object.keys(DELIMITERS).find(
+									(name) =>
+										tDynamic(t, `csvToJson.${name.toLowerCase()}`) === value
+								);
+								setDelimiterName(found ?? "Comma");
+							}}
 						/>
 					</div>
 				</LabeledField>
@@ -134,7 +147,7 @@ export const CsvToJson = (): FunctionComponent => {
 									setHeader(event.target.checked);
 								}}
 							/>
-							First row is the header
+							{t("csvToJson.header")}
 						</label>
 						<label
 							className="flex items-center gap-3 text-neutral-10 cursor-pointer"
@@ -149,16 +162,16 @@ export const CsvToJson = (): FunctionComponent => {
 									setTyped(event.target.checked);
 								}}
 							/>
-							Convert numbers and true/false
+							{t("csvToJson.typed")}
 						</label>
 					</>
 				)}
 
 				<div className="flex gap-4 flex-wrap">
-					<ActionButton label="Convert" onClick={convert} />
+					<ActionButton label={t("common.convert")} onClick={convert} />
 					<ActionButton
 						disabled={input === "" && output === ""}
-						label="Clear"
+						label={t("common.clear")}
 						onClick={() => {
 							setInput("");
 							setOutput("");
@@ -171,7 +184,7 @@ export const CsvToJson = (): FunctionComponent => {
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 				<div className="flex flex-col gap-2">
 					<div className="text-neutral-15 text-sm">
-						{toJson ? "CSV" : "JSON"} — drop a file here to load it
+						{t("csvToJson.dropHint", { format: toJson ? "CSV" : "JSON" })}
 					</div>
 					<ToolTextArea
 						mono
@@ -205,7 +218,7 @@ export const CsvToJson = (): FunctionComponent => {
 									copyToClipboard(output);
 								}}
 							>
-								Copy
+								{t("common.copy")}
 							</button>
 							<button
 								disabled={output === ""}
@@ -224,7 +237,7 @@ export const CsvToJson = (): FunctionComponent => {
 									);
 								}}
 							>
-								Download
+								{t("common.download")}
 							</button>
 						</div>
 					</div>
@@ -233,7 +246,7 @@ export const CsvToJson = (): FunctionComponent => {
 						readOnly
 						height="h-[420px]"
 						id="csv-output"
-						placeholder="The converted data appears here"
+						placeholder={t("csvToJson.outputPlaceholder")}
 						value={output}
 					/>
 				</div>
@@ -245,7 +258,7 @@ export const CsvToJson = (): FunctionComponent => {
 				</div>
 			)}
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/csv-to-json" />
 		</Content>
 	);
 };

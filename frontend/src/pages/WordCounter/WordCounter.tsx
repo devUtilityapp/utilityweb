@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { FunctionComponent } from "../../common/types";
 import { analyzeText, formatDuration } from "../../common/textStats";
-import { findPageSeo } from "../../common/seo";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
 
@@ -19,24 +19,25 @@ const StatCard = ({
 );
 
 export const WordCounter = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [text, setText] = useState<string>("");
 	// 키를 누를 때마다 다시 세므로 계산 결과를 재사용한다.
 	const stats = useMemo(() => analyzeText(text), [text]);
-	const guide = findPageSeo("/word-counter").guide;
 
 	const maxCount = stats.topWords[0]?.count ?? 1;
 
 	return (
-		<Content categoryName="Text" title="WORD COUNTER">
+		<Content
+			categoryName={t("wordCounter.category")}
+			title={t("wordCounter.title")}
+		>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Count words, characters, sentences and paragraphs as you type, with
-				reading time and the words you lean on most. Nothing you write is
-				uploaded.
+				{t("wordCounter.intro")}
 			</p>
 
 			<textarea
 				id="word-counter-input"
-				placeholder="Type or paste your text here"
+				placeholder={t("wordCounter.placeholder")}
 				value={text}
 				className="w-full h-[320px] bg-main-00 border border-neutral-05 rounded-xl p-4
 					text-neutral-05 outline-none resize-y leading-relaxed"
@@ -46,27 +47,36 @@ export const WordCounter = (): FunctionComponent => {
 			/>
 
 			<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-				<StatCard label="Words" value={stats.words.toLocaleString()} />
 				<StatCard
-					label="Characters"
+					label={t("wordCounter.words")}
+					value={stats.words.toLocaleString()}
+				/>
+				<StatCard
+					label={t("wordCounter.characters")}
 					value={stats.characters.toLocaleString()}
 				/>
 				<StatCard
-					label="Characters without spaces"
+					label={t("wordCounter.charactersNoSpaces")}
 					value={stats.charactersNoSpaces.toLocaleString()}
 				/>
-				<StatCard label="Sentences" value={stats.sentences.toLocaleString()} />
 				<StatCard
-					label="Paragraphs"
+					label={t("wordCounter.sentences")}
+					value={stats.sentences.toLocaleString()}
+				/>
+				<StatCard
+					label={t("wordCounter.paragraphs")}
 					value={stats.paragraphs.toLocaleString()}
 				/>
-				<StatCard label="Lines" value={stats.lines.toLocaleString()} />
 				<StatCard
-					label="Reading time"
+					label={t("wordCounter.lines")}
+					value={stats.lines.toLocaleString()}
+				/>
+				<StatCard
+					label={t("wordCounter.readingTime")}
 					value={formatDuration(stats.readingSeconds)}
 				/>
 				<StatCard
-					label="Speaking time"
+					label={t("wordCounter.speakingTime")}
 					value={formatDuration(stats.speakingSeconds)}
 				/>
 			</div>
@@ -74,7 +84,7 @@ export const WordCounter = (): FunctionComponent => {
 			{stats.topWords.length > 0 && (
 				<div className="flex flex-col gap-4">
 					<div className="text-neutral-05 font-medium text-xl lg:text-2xl">
-						Most used words
+						{t("wordCounter.topWords")}
 					</div>
 					<ul className="flex flex-col gap-2">
 						{stats.topWords.map((entry) => (
@@ -97,7 +107,7 @@ export const WordCounter = (): FunctionComponent => {
 				</div>
 			)}
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/word-counter" />
 		</Content>
 	);
 };

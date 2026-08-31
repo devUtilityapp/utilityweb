@@ -31,9 +31,32 @@ import { Route as CsvToJsonImport } from './routes/csv-to-json'
 import { Route as CompressPdfImport } from './routes/compress-pdf'
 import { Route as ColorConverterImport } from './routes/color-converter'
 import { Route as Base64Import } from './routes/base64'
+import { Route as LangImport } from './routes/$lang'
 import { Route as IndexImport } from './routes/index'
+import { Route as LangIndexImport } from './routes/$lang/index'
 import { Route as CalculatorLcmImport } from './routes/calculator/lcm'
 import { Route as CalculatorGcdImport } from './routes/calculator/gcd'
+import { Route as LangWordCounterImport } from './routes/$lang/word-counter'
+import { Route as LangUuidGeneratorImport } from './routes/$lang/uuid-generator'
+import { Route as LangToolsImport } from './routes/$lang/tools'
+import { Route as LangTextDiffImport } from './routes/$lang/text-diff'
+import { Route as LangSplitPdfImport } from './routes/$lang/split-pdf'
+import { Route as LangQrCodeImport } from './routes/$lang/qr-code'
+import { Route as LangPptxViewerImport } from './routes/$lang/pptx-viewer'
+import { Route as LangPdfToPptxImport } from './routes/$lang/pdf-to-pptx'
+import { Route as LangPdfToImagesImport } from './routes/$lang/pdf-to-images'
+import { Route as LangOrganizePdfImport } from './routes/$lang/organize-pdf'
+import { Route as LangMergePdfImport } from './routes/$lang/merge-pdf'
+import { Route as LangJsonFormatterImport } from './routes/$lang/json-formatter'
+import { Route as LangImagesToPdfImport } from './routes/$lang/images-to-pdf'
+import { Route as LangImageConverterImport } from './routes/$lang/image-converter'
+import { Route as LangHashGeneratorImport } from './routes/$lang/hash-generator'
+import { Route as LangCsvToJsonImport } from './routes/$lang/csv-to-json'
+import { Route as LangCompressPdfImport } from './routes/$lang/compress-pdf'
+import { Route as LangColorConverterImport } from './routes/$lang/color-converter'
+import { Route as LangBase64Import } from './routes/$lang/base64'
+import { Route as LangCalculatorLcmImport } from './routes/$lang/calculator/lcm'
+import { Route as LangCalculatorGcdImport } from './routes/$lang/calculator/gcd'
 
 // Create/Update Routes
 
@@ -137,9 +160,19 @@ const Base64Route = Base64Import.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const LangRoute = LangImport.update({
+  path: '/$lang',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const LangIndexRoute = LangIndexImport.update({
+  path: '/',
+  getParentRoute: () => LangRoute,
 } as any)
 
 const CalculatorLcmRoute = CalculatorLcmImport.update({
@@ -152,6 +185,111 @@ const CalculatorGcdRoute = CalculatorGcdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const LangWordCounterRoute = LangWordCounterImport.update({
+  path: '/word-counter',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangUuidGeneratorRoute = LangUuidGeneratorImport.update({
+  path: '/uuid-generator',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangToolsRoute = LangToolsImport.update({
+  path: '/tools',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangTextDiffRoute = LangTextDiffImport.update({
+  path: '/text-diff',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangSplitPdfRoute = LangSplitPdfImport.update({
+  path: '/split-pdf',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangQrCodeRoute = LangQrCodeImport.update({
+  path: '/qr-code',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangPptxViewerRoute = LangPptxViewerImport.update({
+  path: '/pptx-viewer',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangPdfToPptxRoute = LangPdfToPptxImport.update({
+  path: '/pdf-to-pptx',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangPdfToImagesRoute = LangPdfToImagesImport.update({
+  path: '/pdf-to-images',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangOrganizePdfRoute = LangOrganizePdfImport.update({
+  path: '/organize-pdf',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangMergePdfRoute = LangMergePdfImport.update({
+  path: '/merge-pdf',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangJsonFormatterRoute = LangJsonFormatterImport.update({
+  path: '/json-formatter',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangImagesToPdfRoute = LangImagesToPdfImport.update({
+  path: '/images-to-pdf',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangImageConverterRoute = LangImageConverterImport.update({
+  path: '/image-converter',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangHashGeneratorRoute = LangHashGeneratorImport.update({
+  path: '/hash-generator',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangCsvToJsonRoute = LangCsvToJsonImport.update({
+  path: '/csv-to-json',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangCompressPdfRoute = LangCompressPdfImport.update({
+  path: '/compress-pdf',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangColorConverterRoute = LangColorConverterImport.update({
+  path: '/color-converter',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangBase64Route = LangBase64Import.update({
+  path: '/base64',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangCalculatorLcmRoute = LangCalculatorLcmImport.update({
+  path: '/calculator/lcm',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangCalculatorGcdRoute = LangCalculatorGcdImport.update({
+  path: '/calculator/gcd',
+  getParentRoute: () => LangRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -161,6 +299,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/$lang': {
+      id: '/$lang'
+      path: '/$lang'
+      fullPath: '/$lang'
+      preLoaderRoute: typeof LangImport
       parentRoute: typeof rootRoute
     }
     '/base64': {
@@ -303,6 +448,139 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof YoutubeDownloaderImport
       parentRoute: typeof rootRoute
     }
+    '/$lang/base64': {
+      id: '/$lang/base64'
+      path: '/base64'
+      fullPath: '/$lang/base64'
+      preLoaderRoute: typeof LangBase64Import
+      parentRoute: typeof LangImport
+    }
+    '/$lang/color-converter': {
+      id: '/$lang/color-converter'
+      path: '/color-converter'
+      fullPath: '/$lang/color-converter'
+      preLoaderRoute: typeof LangColorConverterImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/compress-pdf': {
+      id: '/$lang/compress-pdf'
+      path: '/compress-pdf'
+      fullPath: '/$lang/compress-pdf'
+      preLoaderRoute: typeof LangCompressPdfImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/csv-to-json': {
+      id: '/$lang/csv-to-json'
+      path: '/csv-to-json'
+      fullPath: '/$lang/csv-to-json'
+      preLoaderRoute: typeof LangCsvToJsonImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/hash-generator': {
+      id: '/$lang/hash-generator'
+      path: '/hash-generator'
+      fullPath: '/$lang/hash-generator'
+      preLoaderRoute: typeof LangHashGeneratorImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/image-converter': {
+      id: '/$lang/image-converter'
+      path: '/image-converter'
+      fullPath: '/$lang/image-converter'
+      preLoaderRoute: typeof LangImageConverterImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/images-to-pdf': {
+      id: '/$lang/images-to-pdf'
+      path: '/images-to-pdf'
+      fullPath: '/$lang/images-to-pdf'
+      preLoaderRoute: typeof LangImagesToPdfImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/json-formatter': {
+      id: '/$lang/json-formatter'
+      path: '/json-formatter'
+      fullPath: '/$lang/json-formatter'
+      preLoaderRoute: typeof LangJsonFormatterImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/merge-pdf': {
+      id: '/$lang/merge-pdf'
+      path: '/merge-pdf'
+      fullPath: '/$lang/merge-pdf'
+      preLoaderRoute: typeof LangMergePdfImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/organize-pdf': {
+      id: '/$lang/organize-pdf'
+      path: '/organize-pdf'
+      fullPath: '/$lang/organize-pdf'
+      preLoaderRoute: typeof LangOrganizePdfImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/pdf-to-images': {
+      id: '/$lang/pdf-to-images'
+      path: '/pdf-to-images'
+      fullPath: '/$lang/pdf-to-images'
+      preLoaderRoute: typeof LangPdfToImagesImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/pdf-to-pptx': {
+      id: '/$lang/pdf-to-pptx'
+      path: '/pdf-to-pptx'
+      fullPath: '/$lang/pdf-to-pptx'
+      preLoaderRoute: typeof LangPdfToPptxImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/pptx-viewer': {
+      id: '/$lang/pptx-viewer'
+      path: '/pptx-viewer'
+      fullPath: '/$lang/pptx-viewer'
+      preLoaderRoute: typeof LangPptxViewerImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/qr-code': {
+      id: '/$lang/qr-code'
+      path: '/qr-code'
+      fullPath: '/$lang/qr-code'
+      preLoaderRoute: typeof LangQrCodeImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/split-pdf': {
+      id: '/$lang/split-pdf'
+      path: '/split-pdf'
+      fullPath: '/$lang/split-pdf'
+      preLoaderRoute: typeof LangSplitPdfImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/text-diff': {
+      id: '/$lang/text-diff'
+      path: '/text-diff'
+      fullPath: '/$lang/text-diff'
+      preLoaderRoute: typeof LangTextDiffImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/tools': {
+      id: '/$lang/tools'
+      path: '/tools'
+      fullPath: '/$lang/tools'
+      preLoaderRoute: typeof LangToolsImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/uuid-generator': {
+      id: '/$lang/uuid-generator'
+      path: '/uuid-generator'
+      fullPath: '/$lang/uuid-generator'
+      preLoaderRoute: typeof LangUuidGeneratorImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/word-counter': {
+      id: '/$lang/word-counter'
+      path: '/word-counter'
+      fullPath: '/$lang/word-counter'
+      preLoaderRoute: typeof LangWordCounterImport
+      parentRoute: typeof LangImport
+    }
     '/calculator/gcd': {
       id: '/calculator/gcd'
       path: '/calculator/gcd'
@@ -317,6 +595,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalculatorLcmImport
       parentRoute: typeof rootRoute
     }
+    '/$lang/': {
+      id: '/$lang/'
+      path: '/'
+      fullPath: '/$lang/'
+      preLoaderRoute: typeof LangIndexImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/calculator/gcd': {
+      id: '/$lang/calculator/gcd'
+      path: '/calculator/gcd'
+      fullPath: '/$lang/calculator/gcd'
+      preLoaderRoute: typeof LangCalculatorGcdImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/calculator/lcm': {
+      id: '/$lang/calculator/lcm'
+      path: '/calculator/lcm'
+      fullPath: '/$lang/calculator/lcm'
+      preLoaderRoute: typeof LangCalculatorLcmImport
+      parentRoute: typeof LangImport
+    }
   }
 }
 
@@ -324,6 +623,30 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexRoute,
+  LangRoute: LangRoute.addChildren({
+    LangBase64Route,
+    LangColorConverterRoute,
+    LangCompressPdfRoute,
+    LangCsvToJsonRoute,
+    LangHashGeneratorRoute,
+    LangImageConverterRoute,
+    LangImagesToPdfRoute,
+    LangJsonFormatterRoute,
+    LangMergePdfRoute,
+    LangOrganizePdfRoute,
+    LangPdfToImagesRoute,
+    LangPdfToPptxRoute,
+    LangPptxViewerRoute,
+    LangQrCodeRoute,
+    LangSplitPdfRoute,
+    LangTextDiffRoute,
+    LangToolsRoute,
+    LangUuidGeneratorRoute,
+    LangWordCounterRoute,
+    LangIndexRoute,
+    LangCalculatorGcdRoute,
+    LangCalculatorLcmRoute,
+  }),
   Base64Route,
   ColorConverterRoute,
   CompressPdfRoute,
@@ -357,6 +680,7 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/$lang",
         "/base64",
         "/color-converter",
         "/compress-pdf",
@@ -383,6 +707,33 @@ export const routeTree = rootRoute.addChildren({
     },
     "/": {
       "filePath": "index.ts"
+    },
+    "/$lang": {
+      "filePath": "$lang.tsx",
+      "children": [
+        "/$lang/base64",
+        "/$lang/color-converter",
+        "/$lang/compress-pdf",
+        "/$lang/csv-to-json",
+        "/$lang/hash-generator",
+        "/$lang/image-converter",
+        "/$lang/images-to-pdf",
+        "/$lang/json-formatter",
+        "/$lang/merge-pdf",
+        "/$lang/organize-pdf",
+        "/$lang/pdf-to-images",
+        "/$lang/pdf-to-pptx",
+        "/$lang/pptx-viewer",
+        "/$lang/qr-code",
+        "/$lang/split-pdf",
+        "/$lang/text-diff",
+        "/$lang/tools",
+        "/$lang/uuid-generator",
+        "/$lang/word-counter",
+        "/$lang/",
+        "/$lang/calculator/gcd",
+        "/$lang/calculator/lcm"
+      ]
     },
     "/base64": {
       "filePath": "base64.ts"
@@ -444,11 +795,99 @@ export const routeTree = rootRoute.addChildren({
     "/youtube-downloader": {
       "filePath": "youtube-downloader.ts"
     },
+    "/$lang/base64": {
+      "filePath": "$lang/base64.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/color-converter": {
+      "filePath": "$lang/color-converter.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/compress-pdf": {
+      "filePath": "$lang/compress-pdf.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/csv-to-json": {
+      "filePath": "$lang/csv-to-json.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/hash-generator": {
+      "filePath": "$lang/hash-generator.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/image-converter": {
+      "filePath": "$lang/image-converter.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/images-to-pdf": {
+      "filePath": "$lang/images-to-pdf.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/json-formatter": {
+      "filePath": "$lang/json-formatter.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/merge-pdf": {
+      "filePath": "$lang/merge-pdf.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/organize-pdf": {
+      "filePath": "$lang/organize-pdf.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/pdf-to-images": {
+      "filePath": "$lang/pdf-to-images.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/pdf-to-pptx": {
+      "filePath": "$lang/pdf-to-pptx.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/pptx-viewer": {
+      "filePath": "$lang/pptx-viewer.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/qr-code": {
+      "filePath": "$lang/qr-code.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/split-pdf": {
+      "filePath": "$lang/split-pdf.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/text-diff": {
+      "filePath": "$lang/text-diff.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/tools": {
+      "filePath": "$lang/tools.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/uuid-generator": {
+      "filePath": "$lang/uuid-generator.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/word-counter": {
+      "filePath": "$lang/word-counter.ts",
+      "parent": "/$lang"
+    },
     "/calculator/gcd": {
       "filePath": "calculator/gcd.ts"
     },
     "/calculator/lcm": {
       "filePath": "calculator/lcm.ts"
+    },
+    "/$lang/": {
+      "filePath": "$lang/index.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/calculator/gcd": {
+      "filePath": "$lang/calculator/gcd.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/calculator/lcm": {
+      "filePath": "$lang/calculator/lcm.ts",
+      "parent": "/$lang"
     }
   }
 }

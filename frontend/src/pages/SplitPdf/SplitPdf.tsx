@@ -1,8 +1,10 @@
 import { useState } from "react";
+import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
+import { tDynamic } from "../../common/translate";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import type { SplitMode } from "../../common/pdfEdit";
-import { findPageSeo } from "../../common/seo";
 import { stripExtension } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
@@ -12,20 +14,30 @@ import { ToolButton } from "../../components/ui/ToolButton";
 import { LabeledField } from "../../components/ui/LabeledField";
 import { useProcessLoadingStore } from "../../store/ProcessLoading";
 
-const MODE_LABELS: Record<SplitMode, string> = {
-	range: "Selected pages (one PDF)",
-	each: "One file per page (ZIP)",
+const MODE_KEYS: Record<SplitMode, string> = {
+	range: "splitPdf.modeRange",
+	each: "splitPdf.modeEach",
 };
 
-const ROTATION_LABELS: Record<string, string> = {
-	"0": "Keep as is",
-	"90": "Rotate 90° right",
-	"180": "Rotate 180°",
-	"270": "Rotate 90° left",
+const ROTATION_KEYS: Record<string, string> = {
+	"0": "splitPdf.rotate0",
+	"90": "splitPdf.rotate90",
+	"180": "splitPdf.rotate180",
+	"270": "splitPdf.rotate270",
 };
 
+/** 번역된 문구를 다시 값으로 되돌린다. Select가 문자열만 주고받기 때문이다. */
+const labelsOf = (
+	keys: Record<string, string>,
+	t: TFunction
+): Record<string, string> =>
+	Object.fromEntries(
+		Object.entries(keys).map(([value, key]) => [value, tDynamic(t, key)])
+	);
+
+/** Select는 문구만 주고받으므로, 고른 문구를 원래 값으로 되돌린다. */
 const labelToValue = <T extends string>(
-	labels: Record<T, string>,
+	labels: Record<string, string>,
 	label: string,
 	fallback: T
 ): T => {
@@ -37,6 +49,7 @@ const isPdfFile = (file: File): boolean =>
 	file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
 
 export const SplitPdf = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [file, setFile] = useState<File | null>(null);
 	const [pageCount, setPageCount] = useState<number | null>(null);
 	const [mode, setMode] = useState<SplitMode>("range");
@@ -48,7 +61,7 @@ export const SplitPdf = (): FunctionComponent => {
 	const addFiles = (files: Array<File>): void => {
 		const [first] = files.filter((candidate) => isPdfFile(candidate));
 		if (!first) {
-			toast.error("Only PDF files are allowed");
+			toast.error(t("common.onlyPdf"));
 			return;
 		}
 
@@ -63,7 +76,7 @@ export const SplitPdf = (): FunctionComponent => {
 				setRanges((previous) => previous || `1-${count}`);
 			})
 			.catch(() => {
-				toast.error(`Cannot read PDF: ${first.name}`);
+				toast.error(t("common.cannotReadPdf", { name: first.name }));
 				setFile(null);
 			});
 	};
@@ -73,7 +86,7 @@ export const SplitPdf = (): FunctionComponent => {
 	): Promise<void> => {
 		event.preventDefault();
 		if (!file) {
-			toast.error("Please add a PDF file");
+			toast.error(t("common.addPdf"));
 			return;
 		}
 
@@ -87,66 +100,70 @@ export const SplitPdf = (): FunctionComponent => {
 				rotation: Number(rotation),
 			});
 			toast.success(
-				`${result.fileName} downloaded (${result.pageCount} pages)`
+				t("splitPdf.done", {
+					name: result.fileName,
+					count: result.pageCount,
+				})
 			);
 		} catch (error) {
 			console.error(error);
 			toast.error(
-				error instanceof Error ? error.message : "Failed to split the PDF"
+				error instanceof Error ? error.message : t("splitPdf.failed")
 			);
 		} finally {
 			setProcessLoading(false);
 		}
 	};
 
-	const guide = findPageSeo("/split-pdf").guide;
+	const modeLabels = labelsOf(MODE_KEYS, t);
+	const rotationLabels = labelsOf(ROTATION_KEYS, t);
 
 	return (
-		<Content categoryName="PDF" title="SPLIT PDF">
+		<Content categoryName={t("splitPdf.category")} title={t("splitPdf.title")}>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Extract the pages you need into a new PDF, or break a document into one
-				file per page. Pages keep their original quality and nothing is
-				uploaded.
+				{t("splitPdf.intro")}
 			</p>
 
 			<form className="flex flex-col gap-8" onSubmit={split}>
 				<FileDropzone
 					accept="application/pdf,.pdf"
 					disabled={processLoading}
-					hint="or click to select a file"
-					title={file ? file.name : "Drop a PDF file here"}
+					hint={t("common.clickToSelectFile")}
+					title={file ? file.name : t("common.dropPdf")}
 					onFilesAdded={addFiles}
 				/>
 
 				{file && (
 					<div className="text-neutral-15 text-sm">
 						{pageCount === null
-							? "Reading the document..."
-							: `${pageCount} pages in this document`}
+							? t("splitPdf.reading")
+							: t("splitPdf.pageCount", { count: pageCount })}
 					</div>
 				)}
 
 				<div className="flex flex-wrap gap-6 items-end">
-					<LabeledField label="Output">
+					<LabeledField label={t("splitPdf.output")}>
 						<div className="h-12 w-[240px]">
 							<Select
-								currentValue={MODE_LABELS[mode]}
-								options={Object.values(MODE_LABELS)}
+								currentValue={modeLabels[mode] ?? ""}
+								options={Object.values(modeLabels)}
 								width="240px"
 								onChange={(value) => {
-									setMode(labelToValue(MODE_LABELS, value, "range"));
+									setMode(
+										labelToValue(modeLabels, value, "range") as SplitMode
+									);
 								}}
 							/>
 						</div>
 					</LabeledField>
 
 					{mode === "range" && (
-						<LabeledField grow label="Pages">
+						<LabeledField grow label={t("splitPdf.pages")}>
 							<div className="flex items-center h-12 border border-neutral-05 rounded-xl px-3">
 								<input
 									className="w-full bg-transparent text-neutral-05 outline-none font-medium"
 									id="split-ranges"
-									placeholder="1-3, 7, 10-"
+									placeholder={t("splitPdf.pagesPlaceholder")}
 									type="text"
 									value={ranges}
 									onChange={(event) => {
@@ -157,14 +174,14 @@ export const SplitPdf = (): FunctionComponent => {
 						</LabeledField>
 					)}
 
-					<LabeledField label="Rotation">
+					<LabeledField label={t("splitPdf.rotation")}>
 						<div className="h-12 w-[200px]">
 							<Select
-								currentValue={ROTATION_LABELS[rotation] ?? "Keep as is"}
-								options={Object.values(ROTATION_LABELS)}
+								currentValue={rotationLabels[rotation] ?? t("splitPdf.rotate0")}
+								options={Object.values(rotationLabels)}
 								width="200px"
 								onChange={(value) => {
-									setRotation(labelToValue(ROTATION_LABELS, value, "0"));
+									setRotation(labelToValue(rotationLabels, value, "0"));
 								}}
 							/>
 						</div>
@@ -173,13 +190,13 @@ export const SplitPdf = (): FunctionComponent => {
 
 				<ToolButton
 					disabled={!file || pageCount === null}
-					label="Split PDF"
+					label={t("splitPdf.action")}
 					loading={processLoading}
-					loadingLabel="Splitting..."
+					loadingLabel={t("splitPdf.working")}
 				/>
 			</form>
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/split-pdf" />
 		</Content>
 	);
 };

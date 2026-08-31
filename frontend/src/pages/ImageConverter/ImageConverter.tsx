@@ -1,4 +1,7 @@
 import { useState } from "react";
+import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
+import { tDynamic } from "../../common/translate";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import type {
@@ -6,7 +9,6 @@ import type {
 	OutputFormat,
 	ResizeMode,
 } from "../../common/imageConvert";
-import { findPageSeo } from "../../common/seo";
 import { formatBytes } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
@@ -19,27 +21,37 @@ import { LabeledField } from "../../components/ui/LabeledField";
 import { useOrderedFiles } from "../../hooks/useOrderedFiles";
 import { useProcessLoadingStore } from "../../store/ProcessLoading";
 
-const FORMAT_LABELS: Record<OutputFormat, string> = {
-	png: "PNG (lossless)",
-	jpeg: "JPG (universal)",
-	webp: "WebP (smallest)",
+const FORMAT_KEYS: Record<OutputFormat, string> = {
+	png: "imageConverter.formatPng",
+	jpeg: "imageConverter.formatJpeg",
+	webp: "imageConverter.formatWebp",
 };
 
-const RESIZE_LABELS: Record<ResizeMode, string> = {
-	none: "Keep original",
-	width: "Fit width (px)",
-	height: "Fit height (px)",
-	percent: "Scale (%)",
+const RESIZE_KEYS: Record<ResizeMode, string> = {
+	none: "imageConverter.resizeNone",
+	width: "imageConverter.resizeWidth",
+	height: "imageConverter.resizeHeight",
+	percent: "imageConverter.resizePercent",
 };
 
+/** Select는 문구만 주고받으므로, 고른 문구를 원래 값으로 되돌린다. */
 const labelToValue = <T extends string>(
-	labels: Record<T, string>,
+	labels: Record<string, string>,
 	label: string,
 	fallback: T
 ): T => {
 	const entry = Object.entries(labels).find(([, text]) => text === label);
 	return entry ? (entry[0] as T) : fallback;
 };
+
+/** 번역된 선택지 문구를 값과 짝지어 만든다. */
+const labelsOf = (
+	keys: Record<string, string>,
+	t: TFunction
+): Record<string, string> =>
+	Object.fromEntries(
+		Object.entries(keys).map(([value, key]) => [value, tDynamic(t, key)])
+	);
 
 const isImageFile = (file: File): boolean => file.type.startsWith("image/");
 
@@ -50,6 +62,7 @@ const sizeChange = (image: ConvertedImage): string => {
 };
 
 export const ImageConverter = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const files = useOrderedFiles();
 	const [format, setFormat] = useState<OutputFormat>("webp");
 	const [resizeMode, setResizeMode] = useState<ResizeMode>("none");
@@ -62,7 +75,7 @@ export const ImageConverter = (): FunctionComponent => {
 	const addFiles = (added: Array<File>): void => {
 		const imageFiles = added.filter((file) => isImageFile(file));
 		if (imageFiles.length !== added.length) {
-			toast.error("Only image files are allowed");
+			toast.error(t("common.onlyImages"));
 		}
 		if (imageFiles.length === 0) return;
 
@@ -74,7 +87,7 @@ export const ImageConverter = (): FunctionComponent => {
 					bitmap.close();
 				})
 				.catch(() => {
-					toast.error(`Cannot read image: ${item.file.name}`);
+					toast.error(t("common.cannotReadImage", { name: item.file.name }));
 					files.remove(item.id);
 				});
 		}
@@ -85,7 +98,7 @@ export const ImageConverter = (): FunctionComponent => {
 	): Promise<void> => {
 		event.preventDefault();
 		if (files.items.length === 0) {
-			toast.error("Please add at least one image");
+			toast.error(t("common.addImage"));
 			return;
 		}
 
@@ -111,11 +124,11 @@ export const ImageConverter = (): FunctionComponent => {
 			);
 			setResults(converted);
 			await downloadConverted(converted, `converted-images.zip`);
-			toast.success(`${converted.length} images converted`);
+			toast.success(t("imageConverter.done", { count: converted.length }));
 		} catch (error) {
 			console.error(error);
 			toast.error(
-				error instanceof Error ? error.message : "Failed to convert the images"
+				error instanceof Error ? error.message : t("imageConverter.failed")
 			);
 		} finally {
 			setProcessLoading(false);
@@ -123,13 +136,16 @@ export const ImageConverter = (): FunctionComponent => {
 		}
 	};
 
-	const guide = findPageSeo("/image-converter").guide;
+	const formatLabels = labelsOf(FORMAT_KEYS, t);
+	const resizeLabels = labelsOf(RESIZE_KEYS, t);
 
 	return (
-		<Content categoryName="Image" title="IMAGE CONVERTER">
+		<Content
+			categoryName={t("imageConverter.category")}
+			title={t("imageConverter.title")}
+		>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Convert images between PNG, JPG and WebP, resize them, and compress them
-				to a smaller file. Several at once, all in your browser.
+				{t("imageConverter.intro")}
 			</p>
 
 			<form className="flex flex-col gap-8" onSubmit={convert}>
@@ -137,17 +153,19 @@ export const ImageConverter = (): FunctionComponent => {
 					multiple
 					accept="image/*"
 					disabled={processLoading}
-					hint="JPG, PNG, WebP, GIF, BMP and AVIF · multiple files supported"
-					title="Drop images here"
+					hint={t("common.imageFormats")}
+					title={t("common.dropImages")}
 					onFilesAdded={addFiles}
 				/>
 
 				{files.items.length > 0 && (
 					<OrderedFileList
 						disabled={processLoading}
-						hint="Every image is converted with the same settings"
+						hint={t("imageConverter.sameSettings")}
 						items={files.items}
-						summary={`${files.items.length} images`}
+						summary={t("imageConverter.imageCount", {
+							count: files.items.length,
+						})}
 						onClear={files.clear}
 						onRemove={files.remove}
 						onReorder={files.reorder}
@@ -155,27 +173,27 @@ export const ImageConverter = (): FunctionComponent => {
 				)}
 
 				<div className="flex flex-wrap gap-6 items-end">
-					<LabeledField label="Convert to">
+					<LabeledField label={t("imageConverter.convertTo")}>
 						<div className="h-12 w-[200px]">
 							<Select
-								currentValue={FORMAT_LABELS[format]}
-								options={Object.values(FORMAT_LABELS)}
+								currentValue={formatLabels[format] ?? ""}
+								options={Object.values(formatLabels)}
 								width="200px"
 								onChange={(value) => {
-									setFormat(labelToValue(FORMAT_LABELS, value, "webp"));
+									setFormat(labelToValue(formatLabels, value, "webp"));
 								}}
 							/>
 						</div>
 					</LabeledField>
 
-					<LabeledField label="Resize">
+					<LabeledField label={t("imageConverter.resize")}>
 						<div className="h-12 w-[190px]">
 							<Select
-								currentValue={RESIZE_LABELS[resizeMode]}
-								options={Object.values(RESIZE_LABELS)}
+								currentValue={resizeLabels[resizeMode] ?? ""}
+								options={Object.values(resizeLabels)}
 								width="190px"
 								onChange={(value) => {
-									setResizeMode(labelToValue(RESIZE_LABELS, value, "none"));
+									setResizeMode(labelToValue(resizeLabels, value, "none"));
 								}}
 							/>
 						</div>
@@ -183,7 +201,11 @@ export const ImageConverter = (): FunctionComponent => {
 
 					{resizeMode !== "none" && (
 						<LabeledField
-							label={resizeMode === "percent" ? "Percent" : "Pixels"}
+							label={
+								resizeMode === "percent"
+									? t("imageConverter.percent")
+									: t("imageConverter.pixels")
+							}
 						>
 							<div className="flex items-center h-12 w-[140px] border border-neutral-05 rounded-xl px-3">
 								<input
@@ -202,7 +224,9 @@ export const ImageConverter = (): FunctionComponent => {
 					)}
 
 					{format !== "png" && (
-						<LabeledField label={`Quality (${quality}%)`}>
+						<LabeledField
+							label={t("imageConverter.qualityLabel", { value: quality })}
+						>
 							<div className="flex items-center h-12 w-[200px]">
 								<input
 									className="w-full accent-green-05"
@@ -224,32 +248,34 @@ export const ImageConverter = (): FunctionComponent => {
 					<ProgressBar
 						done={progress.done}
 						total={progress.total}
-						unit="images"
+						unit={t("common.images")}
 					/>
 				)}
 
 				<ToolButton
 					disabled={files.items.length === 0}
-					label="Convert images"
+					label={t("imageConverter.action")}
 					loading={processLoading}
-					loadingLabel="Converting..."
+					loadingLabel={t("imageConverter.working")}
 				/>
 			</form>
 
 			{results.length > 0 && (
 				<div className="flex flex-col gap-4">
 					<div className="text-neutral-05 font-medium text-xl lg:text-2xl">
-						Result
+						{t("common.result")}
 					</div>
 					<div className="overflow-x-auto">
 						<table className="w-full text-left border-collapse">
 							<thead>
 								<tr className="text-neutral-15 text-sm">
-									<th className="py-2 pr-4 font-medium">File</th>
-									<th className="py-2 pr-4 font-medium">Size</th>
-									<th className="py-2 pr-4 font-medium">Before</th>
-									<th className="py-2 pr-4 font-medium">After</th>
-									<th className="py-2 font-medium">Change</th>
+									<th className="py-2 pr-4 font-medium">{t("common.file")}</th>
+									<th className="py-2 pr-4 font-medium">{t("common.size")}</th>
+									<th className="py-2 pr-4 font-medium">
+										{t("common.before")}
+									</th>
+									<th className="py-2 pr-4 font-medium">{t("common.after")}</th>
+									<th className="py-2 font-medium">{t("common.change")}</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -287,7 +313,7 @@ export const ImageConverter = (): FunctionComponent => {
 				</div>
 			)}
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/image-converter" />
 		</Content>
 	);
 };

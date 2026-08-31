@@ -1,8 +1,10 @@
 import { useState } from "react";
+import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
+import { tDynamic } from "../../common/translate";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import type { ImageFormat, RenderQuality } from "../../common/pdfToImages";
-import { findPageSeo } from "../../common/seo";
 import { stripExtension } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
@@ -13,20 +15,21 @@ import { ToolButton } from "../../components/ui/ToolButton";
 import { LabeledField } from "../../components/ui/LabeledField";
 import { useProcessLoadingStore } from "../../store/ProcessLoading";
 
-const FORMAT_LABELS: Record<ImageFormat, string> = {
-	png: "PNG (sharp, lossless)",
-	jpeg: "JPG (small, universal)",
-	webp: "WebP (smallest)",
+const FORMAT_KEYS: Record<ImageFormat, string> = {
+	png: "pdfToImages.formatPng",
+	jpeg: "pdfToImages.formatJpeg",
+	webp: "pdfToImages.formatWebp",
 };
 
-const QUALITY_LABELS: Record<RenderQuality, string> = {
-	high: "High (3x, print)",
-	medium: "Medium (2x, screen)",
-	low: "Low (1x, small)",
+const QUALITY_KEYS: Record<RenderQuality, string> = {
+	high: "pdfToImages.qualityHigh",
+	medium: "pdfToImages.qualityMedium",
+	low: "pdfToImages.qualityLow",
 };
 
+/** Select는 문구만 주고받으므로, 고른 문구를 원래 값으로 되돌린다. */
 const labelToValue = <T extends string>(
-	labels: Record<T, string>,
+	labels: Record<string, string>,
 	label: string,
 	fallback: T
 ): T => {
@@ -34,10 +37,20 @@ const labelToValue = <T extends string>(
 	return entry ? (entry[0] as T) : fallback;
 };
 
+/** 번역된 선택지 문구를 값과 짝지어 만든다. */
+const labelsOf = (
+	keys: Record<string, string>,
+	t: TFunction
+): Record<string, string> =>
+	Object.fromEntries(
+		Object.entries(keys).map(([value, key]) => [value, tDynamic(t, key)])
+	);
+
 const isPdfFile = (file: File): boolean =>
 	file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
 
 export const PdfToImages = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [file, setFile] = useState<File | null>(null);
 	const [format, setFormat] = useState<ImageFormat>("png");
 	const [quality, setQuality] = useState<RenderQuality>("medium");
@@ -48,7 +61,7 @@ export const PdfToImages = (): FunctionComponent => {
 	const addFiles = (files: Array<File>): void => {
 		const [first] = files.filter((candidate) => isPdfFile(candidate));
 		if (!first) {
-			toast.error("Only PDF files are allowed");
+			toast.error(t("common.onlyPdf"));
 			return;
 		}
 		setFile(first);
@@ -60,7 +73,7 @@ export const PdfToImages = (): FunctionComponent => {
 	): Promise<void> => {
 		event.preventDefault();
 		if (!file) {
-			toast.error("Please add a PDF file");
+			toast.error(t("common.addPdf"));
 			return;
 		}
 
@@ -77,11 +90,11 @@ export const PdfToImages = (): FunctionComponent => {
 					setProgress({ done, total });
 				},
 			});
-			toast.success(`${result.fileName} downloaded`);
+			toast.success(t("common.downloaded", { name: result.fileName }));
 		} catch (error) {
 			console.error(error);
 			toast.error(
-				error instanceof Error ? error.message : "Failed to convert the PDF"
+				error instanceof Error ? error.message : t("pdfToImages.failed")
 			);
 		} finally {
 			setProcessLoading(false);
@@ -89,53 +102,55 @@ export const PdfToImages = (): FunctionComponent => {
 		}
 	};
 
-	const guide = findPageSeo("/pdf-to-images").guide;
+	const formatLabels = labelsOf(FORMAT_KEYS, t);
+	const qualityLabels = labelsOf(QUALITY_KEYS, t);
 
 	return (
-		<Content categoryName="PDF" title="PDF TO IMAGES">
+		<Content
+			categoryName={t("pdfToImages.category")}
+			title={t("pdfToImages.title")}
+		>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Render every page of a PDF as a PNG, JPG or WebP image. One page
-				downloads on its own, more than one arrives as a ZIP — and the file
-				never leaves your browser.
+				{t("pdfToImages.intro")}
 			</p>
 
 			<form className="flex flex-col gap-8" onSubmit={convert}>
 				<FileDropzone
 					accept="application/pdf,.pdf"
 					disabled={processLoading}
-					hint="or click to select a file"
-					title={file ? file.name : "Drop a PDF file here"}
+					hint={t("common.clickToSelectFile")}
+					title={file ? file.name : t("common.dropPdf")}
 					onFilesAdded={addFiles}
 				/>
 
 				<div className="flex flex-wrap gap-6 items-end">
-					<LabeledField label="Format">
+					<LabeledField label={t("common.format")}>
 						<div className="h-12 w-[220px]">
 							<Select
-								currentValue={FORMAT_LABELS[format]}
-								options={Object.values(FORMAT_LABELS)}
+								currentValue={formatLabels[format] ?? ""}
+								options={Object.values(formatLabels)}
 								width="220px"
 								onChange={(value) => {
-									setFormat(labelToValue(FORMAT_LABELS, value, "png"));
+									setFormat(labelToValue(formatLabels, value, "png"));
 								}}
 							/>
 						</div>
 					</LabeledField>
 
-					<LabeledField label="Resolution">
+					<LabeledField label={t("pdfToImages.resolution")}>
 						<div className="h-12 w-[220px]">
 							<Select
-								currentValue={QUALITY_LABELS[quality]}
-								options={Object.values(QUALITY_LABELS)}
+								currentValue={qualityLabels[quality] ?? ""}
+								options={Object.values(qualityLabels)}
 								width="220px"
 								onChange={(value) => {
-									setQuality(labelToValue(QUALITY_LABELS, value, "medium"));
+									setQuality(labelToValue(qualityLabels, value, "medium"));
 								}}
 							/>
 						</div>
 					</LabeledField>
 
-					<LabeledField grow label="Name">
+					<LabeledField grow label={t("pdfToImages.name")}>
 						<div className="flex items-center h-12 border border-neutral-05 rounded-xl px-3">
 							<input
 								className="w-full bg-transparent text-neutral-05 outline-none font-medium"
@@ -158,19 +173,19 @@ export const PdfToImages = (): FunctionComponent => {
 					<ProgressBar
 						done={progress.done}
 						total={progress.total}
-						unit="pages"
+						unit={t("common.pages")}
 					/>
 				)}
 
 				<ToolButton
 					disabled={!file}
-					label="Convert to images"
+					label={t("pdfToImages.action")}
 					loading={processLoading}
-					loadingLabel="Converting..."
+					loadingLabel={t("pdfToImages.working")}
 				/>
 			</form>
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/pdf-to-images" />
 		</Content>
 	);
 };

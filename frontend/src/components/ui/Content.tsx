@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { FunctionComponent } from "../../common/types";
 import { useSidebarStore } from "../../store/Sidebar";
 import { PageTitle } from "../page/common";
@@ -13,6 +14,7 @@ export const Content = ({
 	categoryName: string;
 	tools?: boolean;
 }): FunctionComponent => {
+	const { t } = useTranslation();
 	const sidebarOpen = useSidebarStore((state) => state.sidebarOpen);
 	const setSidebarOpen = useSidebarStore((state) => state.setSidebarOpen);
 	return (
@@ -27,7 +29,7 @@ export const Content = ({
 						}}
 					>
 						<div className="text-neutral-15 font-medium text-md lg:text-2xl select-none">
-							Tools
+							{t("nav.tools")}
 						</div>
 					</div>
 				)}

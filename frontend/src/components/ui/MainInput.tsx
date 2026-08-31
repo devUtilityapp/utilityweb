@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { FunctionComponent } from "../../common/types";
 import type { SetStateAction, Dispatch } from "react";
 import { toast } from "react-toastify";
@@ -21,6 +22,8 @@ export const MainInput = <T extends string | number | Array<number>>({
 	pattern,
 	onKeyDown,
 }: Props<T>): FunctionComponent => {
+	const { t } = useTranslation();
+
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		const inputValue = event.target.value;
 
@@ -80,19 +83,19 @@ export const MainInput = <T extends string | number | Array<number>>({
 
 			if (!/^[\d,]*$/.test(cleanedText)) {
 				event.preventDefault();
-				toast.error("Only numbers and commas are allowed");
+				toast.error(t("input.numbersOnly"));
 				return;
 			}
 
 			if (/,,/.test(cleanedText)) {
 				event.preventDefault();
-				toast.error("Invalid format: consecutive commas are not allowed");
+				toast.error(t("input.doubleComma"));
 				return;
 			}
 
 			if (cleanedText.startsWith(",") || cleanedText.endsWith(",")) {
 				event.preventDefault();
-				toast.error("Invalid format: comma at start or end is not allowed");
+				toast.error(t("input.edgeComma"));
 				return;
 			}
 
@@ -106,7 +109,7 @@ export const MainInput = <T extends string | number | Array<number>>({
 
 			if (!/^[\d,]*$/.test(newValue.replace(/\s/g, ""))) {
 				event.preventDefault();
-				toast.error("Invalid format after paste");
+				toast.error(t("input.badPaste"));
 				return;
 			}
 

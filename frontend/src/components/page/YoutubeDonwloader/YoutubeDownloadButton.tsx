@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { FunctionComponent } from "../../../common/types";
 import type { AllowResolution } from "../../../types/youtube";
 import { NoAudioIcon } from "../../icons/NoAudioIcon";
@@ -18,6 +19,8 @@ export const YoutubeDownloadButton = ({
 	resolution: AllowResolution | null;
 	setResolution: (value: AllowResolution) => void;
 }): FunctionComponent => {
+	const { t } = useTranslation();
+
 	return (
 		<div className="w-full flex justify-center gap-4 flex-col">
 			{resolution?.download_url ? (
@@ -48,7 +51,7 @@ export const YoutubeDownloadButton = ({
 						htmlFor="resolution"
 					>
 						<span className="text-neutral-05 font-medium">
-							Select video format
+							{t("youtube.selectFormat")}
 						</span>
 					</label>
 					<Select
@@ -64,7 +67,7 @@ export const YoutubeDownloadButton = ({
 				<div className="flex justify-end items-center gap-6 h-12">
 					<label className="pointer-events-none " htmlFor="resolution">
 						<span className="text-neutral-05 font-medium">
-							Select video quality
+							{t("youtube.selectQuality")}
 						</span>
 					</label>
 					<Select

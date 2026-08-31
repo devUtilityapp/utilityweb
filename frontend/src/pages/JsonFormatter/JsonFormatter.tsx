@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { tDynamic } from "../../common/translate";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import {
@@ -8,7 +10,6 @@ import {
 	type IndentStyle,
 	type JsonError,
 } from "../../common/jsonFormat";
-import { findPageSeo } from "../../common/seo";
 import { downloadBlob, formatBytes } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
@@ -16,14 +17,14 @@ import { Select } from "../../components/ui/Select";
 import { LabeledField } from "../../components/ui/LabeledField";
 import { ActionButton } from "../../components/ui/ActionButton";
 
-const INDENT_LABELS: Record<IndentStyle, string> = {
-	"2": "2 spaces",
-	"4": "4 spaces",
-	tab: "Tab",
+const INDENT_KEYS: Record<IndentStyle, string> = {
+	"2": "jsonFormatter.indent2",
+	"4": "jsonFormatter.indent4",
+	tab: "jsonFormatter.indentTab",
 };
 
 const labelToValue = <T extends string>(
-	labels: Record<T, string>,
+	labels: Record<string, string>,
 	label: string,
 	fallback: T
 ): T => {
@@ -32,6 +33,7 @@ const labelToValue = <T extends string>(
 };
 
 export const JsonFormatter = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [input, setInput] = useState<string>("");
 	const [output, setOutput] = useState<string>("");
 	const [error, setError] = useState<JsonError | null>(null);
@@ -40,7 +42,7 @@ export const JsonFormatter = (): FunctionComponent => {
 
 	const apply = (transform: "format" | "minify"): void => {
 		if (input.trim() === "") {
-			toast.error("Please paste some JSON first");
+			toast.error(t("jsonFormatter.pasteFirst"));
 			return;
 		}
 
@@ -54,8 +56,8 @@ export const JsonFormatter = (): FunctionComponent => {
 		if (result.error) {
 			toast.error(
 				result.error.line === null
-					? "Invalid JSON"
-					: `Invalid JSON at line ${result.error.line}`
+					? t("jsonFormatter.invalid")
+					: t("jsonFormatter.invalidAt", { line: result.error.line })
 			);
 		}
 	};
@@ -70,7 +72,7 @@ export const JsonFormatter = (): FunctionComponent => {
 				setError(null);
 			})
 			.catch(() => {
-				toast.error("Cannot read the file");
+				toast.error(t("common.cannotReadFile"));
 			});
 	};
 
@@ -78,33 +80,35 @@ export const JsonFormatter = (): FunctionComponent => {
 		navigator.clipboard
 			.writeText(output)
 			.then(() => {
-				toast.success("Copied to the clipboard");
+				toast.success(t("common.copied"));
 			})
 			.catch(() => {
-				toast.error("Cannot access the clipboard");
+				toast.error(t("common.clipboardFailed"));
 			});
 	};
 
+	const indentLabels: Record<string, string> = Object.fromEntries(
+		Object.entries(INDENT_KEYS).map(([value, key]) => [value, tDynamic(t, key)])
+	);
 	const nodes = output === "" ? null : countNodes(output);
-	const guide = findPageSeo("/json-formatter").guide;
-
 	return (
-		<Content categoryName="Text" title="JSON FORMATTER">
+		<Content
+			categoryName={t("jsonFormatter.category")}
+			title={t("jsonFormatter.title")}
+		>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Lay out JSON so you can read it, minify it back down, and see exactly
-				where an invalid document breaks. Parsed in your browser, never sent
-				anywhere.
+				{t("jsonFormatter.intro")}
 			</p>
 
 			<div className="flex flex-wrap gap-6 items-end">
-				<LabeledField label="Indent">
+				<LabeledField label={t("jsonFormatter.indent")}>
 					<div className="h-12 w-[160px]">
 						<Select
-							currentValue={INDENT_LABELS[indent]}
-							options={Object.values(INDENT_LABELS)}
+							currentValue={indentLabels[indent] ?? ""}
+							options={Object.values(indentLabels)}
 							width="160px"
 							onChange={(value) => {
-								setIndent(labelToValue(INDENT_LABELS, value, "2"));
+								setIndent(labelToValue(indentLabels, value, "2"));
 							}}
 						/>
 					</div>
@@ -123,25 +127,25 @@ export const JsonFormatter = (): FunctionComponent => {
 							setSort(event.target.checked);
 						}}
 					/>
-					Sort keys
+					{t("jsonFormatter.sortKeys")}
 				</label>
 
 				<div className="flex gap-4 flex-wrap">
 					<ActionButton
-						label="Format"
+						label={t("jsonFormatter.format")}
 						onClick={() => {
 							apply("format");
 						}}
 					/>
 					<ActionButton
-						label="Minify"
+						label={t("jsonFormatter.minify")}
 						onClick={() => {
 							apply("minify");
 						}}
 					/>
 					<ActionButton
 						disabled={input === "" && output === ""}
-						label="Clear"
+						label={t("common.clear")}
 						onClick={() => {
 							setInput("");
 							setOutput("");
@@ -154,12 +158,14 @@ export const JsonFormatter = (): FunctionComponent => {
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 				<div className="flex flex-col gap-2">
 					<div className="flex items-center justify-between">
-						<div className="text-neutral-15 text-sm">Input</div>
+						<div className="text-neutral-15 text-sm">
+							{t("jsonFormatter.input")}
+						</div>
 						<label
 							className="text-neutral-15 text-sm underline cursor-pointer hover:text-neutral-05"
 							htmlFor="json-file"
 						>
-							Open a .json file
+							{t("jsonFormatter.openFile")}
 							<input
 								accept="application/json,.json,.txt"
 								className="hidden"
@@ -174,7 +180,7 @@ export const JsonFormatter = (): FunctionComponent => {
 					</div>
 					<textarea
 						id="json-input"
-						placeholder='{"name":"utility","tools":["pdf","image"]}'
+						placeholder={t("jsonFormatter.inputPlaceholder")}
 						spellCheck={false}
 						value={input}
 						className="w-full h-[420px] bg-main-00 border border-neutral-05 rounded-xl p-4
@@ -188,9 +194,12 @@ export const JsonFormatter = (): FunctionComponent => {
 				<div className="flex flex-col gap-2">
 					<div className="flex items-center justify-between">
 						<div className="text-neutral-15 text-sm">
-							Output
+							{t("jsonFormatter.output")}
 							{nodes !== null &&
-								` · ${nodes} values · ${formatBytes(new Blob([output]).size)}`}
+								` · ${t("jsonFormatter.summary", {
+									count: nodes,
+									size: formatBytes(new Blob([output]).size),
+								})}`}
 						</div>
 						<div className="flex gap-4">
 							<button
@@ -203,7 +212,7 @@ export const JsonFormatter = (): FunctionComponent => {
 								}`}
 								onClick={copyOutput}
 							>
-								Copy
+								{t("common.copy")}
 							</button>
 							<button
 								disabled={output === ""}
@@ -220,14 +229,14 @@ export const JsonFormatter = (): FunctionComponent => {
 									);
 								}}
 							>
-								Download
+								{t("common.download")}
 							</button>
 						</div>
 					</div>
 					<textarea
 						readOnly
 						id="json-output"
-						placeholder="The formatted document appears here"
+						placeholder={t("jsonFormatter.outputPlaceholder")}
 						spellCheck={false}
 						value={output}
 						className="w-full h-[420px] bg-main-00 border border-neutral-05 rounded-xl p-4
@@ -240,14 +249,17 @@ export const JsonFormatter = (): FunctionComponent => {
 				<div className="border border-neutral-05 rounded-xl p-4 flex flex-col gap-1">
 					<div className="text-neutral-05 font-medium">
 						{error.line === null
-							? "Invalid JSON"
-							: `Invalid JSON at line ${error.line}, column ${error.column}`}
+							? t("jsonFormatter.invalid")
+							: t("jsonFormatter.invalidDetail", {
+									line: error.line,
+									column: error.column,
+								})}
 					</div>
 					<div className="text-neutral-15 text-sm">{error.message}</div>
 				</div>
 			)}
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/json-formatter" />
 		</Content>
 	);
 };

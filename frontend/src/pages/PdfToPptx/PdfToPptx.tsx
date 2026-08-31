@@ -1,11 +1,13 @@
 import { useState } from "react";
+import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
+import { tDynamic } from "../../common/translate";
 import uuid from "react-uuid";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import type { RenderQuality, SlideSize } from "../../common/pdfToPptx";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
-import { findPageSeo } from "../../common/seo";
 import { Select } from "../../components/ui/Select";
 import { FileDropzone } from "../../components/ui/FileDropzone";
 import {
@@ -14,26 +16,36 @@ import {
 } from "../../components/page/PdfToPptx/PdfFileList";
 import { useProcessLoadingStore } from "../../store/ProcessLoading";
 
-const SLIDE_SIZE_LABELS: Record<SlideSize, string> = {
-	"16:9": "16:9 (Widescreen)",
-	"4:3": "4:3 (Standard)",
-	fit: "Fit to PDF size",
+const SLIDE_SIZE_KEYS: Record<SlideSize, string> = {
+	"16:9": "pdfToPptx.size169",
+	"4:3": "pdfToPptx.size43",
+	fit: "pdfToPptx.sizeFit",
 };
 
-const QUALITY_LABELS: Record<RenderQuality, string> = {
-	high: "High (slow, large)",
-	medium: "Medium",
-	low: "Low (fast, small)",
+const QUALITY_KEYS: Record<RenderQuality, string> = {
+	high: "pdfToPptx.qualityHigh",
+	medium: "pdfToPptx.qualityMedium",
+	low: "pdfToPptx.qualityLow",
 };
 
+/** Select는 문구만 주고받으므로, 고른 문구를 원래 값으로 되돌린다. */
 const labelToValue = <T extends string>(
-	labels: Record<T, string>,
+	labels: Record<string, string>,
 	label: string,
 	fallback: T
 ): T => {
 	const entry = Object.entries(labels).find(([, text]) => text === label);
 	return entry ? (entry[0] as T) : fallback;
 };
+
+/** 번역된 선택지 문구를 값과 짝지어 만든다. */
+const labelsOf = (
+	keys: Record<string, string>,
+	t: TFunction
+): Record<string, string> =>
+	Object.fromEntries(
+		Object.entries(keys).map(([value, key]) => [value, tDynamic(t, key)])
+	);
 
 const isPdfFile = (file: File): boolean =>
 	file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
@@ -49,10 +61,11 @@ const sortFilesByName = (files: Array<File>): Array<File> =>
 	);
 
 export const PdfToPptx = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [items, setItems] = useState<Array<PdfItem>>([]);
 	const [slideSize, setSlideSize] = useState<SlideSize>("16:9");
 	const [quality, setQuality] = useState<RenderQuality>("medium");
-	const [fileName, setFileName] = useState<string>("converted");
+	const [fileName, setFileName] = useState<string>(t("pdfToPptx.defaultName"));
 	const [progress, setProgress] = useState<{ done: number; total: number }>({
 		done: 0,
 		total: 0,
@@ -62,7 +75,7 @@ export const PdfToPptx = (): FunctionComponent => {
 	const addFiles = (files: Array<File>): void => {
 		const pdfFiles = files.filter((file) => isPdfFile(file));
 		if (pdfFiles.length !== files.length) {
-			toast.error("Only PDF files are allowed");
+			toast.error(t("common.onlyPdf"));
 		}
 		if (pdfFiles.length === 0) return;
 
@@ -89,7 +102,7 @@ export const PdfToPptx = (): FunctionComponent => {
 					);
 				})
 				.catch(() => {
-					toast.error(`Cannot read PDF: ${item.file.name}`);
+					toast.error(t("common.cannotReadPdf", { name: item.file.name }));
 					setItems((previousItems) =>
 						previousItems.filter((previousItem) => previousItem.id !== item.id)
 					);
@@ -128,11 +141,11 @@ export const PdfToPptx = (): FunctionComponent => {
 		event.preventDefault();
 
 		if (items.length === 0) {
-			toast.error("Please add at least one PDF file");
+			toast.error(t("pdfToPptx.addFile"));
 			return;
 		}
 		if (items.some((item) => item.pageCount === null)) {
-			toast.error("Still reading PDF files. Please wait a moment");
+			toast.error(t("pdfToPptx.stillReading"));
 			return;
 		}
 
@@ -157,11 +170,11 @@ export const PdfToPptx = (): FunctionComponent => {
 					},
 				}
 			);
-			toast.success(`${outputName} downloaded`);
+			toast.success(t("common.downloaded", { name: outputName }));
 		} catch (error) {
 			console.error(error);
 			toast.error(
-				error instanceof Error ? error.message : "Failed to convert PDF files"
+				error instanceof Error ? error.message : t("pdfToPptx.failed")
 			);
 		} finally {
 			setProcessLoading(false);
@@ -169,17 +182,19 @@ export const PdfToPptx = (): FunctionComponent => {
 		}
 	};
 
-	const guide = findPageSeo("/pdf-to-pptx").guide;
+	const slideSizeLabels = labelsOf(SLIDE_SIZE_KEYS, t);
+	const qualityLabels = labelsOf(QUALITY_KEYS, t);
 
 	const progressPercent =
 		progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
 
 	return (
-		<Content categoryName="PDF" title="PDF TO PPTX">
+		<Content
+			categoryName={t("pdfToPptx.category")}
+			title={t("pdfToPptx.title")}
+		>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Turn PDF files into a PowerPoint presentation. Every page becomes a
-				slide, several PDFs can be merged into one deck, and the conversion runs
-				in your browser — nothing is uploaded.
+				{t("pdfToPptx.intro")}
 			</p>
 
 			<form className="flex flex-col gap-8" onSubmit={convert}>
@@ -187,8 +202,8 @@ export const PdfToPptx = (): FunctionComponent => {
 					multiple
 					accept="application/pdf,.pdf"
 					disabled={processLoading}
-					hint="or click to select files (multiple files supported)"
-					title="Drop PDF files here"
+					hint={t("common.clickToSelectFiles")}
+					title={t("common.dropPdfs")}
 					onFilesAdded={addFiles}
 				/>
 
@@ -206,40 +221,44 @@ export const PdfToPptx = (): FunctionComponent => {
 
 				<div className="flex flex-wrap gap-6 items-end">
 					<div className="flex flex-col gap-2">
-						<div className="text-neutral-15 text-sm">Slide size</div>
+						<div className="text-neutral-15 text-sm">
+							{t("pdfToPptx.slideSize")}
+						</div>
 						<div className="h-12 w-[220px]">
 							<Select
-								currentValue={SLIDE_SIZE_LABELS[slideSize]}
-								options={Object.values(SLIDE_SIZE_LABELS)}
+								currentValue={slideSizeLabels[slideSize] ?? ""}
+								options={Object.values(slideSizeLabels)}
 								width="220px"
 								onChange={(value) => {
-									setSlideSize(labelToValue(SLIDE_SIZE_LABELS, value, "16:9"));
+									setSlideSize(labelToValue(slideSizeLabels, value, "16:9"));
 								}}
 							/>
 						</div>
 					</div>
 
 					<div className="flex flex-col gap-2">
-						<div className="text-neutral-15 text-sm">Quality</div>
+						<div className="text-neutral-15 text-sm">{t("common.quality")}</div>
 						<div className="h-12 w-[200px]">
 							<Select
-								currentValue={QUALITY_LABELS[quality]}
-								options={Object.values(QUALITY_LABELS)}
+								currentValue={qualityLabels[quality] ?? ""}
+								options={Object.values(qualityLabels)}
 								width="200px"
 								onChange={(value) => {
-									setQuality(labelToValue(QUALITY_LABELS, value, "medium"));
+									setQuality(labelToValue(qualityLabels, value, "medium"));
 								}}
 							/>
 						</div>
 					</div>
 
 					<div className="flex flex-col gap-2 flex-1 min-w-[200px]">
-						<div className="text-neutral-15 text-sm">File name</div>
+						<div className="text-neutral-15 text-sm">
+							{t("common.fileName")}
+						</div>
 						<div className="flex items-center h-12 border border-neutral-05 rounded-xl px-3">
 							<input
 								className="w-full bg-transparent text-neutral-05 outline-none font-medium"
 								id="pptx-file-name"
-								placeholder="converted"
+								placeholder={t("pdfToPptx.defaultName")}
 								type="text"
 								value={fileName}
 								onChange={(event) => {
@@ -260,7 +279,8 @@ export const PdfToPptx = (): FunctionComponent => {
 							></div>
 						</div>
 						<div className="text-neutral-15 text-sm text-right">
-							{progress.done} / {progress.total} pages ({progressPercent}%)
+							{progress.done} / {progress.total} {t("common.pages")} (
+							{progressPercent}%)
 						</div>
 					</div>
 				)}
@@ -276,11 +296,11 @@ export const PdfToPptx = (): FunctionComponent => {
 								: "bg-main-05 hover:bg-main-10"
 						}`}
 				>
-					{processLoading ? "Converting..." : "Convert to PPTX"}
+					{processLoading ? t("pdfToPptx.working") : t("pdfToPptx.action")}
 				</button>
 			</form>
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/pdf-to-pptx" />
 		</Content>
 	);
 };

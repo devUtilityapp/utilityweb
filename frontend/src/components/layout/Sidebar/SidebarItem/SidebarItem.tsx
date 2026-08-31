@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { LocalizedLink } from "../../../ui/LocalizedLink";
 
 const SidebarItem = ({
 	item,
@@ -12,9 +12,9 @@ const SidebarItem = ({
 }): React.ReactNode => {
 	return (
 		<li className="text-neutral-05 text-xl font-medium">
-			<Link search={item.search} to={item.link} onClick={item.onClick}>
+			<LocalizedLink search={item.search} to={item.link} onClick={item.onClick}>
 				{item.name}
-			</Link>
+			</LocalizedLink>
 		</li>
 	);
 };

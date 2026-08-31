@@ -1,5 +1,6 @@
 import type { FunctionComponent } from "../../common/types";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Content } from "../../components/ui/Content";
 import { MainForm } from "../../components/ui/MainForm";
 import { MainInput } from "../../components/ui/MainInput";
@@ -28,6 +29,7 @@ const getGCD = (a: number, b: number): number => {
 };
 
 export const LCM = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [lcmString, setLcmString] = useState<string>("");
 	const [result, setResult] = useState<number | undefined>(undefined);
 	const [lcmDetails, setLcmDetails] = useState<Array<LCMDetail>>([]);
@@ -58,13 +60,13 @@ export const LCM = (): FunctionComponent => {
 		// 중복 검사
 		const uniqueNumbers = [...new Set(numbers)];
 		if (numbers.length !== uniqueNumbers.length) {
-			toast.error("Duplicate numbers are not allowed");
+			toast.error(t("calculator.duplicate"));
 			return;
 		}
 
 		// 최소 2개 이상의 숫자 검사
 		if (uniqueNumbers.length < 2) {
-			toast.error("Please enter at least two different numbers");
+			toast.error(t("calculator.atLeastTwo"));
 			return;
 		}
 
@@ -106,13 +108,16 @@ export const LCM = (): FunctionComponent => {
 	};
 
 	return (
-		<Content categoryName="Calculator" title="Least Common Multiple">
-			<MainForm buttonText="calculate" onSubmit={calculateLCM}>
+		<Content
+			categoryName={t("calculator.category")}
+			title={t("calculator.lcmTitle")}
+		>
+			<MainForm buttonText={t("calculator.calculate")} onSubmit={calculateLCM}>
 				<div className="w-5/6 h-full">
 					<MainInput
 						id="number"
 						pattern="numbers-only"
-						placeholder="75,90,135,625,7895"
+						placeholder={t("calculator.placeholder")}
 						setValue={setLcmString}
 						value={lcmString}
 					/>
@@ -172,11 +177,13 @@ export const LCM = (): FunctionComponent => {
 									className="p-4 border bg-main-00 border-neutral-05 rounded-lg"
 								>
 									<h3 className="text-lg text-neutral-05 font-semibold mb-2">
-										Step {index}
+										{t("calculator.step", { index })}
 									</h3>
 									<div className="text-sm text-neutral-05 space-y-2">
-										<p>Previous LCM: {runningLCM}</p>
-										<p>Current Number: {currentNumber}</p>
+										<p>{t("calculator.previousLcm", { value: runningLCM })}</p>
+										<p>
+											{t("calculator.currentNumber", { value: currentNumber })}
+										</p>
 										<p>
 											GCD({runningLCM}, {currentNumber}) = {gcd}
 										</p>
@@ -194,19 +201,24 @@ export const LCM = (): FunctionComponent => {
 
 										{/* LCM 증명 */}
 										<div className="mt-4 p-3 bg-neutral-01 rounded-lg">
-											<p className="font-semibold mb-2">Proof:</p>
+											<p className="font-semibold mb-2">
+												{t("calculator.proof")}
+											</p>
 											<div className="space-y-1">
 												<p>
-													{currentLCM} ÷ {runningLCM} = {proofForPrevious}{" "}
-													(integer)
+													{currentLCM} ÷ {runningLCM} = {proofForPrevious} (
+													{t("calculator.integer")})
 												</p>
 												<p>
-													{currentLCM} ÷ {currentNumber} = {proofForCurrent}{" "}
-													(integer)
+													{currentLCM} ÷ {currentNumber} = {proofForCurrent} (
+													{t("calculator.integer")})
 												</p>
 												<p className="mt-2 text-green-05">
-													{currentLCM} is the smallest number that is divisible
-													by both {runningLCM} and {currentNumber}
+													{t("calculator.smallest", {
+														lcm: currentLCM,
+														a: runningLCM,
+														b: currentNumber,
+													})}
 												</p>
 											</div>
 										</div>
@@ -214,14 +226,15 @@ export const LCM = (): FunctionComponent => {
 										{/* 이전 단계까지의 숫자들에 대한 검증 */}
 										<div className="mt-2">
 											<p className="font-semibold mb-1">
-												Verification with all previous numbers:
+												{t("calculator.verification")}
 											</p>
 											{lcmDetails
 												.slice(0, index + 1)
 												.map((previousDetail, index_) => (
 													<p key={index_}>
 														{currentLCM} ÷ {previousDetail.number} ={" "}
-														{currentLCM / previousDetail.number} (integer)
+														{currentLCM / previousDetail.number} (
+														{t("calculator.integer")})
 													</p>
 												))}
 										</div>

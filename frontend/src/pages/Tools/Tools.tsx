@@ -1,19 +1,34 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { FunctionComponent } from "../../common/types";
-import { filterCategories } from "../../common/toolCatalog";
+import {
+	filterCategories,
+	type ToolCategory,
+	type ToolEntry,
+} from "../../common/toolCatalog";
+import { tDynamic } from "../../common/translate";
 import { Content } from "../../components/ui/Content";
 import { ToolCard } from "../../components/page/Tools/ToolCard";
 import { ToolCards } from "../../components/page/Tools/ToolCards";
 
 export const Tools = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [query, setQuery] = useState<string>("");
-	const categories = filterCategories(query);
+
+	// 이름과 분류는 번역된 문구로, 검색어는 영문 약어 그대로 찾을 수 있게 한다.
+	const searchTextOf = (category: ToolCategory, tool: ToolEntry): string =>
+		[
+			tDynamic(t, `tools.${tool.key}.name`),
+			tDynamic(t, `categories.${category.key}`),
+			...tool.keywords,
+		].join(" ");
+
+	const categories = filterCategories(query, searchTextOf);
 
 	return (
-		<Content categoryName="Tools" title="Tools" tools={false}>
+		<Content categoryName={t("nav.tools")} title={t("nav.tools")} tools={false}>
 			<p className="text-neutral-15 text-sm lg:text-md text-center mb-2">
-				Free tools that run entirely in your browser — files are never uploaded
-				to a server.
+				{t("toolsPage.intro")}
 			</p>
 
 			<div className="flex justify-center">
@@ -36,7 +51,7 @@ export const Tools = (): FunctionComponent => {
 					<input
 						className="w-full bg-transparent text-neutral-05 outline-none font-medium px-3"
 						id="tool-search"
-						placeholder="Search tools — pdf, image, qr, json..."
+						placeholder={t("toolsPage.searchPlaceholder")}
 						type="search"
 						value={query}
 						onChange={(event) => {
@@ -48,18 +63,21 @@ export const Tools = (): FunctionComponent => {
 
 			{categories.length === 0 ? (
 				<div className="text-neutral-15 text-center py-10">
-					No tool matches “{query}”.
+					{t("toolsPage.noResults", { query })}
 				</div>
 			) : (
 				<div className="flex flex-col gap-14">
 					{categories.map((category) => (
-						<ToolCards key={category.title} title={category.title}>
+						<ToolCards
+							key={category.key}
+							title={tDynamic(t, `categories.${category.key}`)}
+						>
 							{category.tools.map((tool) => (
 								<ToolCard
-									key={`${tool.to}-${tool.name}`}
+									key={`${tool.to}-${tool.key}`}
 									search={tool.search}
 									to={tool.to}
-									toolName={tool.name}
+									toolName={tDynamic(t, `tools.${tool.key}.name`)}
 								/>
 							))}
 						</ToolCards>

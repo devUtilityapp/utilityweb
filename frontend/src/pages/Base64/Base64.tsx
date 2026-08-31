@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import { decodeText, encodeText } from "../../common/base64";
-import { findPageSeo } from "../../common/seo";
 import {
 	downloadBlob,
 	formatBytes,
@@ -38,6 +38,7 @@ const TabButton = ({
 );
 
 export const Base64 = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [mode, setMode] = useState<Mode>("text");
 	const [direction, setDirection] = useState<Direction>("encode");
 	const [urlSafe, setUrlSafe] = useState(false);
@@ -62,13 +63,15 @@ export const Base64 = (): FunctionComponent => {
 			setError("");
 		} catch (caught) {
 			setOutput("");
-			setError(caught instanceof Error ? caught.message : "Cannot convert");
+			setError(
+				caught instanceof Error ? caught.message : t("base64.cannotConvert")
+			);
 		}
-	}, [mode, direction, urlSafe, input]);
+	}, [mode, direction, urlSafe, input, t]);
 
 	const convertFile = (): void => {
 		if (!file) {
-			toast.error("Please add a file first");
+			toast.error(t("base64.addFile"));
 			return;
 		}
 		setWorking(true);
@@ -79,7 +82,7 @@ export const Base64 = (): FunctionComponent => {
 				setError("");
 			})
 			.catch(() => {
-				toast.error("Cannot read the file");
+				toast.error(t("common.cannotReadFile"));
 			})
 			.finally(() => {
 				setWorking(false);
@@ -97,29 +100,24 @@ export const Base64 = (): FunctionComponent => {
 					}),
 					"decoded.bin"
 				);
-				toast.success("decoded.bin downloaded");
+				toast.success(t("common.downloaded", { name: "decoded.bin" }));
 			})
 			.catch((caught: unknown) => {
 				toast.error(
-					caught instanceof Error ? caught.message : "This is not valid base64"
+					caught instanceof Error ? caught.message : t("base64.cannotConvert")
 				);
 			});
 	};
 
-	const guide = findPageSeo("/base64").guide;
-
 	return (
-		<Content categoryName="Developer" title="BASE64">
-			<p className="text-neutral-15 text-sm lg:text-md">
-				Encode text or a file to base64 and decode it back, with the URL-safe
-				variant when the value has to live in a link. Converted in your browser.
-			</p>
+		<Content categoryName={t("base64.category")} title={t("base64.title")}>
+			<p className="text-neutral-15 text-sm lg:text-md">{t("base64.intro")}</p>
 
 			<div className="flex flex-wrap gap-4 items-center">
 				<div className="flex gap-2">
 					<TabButton
 						active={mode === "text"}
-						label="Text"
+						label={t("common.text")}
 						onClick={() => {
 							setMode("text");
 							setOutput("");
@@ -128,7 +126,7 @@ export const Base64 = (): FunctionComponent => {
 					/>
 					<TabButton
 						active={mode === "file"}
-						label="File"
+						label={t("common.file")}
 						onClick={() => {
 							setMode("file");
 							setDirection("encode");
@@ -142,14 +140,14 @@ export const Base64 = (): FunctionComponent => {
 					<div className="flex gap-2">
 						<TabButton
 							active={direction === "encode"}
-							label="Encode"
+							label={t("base64.encode")}
 							onClick={() => {
 								setDirection("encode");
 							}}
 						/>
 						<TabButton
 							active={direction === "decode"}
-							label="Decode"
+							label={t("base64.decode")}
 							onClick={() => {
 								setDirection("decode");
 							}}
@@ -171,7 +169,7 @@ export const Base64 = (): FunctionComponent => {
 								setUrlSafe(event.target.checked);
 							}}
 						/>
-						URL safe
+						{t("base64.urlSafe")}
 					</label>
 				)}
 			</div>
@@ -181,8 +179,8 @@ export const Base64 = (): FunctionComponent => {
 					<FileDropzone
 						accept="*/*"
 						disabled={working}
-						hint="any file — it is read on your device"
-						title={file ? file.name : "Drop a file here"}
+						hint={t("base64.anyFile")}
+						title={file ? file.name : t("common.dropFile")}
 						onFilesAdded={(files) => {
 							const [first] = files;
 							if (first) {
@@ -193,14 +191,17 @@ export const Base64 = (): FunctionComponent => {
 					/>
 					{file && (
 						<div className="text-neutral-15 text-sm">
-							{stripExtension(file.name)} · {formatBytes(file.size)} · encodes
-							to about {formatBytes(Math.ceil(file.size / 3) * 4)}
+							{t("base64.fileSummary", {
+								name: stripExtension(file.name),
+								size: formatBytes(file.size),
+								encoded: formatBytes(Math.ceil(file.size / 3) * 4),
+							})}
 						</div>
 					)}
 					<div className="flex gap-4 flex-wrap">
 						<ActionButton
 							disabled={!file || working}
-							label={working ? "Encoding..." : "Encode file"}
+							label={working ? t("base64.encoding") : t("base64.encodeFile")}
 							onClick={convertFile}
 						/>
 					</div>
@@ -209,7 +210,7 @@ export const Base64 = (): FunctionComponent => {
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 					<div className="flex flex-col gap-2">
 						<div className="text-neutral-15 text-sm">
-							{direction === "encode" ? "Text" : "Base64"}
+							{direction === "encode" ? t("common.text") : "Base64"}
 						</div>
 						<ToolTextArea
 							mono
@@ -217,8 +218,8 @@ export const Base64 = (): FunctionComponent => {
 							value={input}
 							placeholder={
 								direction === "encode"
-									? "Type or paste the text to encode"
-									: "Paste the base64 to decode"
+									? t("base64.encodePlaceholder")
+									: t("base64.decodePlaceholder")
 							}
 							onChange={setInput}
 						/>
@@ -227,8 +228,9 @@ export const Base64 = (): FunctionComponent => {
 					<div className="flex flex-col gap-2">
 						<div className="flex items-center justify-between">
 							<div className="text-neutral-15 text-sm">
-								{direction === "encode" ? "Base64" : "Text"}
-								{output !== "" && ` · ${output.length} characters`}
+								{direction === "encode" ? "Base64" : t("common.text")}
+								{output !== "" &&
+									` · ${t("base64.characters", { count: output.length })}`}
 							</div>
 							<div className="flex gap-4">
 								<button
@@ -243,7 +245,7 @@ export const Base64 = (): FunctionComponent => {
 										copyToClipboard(output);
 									}}
 								>
-									Copy
+									{t("common.copy")}
 								</button>
 								{direction === "decode" && (
 									<button
@@ -256,7 +258,7 @@ export const Base64 = (): FunctionComponent => {
 										}`}
 										onClick={downloadDecoded}
 									>
-										Save as file
+										{t("base64.saveAsFile")}
 									</button>
 								)}
 							</div>
@@ -265,7 +267,7 @@ export const Base64 = (): FunctionComponent => {
 							mono
 							readOnly
 							id="base64-output"
-							placeholder="The result appears here"
+							placeholder={t("base64.outputPlaceholder")}
 							value={output}
 						/>
 					</div>
@@ -276,7 +278,7 @@ export const Base64 = (): FunctionComponent => {
 				<div className="flex flex-col gap-2">
 					<div className="flex items-center justify-between">
 						<div className="text-neutral-15 text-sm">
-							Base64 · {output.length} characters
+							{`Base64 · ${t("base64.characters", { count: output.length })}`}
 						</div>
 						<button
 							className="text-sm underline text-neutral-15 hover:text-neutral-05"
@@ -285,7 +287,7 @@ export const Base64 = (): FunctionComponent => {
 								copyToClipboard(output);
 							}}
 						>
-							Copy
+							{t("common.copy")}
 						</button>
 					</div>
 					<ToolTextArea
@@ -304,7 +306,7 @@ export const Base64 = (): FunctionComponent => {
 				</div>
 			)}
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/base64" />
 		</Content>
 	);
 };

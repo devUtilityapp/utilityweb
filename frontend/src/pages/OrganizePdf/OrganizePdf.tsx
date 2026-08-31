@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import uuid from "react-uuid";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import type { PageItem } from "../../common/pdfOrganize";
-import { findPageSeo } from "../../common/seo";
 import { stripExtension, withExtension } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
@@ -19,18 +19,21 @@ const isPdfFile = (file: File): boolean =>
 	file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
 
 export const OrganizePdf = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [file, setFile] = useState<File | null>(null);
 	const [pages, setPages] = useState<Array<PageItem>>([]);
 	const [original, setOriginal] = useState<Array<PageItem>>([]);
 	const [reading, setReading] = useState(false);
 	const [progress, setProgress] = useState({ done: 0, total: 0 });
-	const [fileName, setFileName] = useState<string>("organized");
+	const [fileName, setFileName] = useState<string>(
+		t("organizePdf.defaultName")
+	);
 	const { processLoading, setProcessLoading } = useProcessLoadingStore();
 
 	const addFiles = (files: Array<File>): void => {
 		const [first] = files.filter((candidate) => isPdfFile(candidate));
 		if (!first) {
-			toast.error("Only PDF files are allowed");
+			toast.error(t("common.onlyPdf"));
 			return;
 		}
 
@@ -59,7 +62,7 @@ export const OrganizePdf = (): FunctionComponent => {
 			})
 			.catch((error: unknown) => {
 				console.error(error);
-				toast.error(`Cannot read PDF: ${first.name}`);
+				toast.error(t("common.cannotReadPdf", { name: first.name }));
 				setFile(null);
 			})
 			.finally(() => {
@@ -97,7 +100,7 @@ export const OrganizePdf = (): FunctionComponent => {
 	): Promise<void> => {
 		event.preventDefault();
 		if (!file || pages.length === 0) {
-			toast.error("There are no pages left to save");
+			toast.error(t("organizePdf.noPages"));
 			return;
 		}
 
@@ -111,34 +114,34 @@ export const OrganizePdf = (): FunctionComponent => {
 				pages.map((page) => ({ index: page.index, rotation: page.rotation })),
 				outputName
 			);
-			toast.success(`${outputName} downloaded (${count} pages)`);
+			toast.success(t("organizePdf.done", { name: outputName, count }));
 		} catch (error) {
 			console.error(error);
 			toast.error(
-				error instanceof Error ? error.message : "Failed to save the PDF"
+				error instanceof Error ? error.message : t("organizePdf.failed")
 			);
 		} finally {
 			setProcessLoading(false);
 		}
 	};
 
-	const guide = findPageSeo("/organize-pdf").guide;
 	const removed = original.length - pages.length;
 
 	return (
-		<Content categoryName="PDF" title="ORGANIZE PDF">
+		<Content
+			categoryName={t("organizePdf.category")}
+			title={t("organizePdf.title")}
+		>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				See every page as a thumbnail, then reorder, rotate or delete pages and
-				save the result. Pages keep their original quality and nothing is
-				uploaded.
+				{t("organizePdf.intro")}
 			</p>
 
 			<form className="flex flex-col gap-8" onSubmit={save}>
 				<FileDropzone
 					accept="application/pdf,.pdf"
 					disabled={reading || processLoading}
-					hint="or click to select a file"
-					title={file ? file.name : "Drop a PDF file here"}
+					hint={t("common.clickToSelectFile")}
+					title={file ? file.name : t("common.dropPdf")}
 					onFilesAdded={addFiles}
 				/>
 
@@ -146,7 +149,7 @@ export const OrganizePdf = (): FunctionComponent => {
 					<ProgressBar
 						done={progress.done}
 						total={progress.total}
-						unit="pages read"
+						unit={t("organizePdf.pagesRead")}
 					/>
 				)}
 
@@ -154,17 +157,17 @@ export const OrganizePdf = (): FunctionComponent => {
 					<>
 						<div className="flex items-center justify-between flex-wrap gap-4">
 							<div className="text-neutral-05 font-medium text-xl lg:text-2xl">
-								Pages ({pages.length})
+								{t("organizePdf.pageHeading", { count: pages.length })}
 							</div>
 							<div className="flex items-center gap-4">
 								{removed > 0 && (
 									<div className="text-neutral-15 text-sm">
-										{removed} removed
+										{t("organizePdf.removed", { count: removed })}
 									</div>
 								)}
 								<ActionButton
 									disabled={processLoading}
-									label="Reset"
+									label={t("organizePdf.reset")}
 									onClick={() => {
 										setPages(original);
 									}}
@@ -183,11 +186,11 @@ export const OrganizePdf = (): FunctionComponent => {
 				)}
 
 				<div className="flex flex-wrap gap-6 items-end">
-					<LabeledField grow label="File name">
+					<LabeledField grow label={t("common.fileName")}>
 						<FileNameInput
 							extension="pdf"
 							id="organized-file-name"
-							placeholder="organized"
+							placeholder={t("organizePdf.defaultName")}
 							value={fileName}
 							onChange={setFileName}
 						/>
@@ -196,13 +199,13 @@ export const OrganizePdf = (): FunctionComponent => {
 
 				<ToolButton
 					disabled={pages.length === 0}
-					label="Save PDF"
+					label={t("organizePdf.action")}
 					loading={processLoading}
-					loadingLabel="Saving..."
+					loadingLabel={t("organizePdf.working")}
 				/>
 			</form>
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/organize-pdf" />
 		</Content>
 	);
 };

@@ -1,4 +1,7 @@
 import { useState } from "react";
+import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
+import { tDynamic } from "../../common/translate";
 import { toast } from "react-toastify";
 import type { FunctionComponent } from "../../common/types";
 import {
@@ -7,7 +10,6 @@ import {
 	type UuidFormat,
 	type UuidVersion,
 } from "../../common/uuid";
-import { findPageSeo } from "../../common/seo";
 import { downloadBlob } from "../../common/download";
 import { Content } from "../../components/ui/Content";
 import { PageGuideSection } from "../../components/ui/PageGuideSection";
@@ -17,20 +19,29 @@ import { ActionButton } from "../../components/ui/ActionButton";
 import { ToolTextArea } from "../../components/ui/ToolTextArea";
 import { copyToClipboard } from "../../common/clipboard";
 
-const VERSION_LABELS: Record<UuidVersion, string> = {
-	v4: "v4 (random)",
-	v7: "v7 (time-ordered)",
+const VERSION_KEYS: Record<UuidVersion, string> = {
+	v4: "uuidGenerator.v4",
+	v7: "uuidGenerator.v7",
 };
 
-const FORMAT_LABELS: Record<UuidFormat, string> = {
-	plain: "lowercase",
-	upper: "UPPERCASE",
-	braces: "{braces}",
-	compact: "no hyphens",
+const FORMAT_KEYS: Record<UuidFormat, string> = {
+	plain: "uuidGenerator.formatPlain",
+	upper: "uuidGenerator.formatUpper",
+	braces: "uuidGenerator.formatBraces",
+	compact: "uuidGenerator.formatCompact",
 };
+
+/** 번역된 선택지 문구를 값과 짝지어 만든다. */
+const labelsOf = (
+	keys: Record<string, string>,
+	t: TFunction
+): Record<string, string> =>
+	Object.fromEntries(
+		Object.entries(keys).map(([value, key]) => [value, tDynamic(t, key)])
+	);
 
 const labelToValue = <T extends string>(
-	labels: Record<T, string>,
+	labels: Record<string, string>,
 	label: string,
 	fallback: T
 ): T => {
@@ -41,6 +52,7 @@ const labelToValue = <T extends string>(
 const MAX_COUNT = 10_000;
 
 export const UuidGenerator = (): FunctionComponent => {
+	const { t } = useTranslation();
 	const [version, setVersion] = useState<UuidVersion>("v4");
 	const [style, setStyle] = useState<UuidFormat>("plain");
 	const [count, setCount] = useState<string>("5");
@@ -52,56 +64,60 @@ export const UuidGenerator = (): FunctionComponent => {
 	const generate = (): void => {
 		const requested = Number(count);
 		if (!Number.isInteger(requested) || requested < 1) {
-			toast.error("Enter how many you want, as a whole number");
+			toast.error(t("uuidGenerator.badCount"));
 			return;
 		}
 		if (requested > MAX_COUNT) {
-			toast.error(`At most ${MAX_COUNT.toLocaleString()} at a time`);
+			toast.error(
+				t("uuidGenerator.tooMany", { max: MAX_COUNT.toLocaleString() })
+			);
 			return;
 		}
 		setValues(generateUuids(requested, version, style));
 	};
 
-	const guide = findPageSeo("/uuid-generator").guide;
+	const versionLabels = labelsOf(VERSION_KEYS, t);
+	const formatLabels = labelsOf(FORMAT_KEYS, t);
 	const inspected = check.trim() === "" ? null : inspectUuid(check);
 	const joined = values.join("\n");
 
 	return (
-		<Content categoryName="Generator" title="UUID GENERATOR">
+		<Content
+			categoryName={t("uuidGenerator.category")}
+			title={t("uuidGenerator.title")}
+		>
 			<p className="text-neutral-15 text-sm lg:text-md">
-				Generate random v4 or time-ordered v7 identifiers, one or thousands at a
-				time. They come from your browser's cryptographic generator and are
-				never sent anywhere.
+				{t("uuidGenerator.intro")}
 			</p>
 
 			<div className="flex flex-wrap gap-6 items-end">
-				<LabeledField label="Version">
+				<LabeledField label={t("uuidGenerator.version")}>
 					<div className="h-12 w-[210px]">
 						<Select
-							currentValue={VERSION_LABELS[version]}
-							options={Object.values(VERSION_LABELS)}
+							currentValue={versionLabels[version] ?? ""}
+							options={Object.values(versionLabels)}
 							width="210px"
 							onChange={(value) => {
-								setVersion(labelToValue(VERSION_LABELS, value, "v4"));
+								setVersion(labelToValue(versionLabels, value, "v4"));
 							}}
 						/>
 					</div>
 				</LabeledField>
 
-				<LabeledField label="Format">
+				<LabeledField label={t("common.format")}>
 					<div className="h-12 w-[180px]">
 						<Select
-							currentValue={FORMAT_LABELS[style]}
-							options={Object.values(FORMAT_LABELS)}
+							currentValue={formatLabels[style] ?? ""}
+							options={Object.values(formatLabels)}
 							width="180px"
 							onChange={(value) => {
-								setStyle(labelToValue(FORMAT_LABELS, value, "plain"));
+								setStyle(labelToValue(formatLabels, value, "plain"));
 							}}
 						/>
 					</div>
 				</LabeledField>
 
-				<LabeledField label="How many">
+				<LabeledField label={t("uuidGenerator.howMany")}>
 					<div className="flex items-center h-12 w-[140px] border border-neutral-05 rounded-xl px-3">
 						<input
 							className="w-full bg-transparent text-neutral-05 outline-none font-medium"
@@ -119,21 +135,24 @@ export const UuidGenerator = (): FunctionComponent => {
 				</LabeledField>
 
 				<div className="flex gap-4 flex-wrap">
-					<ActionButton label="Generate" onClick={generate} />
 					<ActionButton
-						label="Copy all"
+						label={t("uuidGenerator.generate")}
+						onClick={generate}
+					/>
+					<ActionButton
+						label={t("common.copyAll")}
 						onClick={() => {
 							copyToClipboard(joined);
 						}}
 					/>
 					<ActionButton
-						label="Download"
+						label={t("common.download")}
 						onClick={() => {
 							downloadBlob(
 								new Blob([joined], { type: "text/plain" }),
 								"uuids.txt"
 							);
-							toast.success("uuids.txt downloaded");
+							toast.success(t("common.downloaded", { name: "uuids.txt" }));
 						}}
 					/>
 				</div>
@@ -141,7 +160,7 @@ export const UuidGenerator = (): FunctionComponent => {
 
 			<div className="flex flex-col gap-2">
 				<div className="text-neutral-15 text-sm">
-					{values.length.toLocaleString()} identifiers
+					{t("uuidGenerator.count", { count: values.length })}
 				</div>
 				<ToolTextArea
 					mono
@@ -154,12 +173,14 @@ export const UuidGenerator = (): FunctionComponent => {
 			</div>
 
 			<div className="flex flex-col gap-3">
-				<div className="text-neutral-05 font-medium text-xl">Check a UUID</div>
+				<div className="text-neutral-05 font-medium text-xl">
+					{t("uuidGenerator.check")}
+				</div>
 				<div className="flex items-center h-12 border border-neutral-05 rounded-xl px-4">
 					<input
 						className="w-full bg-transparent text-neutral-05 outline-none font-mono text-sm"
 						id="uuid-check"
-						placeholder="Paste an identifier to see whether it is valid"
+						placeholder={t("uuidGenerator.checkPlaceholder")}
 						type="text"
 						value={check}
 						onChange={(event) => {
@@ -170,17 +191,14 @@ export const UuidGenerator = (): FunctionComponent => {
 				{inspected &&
 					(inspected.valid ? (
 						<div className="text-green-05 font-medium">
-							Valid UUID, version {inspected.version}
+							{t("uuidGenerator.valid", { version: inspected.version })}
 						</div>
 					) : (
-						<div className="text-neutral-05">
-							Not a valid UUID — it needs 32 hexadecimal digits with a version
-							between 1 and 8.
-						</div>
+						<div className="text-neutral-05">{t("uuidGenerator.invalid")}</div>
 					))}
 			</div>
 
-			{guide && <PageGuideSection guide={guide} />}
+			<PageGuideSection path="/uuid-generator" />
 		</Content>
 	);
 };

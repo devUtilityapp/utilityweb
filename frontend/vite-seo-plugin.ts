@@ -1,13 +1,25 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { Plugin } from "vite";
+import type { Language } from "./src/common/languages";
 import {
-	canonicalUrl,
+	DEFAULT_LANGUAGE,
+	LANGUAGES,
+	LANGUAGE_NAMES,
+	LANGUAGE_TAGS,
+	localizePath,
+} from "./src/common/languages";
+import {
 	OG_IMAGE_PATH,
-	PAGE_SEO,
+	SEO_ROUTES,
 	SITE_NAME,
 	SITE_URL,
+	alternateUrls,
+	canonicalUrl,
+	findPageSeo,
+	loadGuides,
 	structuredData,
+	type PageGuide,
 	type PageSeo,
 } from "./src/common/seo";
 
@@ -26,32 +38,61 @@ const WRAPPER_STYLE =
 const HEADING_STYLE = "color:#f7f7f7;font-size:1.5rem;margin-bottom:1.5rem";
 const SUBHEADING_STYLE = "color:#f7f7f7;font-size:1.25rem;margin:2rem 0 1rem";
 
-// 링크가 있어야 자바스크립트를 실행하지 않는 크롤러도 나머지 페이지를 찾아간다.
-const otherToolLinks = (page: PageSeo, title: string): Array<string> => [
-	`<h2 style="${SUBHEADING_STYLE}">${title}</h2>`,
+// 크롤러가 다른 언어판을 링크로도 찾아갈 수 있게 한다.
+const languageLinks = (page: PageSeo): Array<string> => [
+	`<h2 style="${SUBHEADING_STYLE}">Languages</h2>`,
 	"<ul>",
-	...PAGE_SEO.filter(
-		(entry) => entry.path !== "/" && entry.path !== page.path
-	).map(
-		(entry) =>
-			`<li><a href="${entry.path}" style="color:#f7f7f7">${escapeHtml(entry.title.split(" - ")[0] ?? entry.title)}</a></li>`
+	...LANGUAGES.map(
+		(language) =>
+			`<li><a href="${localizePath(page.path, language)}" hreflang="${LANGUAGE_TAGS[language]}" style="color:#f7f7f7">${escapeHtml(LANGUAGE_NAMES[language])}</a></li>`
 	),
 	"</ul>",
 ];
 
-// 가이드가 없는 페이지(목록/계산기)는 설명과 내부 링크만 남긴다.
-const linkListBody = (page: PageSeo): string =>
-	[
-		`<div style="${WRAPPER_STYLE}">`,
-		`<h1 style="${HEADING_STYLE}">${escapeHtml(SITE_NAME)}</h1>`,
-		`<p>${escapeHtml(page.description)}</p>`,
-		...otherToolLinks(page, "Tools"),
-		"</div>",
-	].join("");
+// 링크가 있어야 자바스크립트를 실행하지 않는 크롤러도 나머지 페이지를 찾아간다.
+// 언어별 페이지는 같은 언어의 다른 도구로 연결한다.
+const otherToolLinks = (
+	page: PageSeo,
+	language: Language,
+	title: string,
+	titleOf: (path: string) => string
+): Array<string> => [
+	`<h2 style="${SUBHEADING_STYLE}">${escapeHtml(title)}</h2>`,
+	"<ul>",
+	...SEO_ROUTES.filter(
+		(entry) => entry.path !== "/" && entry.path !== page.path
+	).map((entry) => {
+		const label = titleOf(entry.path).split(" - ")[0] ?? titleOf(entry.path);
+		return `<li><a href="${localizePath(entry.path, language)}" style="color:#f7f7f7">${escapeHtml(label)}</a></li>`;
+	}),
+	"</ul>",
+];
 
-const bodyFor = (page: PageSeo): string => {
-	if (!page.guide) return linkListBody(page);
-	const guide = page.guide;
+const bodyFor = (
+	page: PageSeo,
+	language: Language,
+	guide: PageGuide | undefined,
+	titleOf: (path: string) => string
+): string => {
+	const links = [
+		...otherToolLinks(
+			page,
+			language,
+			guide ? "Other tools" : "Tools",
+			titleOf
+		),
+		...languageLinks(page),
+		"</div>",
+	];
+
+	if (!guide) {
+		return [
+			`<div style="${WRAPPER_STYLE}">`,
+			`<h1 style="${HEADING_STYLE}">${escapeHtml(SITE_NAME)}</h1>`,
+			`<p>${escapeHtml(page.description)}</p>`,
+			...links,
+		].join("");
+	}
 
 	return [
 		`<div style="${WRAPPER_STYLE}">`,
@@ -66,53 +107,81 @@ const bodyFor = (page: PageSeo): string => {
 			`<h3 style="color:#f7f7f7;font-size:1rem;margin:1.5rem 0 0.5rem">${escapeHtml(entry.question)}</h3>`,
 			`<p>${escapeHtml(entry.answer)}</p>`,
 		]),
-		...otherToolLinks(page, "Other tools"),
-		"</div>",
+		...links,
 	].join("");
 };
 
-const headFor = (page: PageSeo): string => {
-	const url = canonicalUrl(page.path);
+const headFor = (
+	page: PageSeo,
+	language: Language,
+	guide: PageGuide | undefined
+): string => {
+	const url = canonicalUrl(page.path, language);
 	const image = `${SITE_URL}${OG_IMAGE_PATH}`;
 
 	return [
 		`<title>${escapeHtml(page.title)}</title>`,
 		`<meta name="description" content="${escapeHtml(page.description)}" />`,
 		`<link rel="canonical" href="${url}" />`,
+		...alternateUrls(page.path).map(
+			(alternate) =>
+				`<link rel="alternate" hreflang="${alternate.tag}" href="${alternate.url}" />`
+		),
+		`<link rel="alternate" hreflang="x-default" href="${canonicalUrl(page.path, DEFAULT_LANGUAGE)}" />`,
 		`<meta property="og:type" content="website" />`,
 		`<meta property="og:site_name" content="${escapeHtml(SITE_NAME)}" />`,
 		`<meta property="og:title" content="${escapeHtml(page.title)}" />`,
 		`<meta property="og:description" content="${escapeHtml(page.description)}" />`,
 		`<meta property="og:url" content="${url}" />`,
 		`<meta property="og:image" content="${image}" />`,
+		`<meta property="og:locale" content="${LANGUAGE_TAGS[language]}" />`,
 		`<meta name="twitter:card" content="summary_large_image" />`,
 		`<meta name="twitter:title" content="${escapeHtml(page.title)}" />`,
 		`<meta name="twitter:description" content="${escapeHtml(page.description)}" />`,
 		`<meta name="twitter:image" content="${image}" />`,
-		`<script type="application/ld+json">${structuredData(page)}</script>`,
+		`<script type="application/ld+json">${structuredData(page, language, guide)}</script>`,
 	].join("\n    ");
 };
 
 // index.html의 기본 title/description을 페이지별 값으로 갈아끼운다.
-const renderHtml = (template: string, page: PageSeo): string =>
+const renderHtml = (
+	template: string,
+	page: PageSeo,
+	language: Language,
+	guide: PageGuide | undefined,
+	titleOf: (path: string) => string
+): string =>
 	template
 		.replace(/<title>[^<]*<\/title>/, "")
 		.replace(/<meta\s+name="description"[\s\S]*?\/>/, "")
-		.replace("</head>", `  ${headFor(page)}\n  </head>`)
-		.replace('<div id="root"></div>', `<div id="root">${bodyFor(page)}</div>`);
+		.replace('<html lang="en"', `<html lang="${LANGUAGE_TAGS[language]}"`)
+		.replace("</head>", `  ${headFor(page, language, guide)}\n  </head>`)
+		.replace(
+			'<div id="root"></div>',
+			`<div id="root">${bodyFor(page, language, guide, titleOf)}</div>`
+		);
 
+// 한 페이지의 모든 언어판을 <xhtml:link>로 서로 가리키게 한다.
+// 구글은 사이트맵의 이 표기를 hreflang 태그와 동등하게 읽는다.
 const sitemap = (lastModified: string): string =>
 	[
 		'<?xml version="1.0" encoding="UTF-8"?>',
-		'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-		...PAGE_SEO.map((page) =>
-			[
-				"  <url>",
-				`    <loc>${canonicalUrl(page.path)}</loc>`,
-				`    <lastmod>${lastModified}</lastmod>`,
-				`    <priority>${page.priority}</priority>`,
-				"  </url>",
-			].join("\n")
+		'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+		...LANGUAGES.flatMap((language) =>
+			SEO_ROUTES.map((route) =>
+				[
+					"  <url>",
+					`    <loc>${canonicalUrl(route.path, language)}</loc>`,
+					...alternateUrls(route.path).map(
+						(alternate) =>
+							`    <xhtml:link rel="alternate" hreflang="${alternate.tag}" href="${alternate.url}" />`
+					),
+					`    <xhtml:link rel="alternate" hreflang="x-default" href="${canonicalUrl(route.path, DEFAULT_LANGUAGE)}" />`,
+					`    <lastmod>${lastModified}</lastmod>`,
+					`    <priority>${route.priority}</priority>`,
+					"  </url>",
+				].join("\n")
+			)
 		),
 		"</urlset>",
 		"",
@@ -131,8 +200,8 @@ const robots = (): string =>
 
 /**
  * SPA는 크롤러가 자바스크립트를 돌리지 않으면 모든 경로가 같은 HTML로 보인다.
- * 빌드 후 경로마다 메타데이터를 채운 HTML을 만들어 두면, 색인과 링크 미리보기가
- * 해당 페이지의 제목과 설명을 그대로 사용한다.
+ * 빌드 후 경로·언어마다 메타데이터와 본문을 채운 HTML을 만들어 두면,
+ * 색인과 링크 미리보기가 해당 페이지의 언어로 된 제목과 설명을 그대로 쓴다.
  */
 export const seoPlugin = (buildDate: string): Plugin => ({
 	name: "utilityweb-seo",
@@ -141,16 +210,30 @@ export const seoPlugin = (buildDate: string): Plugin => ({
 		const outDir = path.resolve("./dist");
 		const template = await readFile(path.join(outDir, "index.html"), "utf8");
 
-		for (const page of PAGE_SEO) {
-			const html = renderHtml(template, page);
-			if (page.path === "/") {
-				await writeFile(path.join(outDir, "index.html"), html);
-				continue;
-			}
+		for (const language of LANGUAGES) {
+			const guides = await loadGuides(language);
+			const fallbackGuides =
+				language === DEFAULT_LANGUAGE
+					? guides
+					: await loadGuides(DEFAULT_LANGUAGE);
+			const titleOf = (target: string): string =>
+				findPageSeo(target, language).title;
 
-			const directory = path.join(outDir, page.path.replace(/^\//, ""));
-			await mkdir(directory, { recursive: true });
-			await writeFile(path.join(directory, "index.html"), html);
+			for (const route of SEO_ROUTES) {
+				const page = findPageSeo(route.path, language);
+				const guide = guides[route.path] ?? fallbackGuides[route.path];
+				const html = renderHtml(template, page, language, guide, titleOf);
+				const localized = localizePath(route.path, language);
+
+				if (localized === "/") {
+					await writeFile(path.join(outDir, "index.html"), html);
+					continue;
+				}
+
+				const directory = path.join(outDir, localized.replace(/^\//, ""));
+				await mkdir(directory, { recursive: true });
+				await writeFile(path.join(directory, "index.html"), html);
+			}
 		}
 
 		await writeFile(path.join(outDir, "sitemap.xml"), sitemap(buildDate));
