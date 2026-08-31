@@ -102,6 +102,30 @@
     "lcm": {
       "name": "最小公倍数",
       "short": "最小公倍数"
+    },
+    "unitConverter": {
+      "name": "单位换算",
+      "short": "单位换算"
+    },
+    "passwordGenerator": {
+      "name": "密码生成",
+      "short": "密码生成"
+    },
+    "dateCalculator": {
+      "name": "日期计算",
+      "short": "日期计算"
+    },
+    "timestampConverter": {
+      "name": "时间戳转换",
+      "short": "时间戳转换"
+    },
+    "regexTester": {
+      "name": "正则测试",
+      "short": "正则测试"
+    },
+    "jwtDecoder": {
+      "name": "JWT 解码",
+      "short": "jwt 解码"
     }
   },
   "toolsPage": {
@@ -552,5 +576,198 @@
   },
   "update": {
     "ready": "有新版本可用，点击这里刷新。"
+  },
+  "unitConverter": {
+    "category": "计算器",
+    "title": "单位换算",
+    "intro": "在公制与英制之间换算长度、重量、温度、面积、体积、速度、数据和时间。所有计算都在浏览器里完成。",
+    "value": "数值",
+    "from": "从",
+    "to": "到",
+    "swap": "交换两个单位",
+    "allUnits": "查看全部单位",
+    "categories": {
+      "length": "长度",
+      "weight": "重量",
+      "temperature": "温度",
+      "area": "面积",
+      "volume": "体积",
+      "speed": "速度",
+      "data": "数据",
+      "time": "时间"
+    },
+    "units": {
+      "meter": "米",
+      "kilometer": "千米",
+      "centimeter": "厘米",
+      "millimeter": "毫米",
+      "mile": "英里",
+      "yard": "码",
+      "foot": "英尺",
+      "inch": "英寸",
+      "kilogram": "千克",
+      "gram": "克",
+      "milligram": "毫克",
+      "tonne": "吨",
+      "pound": "磅",
+      "ounce": "盎司",
+      "celsius": "摄氏度",
+      "fahrenheit": "华氏度",
+      "kelvin": "开尔文",
+      "squareMeter": "平方米",
+      "squareKilometer": "平方千米",
+      "squareFoot": "平方英尺",
+      "acre": "英亩",
+      "hectare": "公顷",
+      "pyeong": "坪",
+      "liter": "升",
+      "milliliter": "毫升",
+      "cubicMeter": "立方米",
+      "gallon": "加仑",
+      "quart": "夸脱",
+      "cup": "杯",
+      "meterPerSecond": "米每秒",
+      "kilometerPerHour": "千米每小时",
+      "milePerHour": "英里每小时",
+      "knot": "节",
+      "byte": "字节",
+      "kilobyte": "千字节",
+      "megabyte": "兆字节",
+      "gigabyte": "吉字节",
+      "terabyte": "太字节",
+      "second": "秒",
+      "millisecond": "毫秒",
+      "minute": "分钟",
+      "hour": "小时",
+      "day": "天",
+      "week": "周"
+    }
+  },
+  "passwordGenerator": {
+    "category": "生成器",
+    "title": "密码生成",
+    "intro": "生成足够长、足够杂的密码。它来自浏览器的密码学随机源，不会发送到任何地方。",
+    "length": "长度",
+    "lowercase": "小写字母",
+    "uppercase": "大写字母",
+    "digits": "数字",
+    "symbols": "符号",
+    "avoidAmbiguous": "排除易混淆字符（0 O 1 l I）",
+    "howMany": "数量",
+    "generate": "生成",
+    "strength": "强度",
+    "bits": "{{bits}} 位熵",
+    "level": {
+      "weak": "弱",
+      "fair": "一般",
+      "strong": "强",
+      "excellent": "非常强"
+    },
+    "failed": "当前设置无法生成密码"
+  },
+  "dateCalculator": {
+    "category": "计算器",
+    "title": "日期计算",
+    "intro": "计算两个日期之间的天数，或求出距某个日期一段时间的那一天。周末和月份长度都会正确处理。",
+    "modeBetween": "两个日期之间",
+    "modeShift": "加上或减去",
+    "from": "起",
+    "to": "止",
+    "startDate": "起始日期",
+    "amount": "数量",
+    "unitLabel": "单位",
+    "unit": {
+      "days": "天",
+      "weeks": "周",
+      "months": "个月",
+      "years": "年"
+    },
+    "totalDays": "{{count}} 天",
+    "breakdown": "{{years}} 年 {{months}} 个月 {{days}} 天",
+    "weeks": "周",
+    "businessDays": "工作日",
+    "hours": "小时",
+    "minutes": "分钟",
+    "resultLabel": "结果",
+    "weekday": {
+      "0": "星期日",
+      "1": "星期一",
+      "2": "星期二",
+      "3": "星期三",
+      "4": "星期四",
+      "5": "星期五",
+      "6": "星期六"
+    }
+  },
+  "timestampConverter": {
+    "category": "开发者",
+    "title": "时间戳转换",
+    "intro": "把 Unix 时间戳变成看得懂的日期，也能把日期变回时间戳。是秒还是毫秒会自动判断。",
+    "now": "当前 Unix 时间",
+    "useNow": "使用该值",
+    "fromTimestamp": "从时间戳",
+    "fromDate": "从日期",
+    "unit": {
+      "seconds": "秒",
+      "milliseconds": "毫秒"
+    },
+    "seconds": "秒",
+    "milliseconds": "毫秒",
+    "local": "本地时间",
+    "past": "{{amount}} {{unit}}前",
+    "future": "{{amount}} {{unit}}后",
+    "relative": {
+      "second": "秒",
+      "minute": "分钟",
+      "hour": "小时",
+      "day": "天",
+      "month": "个月",
+      "year": "年"
+    }
+  },
+  "regexTester": {
+    "category": "开发者",
+    "title": "正则测试",
+    "intro": "用正则表达式检索你的文本，高亮每一处匹配并列出捕获的分组。粘贴的内容不会离开浏览器。",
+    "pattern": "表达式",
+    "testText": "待测文本",
+    "testPlaceholder": "粘贴你要检索的文本",
+    "flag": {
+      "global": "查找全部",
+      "ignoreCase": "忽略大小写",
+      "multiline": "^ 和 $ 按行匹配",
+      "dotAll": ". 也匹配换行",
+      "unicode": "Unicode 模式"
+    },
+    "matchCount": "匹配 {{count}} 处",
+    "truncated": "仅显示前 1,000 处",
+    "match": "匹配",
+    "position": "位置",
+    "groups": "分组",
+    "showReplace": "显示替换",
+    "replacement": "替换为",
+    "replacedPlaceholder": "替换后的文本会显示在这里"
+  },
+  "jwtDecoder": {
+    "category": "开发者",
+    "title": "JWT 解码",
+    "intro": "打开 JSON Web Token 看清里面的内容——头部、声明和过期时间——有密钥时还能校验 HMAC 签名。令牌不会离开你的浏览器。",
+    "token": "令牌",
+    "algorithm": "算法",
+    "header": "头部",
+    "payload": "载荷",
+    "times": "令牌中的时间",
+    "expired": "已过期",
+    "verify": "校验签名",
+    "verifyHint": "这里只能校验 HS256、HS384 和 HS512，其余需要公钥。你输入的密钥只留在浏览器里。",
+    "secret": "密钥",
+    "secretPlaceholder": "签发该令牌所用的密钥",
+    "check": "校验",
+    "result": {
+      "valid": "签名与该密钥一致。",
+      "invalid": "签名与该密钥不一致。",
+      "unsupported": "{{algorithm}} 需要公钥，本工具不处理。"
+    },
+    "failed": "无法读取这个令牌"
   }
 }

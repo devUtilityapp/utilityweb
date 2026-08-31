@@ -117,6 +117,11 @@ const CATEGORIES: Array<ToolCategory> = [
 				to: "/uuid-generator",
 				keywords: ["uuid", "guid", "identifier", "v4", "v7", "random"],
 			},
+			{
+				key: "passwordGenerator",
+				to: "/password-generator",
+				keywords: ["password", "passphrase", "random", "secure", "generator"],
+			},
 		],
 	},
 	{
@@ -136,6 +141,21 @@ const CATEGORIES: Array<ToolCategory> = [
 				key: "colorConverter",
 				to: "/color-converter",
 				keywords: ["color", "colour", "hex", "rgb", "hsl", "cmyk", "contrast"],
+			},
+			{
+				key: "jwtDecoder",
+				to: "/jwt-decoder",
+				keywords: ["jwt", "token", "decode", "bearer", "claims", "hs256"],
+			},
+			{
+				key: "timestampConverter",
+				to: "/timestamp-converter",
+				keywords: ["timestamp", "unix", "epoch", "iso", "date", "convert"],
+			},
+			{
+				key: "regexTester",
+				to: "/regex-tester",
+				keywords: ["regex", "regexp", "pattern", "match", "replace"],
 			},
 		],
 	},
@@ -176,6 +196,24 @@ const CATEGORIES: Array<ToolCategory> = [
 				key: "lcm",
 				to: "/calculator/lcm",
 				keywords: ["lcm", "multiple", "math", "calculator"],
+			},
+			{
+				key: "unitConverter",
+				to: "/unit-converter",
+				keywords: [
+					"unit",
+					"convert",
+					"length",
+					"weight",
+					"temperature",
+					"km",
+					"mile",
+				],
+			},
+			{
+				key: "dateCalculator",
+				to: "/date-calculator",
+				keywords: ["date", "days", "between", "difference", "add", "duration"],
 			},
 		],
 	},

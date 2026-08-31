@@ -102,6 +102,30 @@
     "lcm": {
       "name": "最小公倍数",
       "short": "最小公倍数"
+    },
+    "unitConverter": {
+      "name": "単位変換",
+      "short": "単位変換"
+    },
+    "passwordGenerator": {
+      "name": "パスワード生成",
+      "short": "パスワード生成"
+    },
+    "dateCalculator": {
+      "name": "日付計算",
+      "short": "日付計算"
+    },
+    "timestampConverter": {
+      "name": "タイムスタンプ変換",
+      "short": "タイムスタンプ変換"
+    },
+    "regexTester": {
+      "name": "正規表現テスター",
+      "short": "正規表現テスター"
+    },
+    "jwtDecoder": {
+      "name": "JWT デコーダー",
+      "short": "jwt デコーダー"
     }
   },
   "toolsPage": {
@@ -552,5 +576,198 @@
   },
   "update": {
     "ready": "新しいバージョンがあります。押して再読み込みしてください。"
+  },
+  "unitConverter": {
+    "category": "計算",
+    "title": "単位変換",
+    "intro": "長さ・重さ・温度・面積・体積・速さ・データ・時間をメートル法とヤード・ポンド法のあいだで変換します。計算はすべてブラウザ内で行われます。",
+    "value": "値",
+    "from": "変換元",
+    "to": "変換先",
+    "swap": "2 つの単位を入れ替える",
+    "allUnits": "すべての単位で見る",
+    "categories": {
+      "length": "長さ",
+      "weight": "重さ",
+      "temperature": "温度",
+      "area": "面積",
+      "volume": "体積",
+      "speed": "速さ",
+      "data": "データ",
+      "time": "時間"
+    },
+    "units": {
+      "meter": "メートル",
+      "kilometer": "キロメートル",
+      "centimeter": "センチメートル",
+      "millimeter": "ミリメートル",
+      "mile": "マイル",
+      "yard": "ヤード",
+      "foot": "フィート",
+      "inch": "インチ",
+      "kilogram": "キログラム",
+      "gram": "グラム",
+      "milligram": "ミリグラム",
+      "tonne": "トン",
+      "pound": "ポンド",
+      "ounce": "オンス",
+      "celsius": "摂氏",
+      "fahrenheit": "華氏",
+      "kelvin": "ケルビン",
+      "squareMeter": "平方メートル",
+      "squareKilometer": "平方キロメートル",
+      "squareFoot": "平方フィート",
+      "acre": "エーカー",
+      "hectare": "ヘクタール",
+      "pyeong": "坪",
+      "liter": "リットル",
+      "milliliter": "ミリリットル",
+      "cubicMeter": "立方メートル",
+      "gallon": "ガロン",
+      "quart": "クォート",
+      "cup": "カップ",
+      "meterPerSecond": "メートル毎秒",
+      "kilometerPerHour": "キロメートル毎時",
+      "milePerHour": "マイル毎時",
+      "knot": "ノット",
+      "byte": "バイト",
+      "kilobyte": "キロバイト",
+      "megabyte": "メガバイト",
+      "gigabyte": "ギガバイト",
+      "terabyte": "テラバイト",
+      "second": "秒",
+      "millisecond": "ミリ秒",
+      "minute": "分",
+      "hour": "時間",
+      "day": "日",
+      "week": "週"
+    }
+  },
+  "passwordGenerator": {
+    "category": "ジェネレーター",
+    "title": "パスワード生成",
+    "intro": "使うに値するだけ長く、混ざったパスワードを作ります。ブラウザの暗号用乱数から生成され、どこにも送信されません。",
+    "length": "長さ",
+    "lowercase": "小文字",
+    "uppercase": "大文字",
+    "digits": "数字",
+    "symbols": "記号",
+    "avoidAmbiguous": "紛らわしい文字を除く（0 O 1 l I）",
+    "howMany": "個数",
+    "generate": "生成",
+    "strength": "強度",
+    "bits": "エントロピー {{bits}} ビット",
+    "level": {
+      "weak": "弱い",
+      "fair": "ふつう",
+      "strong": "強い",
+      "excellent": "非常に強い"
+    },
+    "failed": "この設定ではパスワードを作れません"
+  },
+  "dateCalculator": {
+    "category": "計算",
+    "title": "日付計算",
+    "intro": "2 つの日付のあいだの日数を数えたり、ある日付から一定期間離れた日を求めたりします。週末と月の長さを正しく扱います。",
+    "modeBetween": "2 つの日付のあいだ",
+    "modeShift": "加算・減算",
+    "from": "開始",
+    "to": "終了",
+    "startDate": "基準の日付",
+    "amount": "期間",
+    "unitLabel": "単位",
+    "unit": {
+      "days": "日",
+      "weeks": "週",
+      "months": "か月",
+      "years": "年"
+    },
+    "totalDays": "{{count}} 日",
+    "breakdown": "{{years}} 年 {{months}} か月 {{days}} 日",
+    "weeks": "週",
+    "businessDays": "営業日",
+    "hours": "時間",
+    "minutes": "分",
+    "resultLabel": "結果",
+    "weekday": {
+      "0": "日曜日",
+      "1": "月曜日",
+      "2": "火曜日",
+      "3": "水曜日",
+      "4": "木曜日",
+      "5": "金曜日",
+      "6": "土曜日"
+    }
+  },
+  "timestampConverter": {
+    "category": "開発者",
+    "title": "タイムスタンプ変換",
+    "intro": "Unix タイムスタンプを読める日付に、日付をタイムスタンプに戻します。秒かミリ秒かは自動で見分けます。",
+    "now": "現在の Unix 時刻",
+    "useNow": "この値を使う",
+    "fromTimestamp": "タイムスタンプから",
+    "fromDate": "日付から",
+    "unit": {
+      "seconds": "秒",
+      "milliseconds": "ミリ秒"
+    },
+    "seconds": "秒",
+    "milliseconds": "ミリ秒",
+    "local": "現地時刻",
+    "past": "{{amount}} {{unit}}前",
+    "future": "{{amount}} {{unit}}後",
+    "relative": {
+      "second": "秒",
+      "minute": "分",
+      "hour": "時間",
+      "day": "日",
+      "month": "か月",
+      "year": "年"
+    }
+  },
+  "regexTester": {
+    "category": "開発者",
+    "title": "正規表現テスター",
+    "intro": "正規表現を文章に当てて、一致した箇所を色分けし、取り出したグループを並べます。貼り付けた文章はブラウザの外に出ません。",
+    "pattern": "パターン",
+    "testText": "試す文章",
+    "testPlaceholder": "探したい文章を貼り付けてください",
+    "flag": {
+      "global": "すべて探す",
+      "ignoreCase": "大文字小文字を無視",
+      "multiline": "^ と $ を行ごとに",
+      "dotAll": ". が改行にも一致",
+      "unicode": "Unicode モード"
+    },
+    "matchCount": "{{count}} 件一致",
+    "truncated": "先頭 1,000 件のみ表示",
+    "match": "一致",
+    "position": "位置",
+    "groups": "グループ",
+    "showReplace": "置換を表示",
+    "replacement": "置換後",
+    "replacedPlaceholder": "置換した文章がここに出ます"
+  },
+  "jwtDecoder": {
+    "category": "開発者",
+    "title": "JWT デコーダー",
+    "intro": "JSON Web Token の中身——ヘッダー、クレーム、失効時刻——を開いて確認し、秘密鍵があれば HMAC 署名まで検証します。トークンはブラウザの外に出ません。",
+    "token": "トークン",
+    "algorithm": "アルゴリズム",
+    "header": "ヘッダー",
+    "payload": "ペイロード",
+    "times": "トークン内の時刻",
+    "expired": "期限切れ",
+    "verify": "署名を検証",
+    "verifyHint": "ここで検証できるのは HS256、HS384、HS512 だけです。ほかは公開鍵が必要になります。入力した秘密鍵はブラウザ内にとどまります。",
+    "secret": "秘密鍵",
+    "secretPlaceholder": "このトークンに署名した鍵",
+    "check": "検証",
+    "result": {
+      "valid": "署名はこの秘密鍵と一致します。",
+      "invalid": "署名はこの秘密鍵と一致しません。",
+      "unsupported": "{{algorithm}} は公開鍵が必要なため、ここでは扱えません。"
+    },
+    "failed": "このトークンは読み取れません"
   }
 }

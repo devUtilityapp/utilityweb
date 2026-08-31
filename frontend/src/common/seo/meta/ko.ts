@@ -102,6 +102,36 @@ export const META_KO: Record<string, PageMeta> = {
 		description:
 			"낱말, 공백 포함·제외 글자 수, 문장, 문단을 세고 읽는 시간과 자주 쓴 낱말을 보여 줍니다. 적은 글은 업로드되지 않습니다.",
 	},
+	"/unit-converter": {
+		title: "단위 변환기 - 길이·무게·온도 변환 - Utility web",
+		description:
+			"길이, 무게, 온도, 넓이, 부피, 속도, 데이터, 시간을 미터법과 야드파운드법 사이에서 바꿉니다. 무료이고 즉시 계산되며 브라우저에서 돌아갑니다.",
+	},
+	"/password-generator": {
+		title: "비밀번호 생성기 - 무료, 저장하지 않음 - Utility web",
+		description:
+			"원하는 길이와 글자 종류로 무작위 비밀번호를 만듭니다. 브라우저의 암호용 난수 생성기가 만들며 어디로도 보내지 않습니다.",
+	},
+	"/date-calculator": {
+		title: "날짜 계산기 - 두 날짜 사이 일수 - Utility web",
+		description:
+			"두 날짜 사이의 일수, 주, 영업일을 세거나 어떤 날짜에서 일정 기간 떨어진 날을 찾습니다. 달의 길이와 윤년을 제대로 반영합니다.",
+	},
+	"/timestamp-converter": {
+		title: "유닉스 타임스탬프 변환 - epoch를 날짜로 - Utility web",
+		description:
+			"유닉스 타임스탬프를 읽을 수 있는 날짜로, 날짜를 다시 타임스탬프로 바꿉니다. 초와 밀리초를 자동으로 가려내고 ISO·UTC·현지 시각을 함께 보여 줍니다.",
+	},
+	"/regex-tester": {
+		title: "정규식 테스터 - 정규표현식 검사 - Utility web",
+		description:
+			"정규식을 글에 대고 시험해 맞은 자리를 표시하고, 잡은 그룹을 늘어놓고, 치환 결과를 미리 봅니다. 붙여 넣은 글은 업로드되지 않습니다.",
+	},
+	"/jwt-decoder": {
+		title: "JWT 디코더 - 토큰 열어 보고 검증 - Utility web",
+		description:
+			"JSON 웹 토큰의 헤더, 클레임, 만료 시각을 열어 보고 HS256 서명을 비밀 값으로 확인합니다. 토큰은 브라우저 안에 머뭅니다.",
+	},
 	"/calculator/gcd": {
 		title: "최대공약수 계산기 - Utility web",
 		description:

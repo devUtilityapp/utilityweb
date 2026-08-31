@@ -102,6 +102,36 @@ export const META_EN: Record<string, PageMeta> = {
 		description:
 			"Convert a color between HEX, RGB, HSL, HSV and CMYK, check its WCAG contrast, and pull a set of tints and shades. Runs in your browser.",
 	},
+	"/unit-converter": {
+		title: "Unit converter - length, weight, temperature - Utility web",
+		description:
+			"Convert between metric and imperial units for length, weight, temperature, area, volume, speed, data and time. Free, instant, and it runs in your browser.",
+	},
+	"/password-generator": {
+		title: "Strong password generator - free, nothing stored - Utility web",
+		description:
+			"Generate a strong random password with the length and character types you choose. Created by your browser's cryptographic generator and never sent anywhere.",
+	},
+	"/date-calculator": {
+		title: "Date calculator - days between dates - Utility web",
+		description:
+			"Count the days, weeks and business days between two dates, or find the date a set period before or after another. Calendar months and leap years handled.",
+	},
+	"/timestamp-converter": {
+		title: "Unix timestamp converter - epoch to date - Utility web",
+		description:
+			"Convert a Unix timestamp to a readable date and back again. Seconds and milliseconds are detected automatically, with ISO, UTC and local time side by side.",
+	},
+	"/regex-tester": {
+		title: "Regex tester - test and debug regular expressions - Utility web",
+		description:
+			"Test a regular expression against your text with every match highlighted, captured groups listed and a replacement preview. Nothing you paste is uploaded.",
+	},
+	"/jwt-decoder": {
+		title: "JWT decoder - read and verify a token - Utility web",
+		description:
+			"Decode a JSON Web Token to see its header, claims and expiry, and check an HS256 signature against your secret. The token stays in your browser.",
+	},
 	"/calculator/gcd": {
 		title: "Greatest common divisor calculator - Utility web",
 		description:

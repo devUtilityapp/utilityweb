@@ -102,6 +102,36 @@ export const META_JA: Record<string, PageMeta> = {
 		description:
 			"語数、空白ありなしの文字数、文の数、段落数を数え、読むのにかかる時間とよく使った語を示します。書いた内容はアップロードされません。",
 	},
+	"/unit-converter": {
+		title: "単位変換 - 長さ・重さ・温度 - Utility web",
+		description:
+			"長さ、重さ、温度、面積、体積、速さ、データ、時間をメートル法とヤード・ポンド法のあいだで変換します。無料で即時、ブラウザ内で動きます。",
+	},
+	"/password-generator": {
+		title: "強力なパスワード生成 - 無料・保存なし - Utility web",
+		description:
+			"好きな長さと文字種でランダムなパスワードを作ります。ブラウザの暗号用乱数が生成し、どこにも送信されません。",
+	},
+	"/date-calculator": {
+		title: "日付計算 - 2 つの日付の日数 - Utility web",
+		description:
+			"2 つの日付のあいだの日数・週数・営業日を数え、ある日付から一定期間離れた日を求めます。月の長さとうるう年を正しく扱います。",
+	},
+	"/timestamp-converter": {
+		title: "Unix タイムスタンプ変換 - epoch を日付に - Utility web",
+		description:
+			"Unix タイムスタンプを読める日付に、日付をタイムスタンプに戻します。秒とミリ秒を自動で判別し、ISO・UTC・現地時刻を並べて示します。",
+	},
+	"/regex-tester": {
+		title: "正規表現テスター - 正規表現の確認とデバッグ - Utility web",
+		description:
+			"正規表現を文章に当てて一致箇所を色分けし、取り出したグループを並べ、置換結果を先に確かめます。貼り付けた内容はアップロードされません。",
+	},
+	"/jwt-decoder": {
+		title: "JWT デコーダー - トークンの確認と検証 - Utility web",
+		description:
+			"JSON Web Token のヘッダー、クレーム、失効時刻を確認し、HS256 署名を秘密鍵で検証します。トークンはブラウザ内にとどまります。",
+	},
 	"/calculator/gcd": {
 		title: "最大公約数の計算 - Utility web",
 		description:

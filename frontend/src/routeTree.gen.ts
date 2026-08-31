@@ -14,19 +14,25 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as YoutubeDownloaderImport } from './routes/youtube-downloader'
 import { Route as WordCounterImport } from './routes/word-counter'
 import { Route as UuidGeneratorImport } from './routes/uuid-generator'
+import { Route as UnitConverterImport } from './routes/unit-converter'
 import { Route as ToolsImport } from './routes/tools'
+import { Route as TimestampConverterImport } from './routes/timestamp-converter'
 import { Route as TextDiffImport } from './routes/text-diff'
 import { Route as SplitPdfImport } from './routes/split-pdf'
+import { Route as RegexTesterImport } from './routes/regex-tester'
 import { Route as QrCodeImport } from './routes/qr-code'
 import { Route as PptxViewerImport } from './routes/pptx-viewer'
 import { Route as PdfToPptxImport } from './routes/pdf-to-pptx'
 import { Route as PdfToImagesImport } from './routes/pdf-to-images'
+import { Route as PasswordGeneratorImport } from './routes/password-generator'
 import { Route as OrganizePdfImport } from './routes/organize-pdf'
 import { Route as MergePdfImport } from './routes/merge-pdf'
+import { Route as JwtDecoderImport } from './routes/jwt-decoder'
 import { Route as JsonFormatterImport } from './routes/json-formatter'
 import { Route as ImagesToPdfImport } from './routes/images-to-pdf'
 import { Route as ImageConverterImport } from './routes/image-converter'
 import { Route as HashGeneratorImport } from './routes/hash-generator'
+import { Route as DateCalculatorImport } from './routes/date-calculator'
 import { Route as CsvToJsonImport } from './routes/csv-to-json'
 import { Route as CompressPdfImport } from './routes/compress-pdf'
 import { Route as ColorConverterImport } from './routes/color-converter'
@@ -38,19 +44,25 @@ import { Route as CalculatorLcmImport } from './routes/calculator/lcm'
 import { Route as CalculatorGcdImport } from './routes/calculator/gcd'
 import { Route as LangWordCounterImport } from './routes/$lang/word-counter'
 import { Route as LangUuidGeneratorImport } from './routes/$lang/uuid-generator'
+import { Route as LangUnitConverterImport } from './routes/$lang/unit-converter'
 import { Route as LangToolsImport } from './routes/$lang/tools'
+import { Route as LangTimestampConverterImport } from './routes/$lang/timestamp-converter'
 import { Route as LangTextDiffImport } from './routes/$lang/text-diff'
 import { Route as LangSplitPdfImport } from './routes/$lang/split-pdf'
+import { Route as LangRegexTesterImport } from './routes/$lang/regex-tester'
 import { Route as LangQrCodeImport } from './routes/$lang/qr-code'
 import { Route as LangPptxViewerImport } from './routes/$lang/pptx-viewer'
 import { Route as LangPdfToPptxImport } from './routes/$lang/pdf-to-pptx'
 import { Route as LangPdfToImagesImport } from './routes/$lang/pdf-to-images'
+import { Route as LangPasswordGeneratorImport } from './routes/$lang/password-generator'
 import { Route as LangOrganizePdfImport } from './routes/$lang/organize-pdf'
 import { Route as LangMergePdfImport } from './routes/$lang/merge-pdf'
+import { Route as LangJwtDecoderImport } from './routes/$lang/jwt-decoder'
 import { Route as LangJsonFormatterImport } from './routes/$lang/json-formatter'
 import { Route as LangImagesToPdfImport } from './routes/$lang/images-to-pdf'
 import { Route as LangImageConverterImport } from './routes/$lang/image-converter'
 import { Route as LangHashGeneratorImport } from './routes/$lang/hash-generator'
+import { Route as LangDateCalculatorImport } from './routes/$lang/date-calculator'
 import { Route as LangCsvToJsonImport } from './routes/$lang/csv-to-json'
 import { Route as LangCompressPdfImport } from './routes/$lang/compress-pdf'
 import { Route as LangColorConverterImport } from './routes/$lang/color-converter'
@@ -75,8 +87,18 @@ const UuidGeneratorRoute = UuidGeneratorImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const UnitConverterRoute = UnitConverterImport.update({
+  path: '/unit-converter',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const ToolsRoute = ToolsImport.update({
   path: '/tools',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TimestampConverterRoute = TimestampConverterImport.update({
+  path: '/timestamp-converter',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -87,6 +109,11 @@ const TextDiffRoute = TextDiffImport.update({
 
 const SplitPdfRoute = SplitPdfImport.update({
   path: '/split-pdf',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const RegexTesterRoute = RegexTesterImport.update({
+  path: '/regex-tester',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -110,6 +137,11 @@ const PdfToImagesRoute = PdfToImagesImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PasswordGeneratorRoute = PasswordGeneratorImport.update({
+  path: '/password-generator',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const OrganizePdfRoute = OrganizePdfImport.update({
   path: '/organize-pdf',
   getParentRoute: () => rootRoute,
@@ -117,6 +149,11 @@ const OrganizePdfRoute = OrganizePdfImport.update({
 
 const MergePdfRoute = MergePdfImport.update({
   path: '/merge-pdf',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const JwtDecoderRoute = JwtDecoderImport.update({
+  path: '/jwt-decoder',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -137,6 +174,11 @@ const ImageConverterRoute = ImageConverterImport.update({
 
 const HashGeneratorRoute = HashGeneratorImport.update({
   path: '/hash-generator',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DateCalculatorRoute = DateCalculatorImport.update({
+  path: '/date-calculator',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -195,8 +237,18 @@ const LangUuidGeneratorRoute = LangUuidGeneratorImport.update({
   getParentRoute: () => LangRoute,
 } as any)
 
+const LangUnitConverterRoute = LangUnitConverterImport.update({
+  path: '/unit-converter',
+  getParentRoute: () => LangRoute,
+} as any)
+
 const LangToolsRoute = LangToolsImport.update({
   path: '/tools',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangTimestampConverterRoute = LangTimestampConverterImport.update({
+  path: '/timestamp-converter',
   getParentRoute: () => LangRoute,
 } as any)
 
@@ -207,6 +259,11 @@ const LangTextDiffRoute = LangTextDiffImport.update({
 
 const LangSplitPdfRoute = LangSplitPdfImport.update({
   path: '/split-pdf',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangRegexTesterRoute = LangRegexTesterImport.update({
+  path: '/regex-tester',
   getParentRoute: () => LangRoute,
 } as any)
 
@@ -230,6 +287,11 @@ const LangPdfToImagesRoute = LangPdfToImagesImport.update({
   getParentRoute: () => LangRoute,
 } as any)
 
+const LangPasswordGeneratorRoute = LangPasswordGeneratorImport.update({
+  path: '/password-generator',
+  getParentRoute: () => LangRoute,
+} as any)
+
 const LangOrganizePdfRoute = LangOrganizePdfImport.update({
   path: '/organize-pdf',
   getParentRoute: () => LangRoute,
@@ -237,6 +299,11 @@ const LangOrganizePdfRoute = LangOrganizePdfImport.update({
 
 const LangMergePdfRoute = LangMergePdfImport.update({
   path: '/merge-pdf',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangJwtDecoderRoute = LangJwtDecoderImport.update({
+  path: '/jwt-decoder',
   getParentRoute: () => LangRoute,
 } as any)
 
@@ -257,6 +324,11 @@ const LangImageConverterRoute = LangImageConverterImport.update({
 
 const LangHashGeneratorRoute = LangHashGeneratorImport.update({
   path: '/hash-generator',
+  getParentRoute: () => LangRoute,
+} as any)
+
+const LangDateCalculatorRoute = LangDateCalculatorImport.update({
+  path: '/date-calculator',
   getParentRoute: () => LangRoute,
 } as any)
 
@@ -336,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CsvToJsonImport
       parentRoute: typeof rootRoute
     }
+    '/date-calculator': {
+      id: '/date-calculator'
+      path: '/date-calculator'
+      fullPath: '/date-calculator'
+      preLoaderRoute: typeof DateCalculatorImport
+      parentRoute: typeof rootRoute
+    }
     '/hash-generator': {
       id: '/hash-generator'
       path: '/hash-generator'
@@ -364,6 +443,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JsonFormatterImport
       parentRoute: typeof rootRoute
     }
+    '/jwt-decoder': {
+      id: '/jwt-decoder'
+      path: '/jwt-decoder'
+      fullPath: '/jwt-decoder'
+      preLoaderRoute: typeof JwtDecoderImport
+      parentRoute: typeof rootRoute
+    }
     '/merge-pdf': {
       id: '/merge-pdf'
       path: '/merge-pdf'
@@ -376,6 +462,13 @@ declare module '@tanstack/react-router' {
       path: '/organize-pdf'
       fullPath: '/organize-pdf'
       preLoaderRoute: typeof OrganizePdfImport
+      parentRoute: typeof rootRoute
+    }
+    '/password-generator': {
+      id: '/password-generator'
+      path: '/password-generator'
+      fullPath: '/password-generator'
+      preLoaderRoute: typeof PasswordGeneratorImport
       parentRoute: typeof rootRoute
     }
     '/pdf-to-images': {
@@ -406,6 +499,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QrCodeImport
       parentRoute: typeof rootRoute
     }
+    '/regex-tester': {
+      id: '/regex-tester'
+      path: '/regex-tester'
+      fullPath: '/regex-tester'
+      preLoaderRoute: typeof RegexTesterImport
+      parentRoute: typeof rootRoute
+    }
     '/split-pdf': {
       id: '/split-pdf'
       path: '/split-pdf'
@@ -420,11 +520,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TextDiffImport
       parentRoute: typeof rootRoute
     }
+    '/timestamp-converter': {
+      id: '/timestamp-converter'
+      path: '/timestamp-converter'
+      fullPath: '/timestamp-converter'
+      preLoaderRoute: typeof TimestampConverterImport
+      parentRoute: typeof rootRoute
+    }
     '/tools': {
       id: '/tools'
       path: '/tools'
       fullPath: '/tools'
       preLoaderRoute: typeof ToolsImport
+      parentRoute: typeof rootRoute
+    }
+    '/unit-converter': {
+      id: '/unit-converter'
+      path: '/unit-converter'
+      fullPath: '/unit-converter'
+      preLoaderRoute: typeof UnitConverterImport
       parentRoute: typeof rootRoute
     }
     '/uuid-generator': {
@@ -476,6 +590,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangCsvToJsonImport
       parentRoute: typeof LangImport
     }
+    '/$lang/date-calculator': {
+      id: '/$lang/date-calculator'
+      path: '/date-calculator'
+      fullPath: '/$lang/date-calculator'
+      preLoaderRoute: typeof LangDateCalculatorImport
+      parentRoute: typeof LangImport
+    }
     '/$lang/hash-generator': {
       id: '/$lang/hash-generator'
       path: '/hash-generator'
@@ -504,6 +625,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangJsonFormatterImport
       parentRoute: typeof LangImport
     }
+    '/$lang/jwt-decoder': {
+      id: '/$lang/jwt-decoder'
+      path: '/jwt-decoder'
+      fullPath: '/$lang/jwt-decoder'
+      preLoaderRoute: typeof LangJwtDecoderImport
+      parentRoute: typeof LangImport
+    }
     '/$lang/merge-pdf': {
       id: '/$lang/merge-pdf'
       path: '/merge-pdf'
@@ -516,6 +644,13 @@ declare module '@tanstack/react-router' {
       path: '/organize-pdf'
       fullPath: '/$lang/organize-pdf'
       preLoaderRoute: typeof LangOrganizePdfImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/password-generator': {
+      id: '/$lang/password-generator'
+      path: '/password-generator'
+      fullPath: '/$lang/password-generator'
+      preLoaderRoute: typeof LangPasswordGeneratorImport
       parentRoute: typeof LangImport
     }
     '/$lang/pdf-to-images': {
@@ -546,6 +681,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangQrCodeImport
       parentRoute: typeof LangImport
     }
+    '/$lang/regex-tester': {
+      id: '/$lang/regex-tester'
+      path: '/regex-tester'
+      fullPath: '/$lang/regex-tester'
+      preLoaderRoute: typeof LangRegexTesterImport
+      parentRoute: typeof LangImport
+    }
     '/$lang/split-pdf': {
       id: '/$lang/split-pdf'
       path: '/split-pdf'
@@ -560,11 +702,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangTextDiffImport
       parentRoute: typeof LangImport
     }
+    '/$lang/timestamp-converter': {
+      id: '/$lang/timestamp-converter'
+      path: '/timestamp-converter'
+      fullPath: '/$lang/timestamp-converter'
+      preLoaderRoute: typeof LangTimestampConverterImport
+      parentRoute: typeof LangImport
+    }
     '/$lang/tools': {
       id: '/$lang/tools'
       path: '/tools'
       fullPath: '/$lang/tools'
       preLoaderRoute: typeof LangToolsImport
+      parentRoute: typeof LangImport
+    }
+    '/$lang/unit-converter': {
+      id: '/$lang/unit-converter'
+      path: '/unit-converter'
+      fullPath: '/$lang/unit-converter'
+      preLoaderRoute: typeof LangUnitConverterImport
       parentRoute: typeof LangImport
     }
     '/$lang/uuid-generator': {
@@ -628,19 +784,25 @@ export const routeTree = rootRoute.addChildren({
     LangColorConverterRoute,
     LangCompressPdfRoute,
     LangCsvToJsonRoute,
+    LangDateCalculatorRoute,
     LangHashGeneratorRoute,
     LangImageConverterRoute,
     LangImagesToPdfRoute,
     LangJsonFormatterRoute,
+    LangJwtDecoderRoute,
     LangMergePdfRoute,
     LangOrganizePdfRoute,
+    LangPasswordGeneratorRoute,
     LangPdfToImagesRoute,
     LangPdfToPptxRoute,
     LangPptxViewerRoute,
     LangQrCodeRoute,
+    LangRegexTesterRoute,
     LangSplitPdfRoute,
     LangTextDiffRoute,
+    LangTimestampConverterRoute,
     LangToolsRoute,
+    LangUnitConverterRoute,
     LangUuidGeneratorRoute,
     LangWordCounterRoute,
     LangIndexRoute,
@@ -651,19 +813,25 @@ export const routeTree = rootRoute.addChildren({
   ColorConverterRoute,
   CompressPdfRoute,
   CsvToJsonRoute,
+  DateCalculatorRoute,
   HashGeneratorRoute,
   ImageConverterRoute,
   ImagesToPdfRoute,
   JsonFormatterRoute,
+  JwtDecoderRoute,
   MergePdfRoute,
   OrganizePdfRoute,
+  PasswordGeneratorRoute,
   PdfToImagesRoute,
   PdfToPptxRoute,
   PptxViewerRoute,
   QrCodeRoute,
+  RegexTesterRoute,
   SplitPdfRoute,
   TextDiffRoute,
+  TimestampConverterRoute,
   ToolsRoute,
+  UnitConverterRoute,
   UuidGeneratorRoute,
   WordCounterRoute,
   YoutubeDownloaderRoute,
@@ -685,19 +853,25 @@ export const routeTree = rootRoute.addChildren({
         "/color-converter",
         "/compress-pdf",
         "/csv-to-json",
+        "/date-calculator",
         "/hash-generator",
         "/image-converter",
         "/images-to-pdf",
         "/json-formatter",
+        "/jwt-decoder",
         "/merge-pdf",
         "/organize-pdf",
+        "/password-generator",
         "/pdf-to-images",
         "/pdf-to-pptx",
         "/pptx-viewer",
         "/qr-code",
+        "/regex-tester",
         "/split-pdf",
         "/text-diff",
+        "/timestamp-converter",
         "/tools",
+        "/unit-converter",
         "/uuid-generator",
         "/word-counter",
         "/youtube-downloader",
@@ -715,19 +889,25 @@ export const routeTree = rootRoute.addChildren({
         "/$lang/color-converter",
         "/$lang/compress-pdf",
         "/$lang/csv-to-json",
+        "/$lang/date-calculator",
         "/$lang/hash-generator",
         "/$lang/image-converter",
         "/$lang/images-to-pdf",
         "/$lang/json-formatter",
+        "/$lang/jwt-decoder",
         "/$lang/merge-pdf",
         "/$lang/organize-pdf",
+        "/$lang/password-generator",
         "/$lang/pdf-to-images",
         "/$lang/pdf-to-pptx",
         "/$lang/pptx-viewer",
         "/$lang/qr-code",
+        "/$lang/regex-tester",
         "/$lang/split-pdf",
         "/$lang/text-diff",
+        "/$lang/timestamp-converter",
         "/$lang/tools",
+        "/$lang/unit-converter",
         "/$lang/uuid-generator",
         "/$lang/word-counter",
         "/$lang/",
@@ -747,6 +927,9 @@ export const routeTree = rootRoute.addChildren({
     "/csv-to-json": {
       "filePath": "csv-to-json.ts"
     },
+    "/date-calculator": {
+      "filePath": "date-calculator.ts"
+    },
     "/hash-generator": {
       "filePath": "hash-generator.ts"
     },
@@ -759,11 +942,17 @@ export const routeTree = rootRoute.addChildren({
     "/json-formatter": {
       "filePath": "json-formatter.ts"
     },
+    "/jwt-decoder": {
+      "filePath": "jwt-decoder.ts"
+    },
     "/merge-pdf": {
       "filePath": "merge-pdf.ts"
     },
     "/organize-pdf": {
       "filePath": "organize-pdf.ts"
+    },
+    "/password-generator": {
+      "filePath": "password-generator.ts"
     },
     "/pdf-to-images": {
       "filePath": "pdf-to-images.ts"
@@ -777,14 +966,23 @@ export const routeTree = rootRoute.addChildren({
     "/qr-code": {
       "filePath": "qr-code.ts"
     },
+    "/regex-tester": {
+      "filePath": "regex-tester.ts"
+    },
     "/split-pdf": {
       "filePath": "split-pdf.ts"
     },
     "/text-diff": {
       "filePath": "text-diff.ts"
     },
+    "/timestamp-converter": {
+      "filePath": "timestamp-converter.ts"
+    },
     "/tools": {
       "filePath": "tools.ts"
+    },
+    "/unit-converter": {
+      "filePath": "unit-converter.ts"
     },
     "/uuid-generator": {
       "filePath": "uuid-generator.ts"
@@ -811,6 +1009,10 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "$lang/csv-to-json.ts",
       "parent": "/$lang"
     },
+    "/$lang/date-calculator": {
+      "filePath": "$lang/date-calculator.ts",
+      "parent": "/$lang"
+    },
     "/$lang/hash-generator": {
       "filePath": "$lang/hash-generator.ts",
       "parent": "/$lang"
@@ -827,12 +1029,20 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "$lang/json-formatter.ts",
       "parent": "/$lang"
     },
+    "/$lang/jwt-decoder": {
+      "filePath": "$lang/jwt-decoder.ts",
+      "parent": "/$lang"
+    },
     "/$lang/merge-pdf": {
       "filePath": "$lang/merge-pdf.ts",
       "parent": "/$lang"
     },
     "/$lang/organize-pdf": {
       "filePath": "$lang/organize-pdf.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/password-generator": {
+      "filePath": "$lang/password-generator.ts",
       "parent": "/$lang"
     },
     "/$lang/pdf-to-images": {
@@ -851,6 +1061,10 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "$lang/qr-code.ts",
       "parent": "/$lang"
     },
+    "/$lang/regex-tester": {
+      "filePath": "$lang/regex-tester.ts",
+      "parent": "/$lang"
+    },
     "/$lang/split-pdf": {
       "filePath": "$lang/split-pdf.ts",
       "parent": "/$lang"
@@ -859,8 +1073,16 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "$lang/text-diff.ts",
       "parent": "/$lang"
     },
+    "/$lang/timestamp-converter": {
+      "filePath": "$lang/timestamp-converter.ts",
+      "parent": "/$lang"
+    },
     "/$lang/tools": {
       "filePath": "$lang/tools.ts",
+      "parent": "/$lang"
+    },
+    "/$lang/unit-converter": {
+      "filePath": "$lang/unit-converter.ts",
       "parent": "/$lang"
     },
     "/$lang/uuid-generator": {

@@ -710,6 +710,241 @@ export const GUIDES_EN: Record<string, PageGuide> = {
 			},
 		],
 	},
+	"/unit-converter": {
+		heading: "Unit converter",
+		lead: "This converter moves a number between the units people actually have to reconcile: a recipe in cups against a kitchen scale in grams, a height in feet against a form that wants centimetres, a hard drive quoted in TB against a folder measured in GB. It covers length, weight, temperature, area, volume, speed, data and time, and shows the value in every unit of the category at once, so you can read off the one you need without converting twice. It runs in the page — no request goes out when you type.",
+		stepsTitle: "How to convert units",
+		steps: [
+			"Pick a category — length, weight, temperature and so on. The unit lists change with it.",
+			"Type the number you have. It converts as you type; there is no button to press.",
+			"Choose the unit you are converting from and the one you want. The arrows between them swap the two if you picked them the wrong way round.",
+			"Read the large result, or look at the table below it, which shows the same value in every unit of that category.",
+		],
+		faqTitle: "Questions about converting units",
+		faq: [
+			{
+				question: "Why is temperature handled differently from the rest?",
+				answer:
+					"Because its scales do not start at the same place. Ten metres is ten times one metre, but ten degrees Celsius is not ten times one degree — zero means something different on each scale. Temperature is converted with the proper formula rather than by multiplying.",
+			},
+			{
+				question: "Does a kilobyte mean 1,000 or 1,024 bytes here?",
+				answer:
+					"1,024. This tool uses the binary steps that operating systems and file managers report, so the numbers match what you see on your own disk. Drive manufacturers use 1,000, which is why a 1 TB drive shows up as about 931 GB.",
+			},
+			{
+				question: "Which gallon and which cup are these?",
+				answer:
+					"The US liquid gallon of 3.785 litres and the US cup of about 237 millilitres. The imperial gallon used in the UK is roughly 4.546 litres, so a recipe written in one is not interchangeable with the other.",
+			},
+			{
+				question: "Why do some results have so many decimal places?",
+				answer:
+					"Because the exact conversion needs them. The result keeps enough digits to stay accurate for the size of the number, and switches to scientific notation when the value gets very large or very small. Copy what you need and round it yourself.",
+			},
+			{
+				question: "What is a pyeong?",
+				answer:
+					"A traditional East Asian unit of area still used for property in Korea, equal to about 3.3 square metres. It is included because apartment listings there are quoted in pyeong while official documents use square metres.",
+			},
+		],
+	},
+	"/password-generator": {
+		heading: "Password generator",
+		lead: "A password is only as good as the number of guesses it would take to find, and people are bad at producing that by hand — the ones we invent cluster around words, dates and keyboard patterns that cracking software tries first. This generator draws every character from your browser's cryptographic random source, so there is no pattern to exploit. It tells you how many bits of entropy the current settings give you, which is the honest measure of strength: each extra bit doubles the work of guessing. The password is generated in the page and is never transmitted, stored or logged.",
+		stepsTitle: "How to make a strong password",
+		steps: [
+			"Drag the length slider. Length matters more than anything else here — going from 12 to 20 characters is a far bigger gain than adding symbols to a short password.",
+			"Choose which kinds of characters to use. Leave all four on unless the site you are signing up to refuses symbols.",
+			'Turn on "avoid look-alike characters" if you will have to read the password aloud or type it from paper, and 0 against O will cause trouble.',
+			"Copy the password straight into your password manager. Generate several at once if you are setting up more than one account.",
+		],
+		faqTitle: "Questions about generated passwords",
+		faq: [
+			{
+				question: "Is the password sent anywhere or saved?",
+				answer:
+					"No. It is produced by your browser's cryptographic random generator inside the page. Nothing is transmitted, nothing is written to storage, and closing the tab is enough to be rid of it.",
+			},
+			{
+				question: "How long should a password be?",
+				answer:
+					"Sixteen characters with mixed types is comfortably beyond brute force today; twenty gives room for the years ahead. Anything under twelve is worth replacing. The entropy figure under the password is the number to watch — 80 bits is strong, 128 bits is more than anything currently practical.",
+			},
+			{
+				question: "What do the bits of entropy mean?",
+				answer:
+					"They count how many guesses an attacker would need, expressed as a power of two. Sixty bits means about a billion billion possibilities. It measures this password against blind guessing — it says nothing about whether you then reuse it, which is what actually ends most accounts.",
+			},
+			{
+				question: "Should I use symbols?",
+				answer:
+					"They help, but less than people expect. Adding all the symbols to a 12-character password gains about 8 bits; adding four more characters gains about 26. If a site rejects symbols, make the password longer rather than worrying about it.",
+			},
+			{
+				question: "Is a random password better than a passphrase?",
+				answer:
+					"For anything you paste from a password manager, yes — it is shorter for the same strength. A passphrase of several unrelated words is easier to type and remember, which makes it the better choice for the handful of passwords you have to key in by hand, such as the one guarding the manager itself.",
+			},
+		],
+	},
+	"/date-calculator": {
+		heading: "Date calculator",
+		lead: "This calculator answers the two date questions that come up constantly and that nobody can do reliably in their head: how long is it between these two dates, and what date falls a certain distance from this one. It counts calendar months properly — a month after 31 January is not simply thirty days later — handles leap years, and gives you the count in business days as well as plain days, which is what notice periods, delivery estimates and deadlines are usually written in.",
+		stepsTitle: "How to work out dates",
+		steps: [
+			'Choose "between two dates" to measure a gap, or "add or subtract" to move away from a date.',
+			"For a gap, pick the two dates. The order does not matter — the result is the same either way.",
+			"Read the total in days, then the breakdown into years, months and days, and the panels for weeks, business days, hours and minutes.",
+			"To move from a date, enter how far and in which unit. A negative number goes backwards. The result shows the date and the day of the week it lands on.",
+		],
+		faqTitle: "Questions about date calculations",
+		faq: [
+			{
+				question: "How are business days counted?",
+				answer:
+					"Every day except Saturday and Sunday, counting the start date and stopping before the end date. Public holidays are not deducted, because they differ by country and by year — subtract those yourself for the region you are in.",
+			},
+			{
+				question:
+					"Why is the breakdown into years and months not just the days divided up?",
+				answer:
+					"Because months are not the same length. The breakdown walks the calendar: it counts whole months from the start date, then the days left over. That is why 31 January to 1 March reads as one month and one day rather than a fixed number of days.",
+			},
+			{
+				question: "What happens when I add a month to the 31st?",
+				answer:
+					"The date rolls into the next month rather than clamping. One month after 31 January lands on 2 or 3 March, depending on the year, because February has no 31st. If you need it to clamp to the last day of the month, subtract the difference by hand.",
+			},
+			{
+				question: "Are leap years handled?",
+				answer:
+					"Yes. The calculation uses the browser's own calendar, so 29 February exists in the years it should and day counts across it come out right.",
+			},
+			{
+				question: "Does the time of day affect the result?",
+				answer:
+					"The day, week and business-day counts ignore the time and compare whole calendar days, so a time zone change cannot shift the answer by one. The hours and minutes figures do use the exact moments.",
+			},
+		],
+	},
+	"/timestamp-converter": {
+		heading: "Unix timestamp converter",
+		lead: "A Unix timestamp counts the seconds since the start of 1970, which makes it convenient for computers and unreadable for people. This converter goes both ways: paste the number from a log line, a database column or an API response and get the date, or type a date and get the number back. It works out on its own whether you pasted seconds or milliseconds — the usual source of an answer that is off by a factor of a thousand — and shows the moment in ISO, UTC and your own local time at once, along with how long ago it was.",
+		stepsTitle: "How to convert a Unix timestamp",
+		steps: [
+			"Paste the timestamp into the first box. Ten digits are read as seconds and thirteen as milliseconds; the label beside the box shows which was assumed.",
+			'Or type a date into the second box — "2026-01-01", "2026-01-01T09:30:00Z" and similar formats are all understood.',
+			"Read the results: the same moment as seconds, milliseconds, ISO 8601, UTC and your local time, each with its own copy button.",
+			'Press "use this" beside the live clock to drop the current timestamp into the box.',
+		],
+		faqTitle: "Questions about Unix timestamps",
+		faq: [
+			{
+				question: "Seconds or milliseconds — how do I tell?",
+				answer:
+					"By length. A timestamp in seconds has ten digits for any date between 2001 and 2286; the same moment in milliseconds has thirteen. This tool switches automatically on that, and shows you which it chose so you can correct it if the value is unusual.",
+			},
+			{
+				question: "Why does the local time differ from UTC?",
+				answer:
+					"Because a timestamp records an instant, not a wall clock. The same number is 09:00 in London and 18:00 in Seoul. The local line uses your device's time zone; the UTC and ISO lines are the same everywhere, which is why logs and APIs use them.",
+			},
+			{
+				question: "What happens in 2038?",
+				answer:
+					"Systems that store the timestamp in a signed 32-bit integer run out of room on 19 January 2038 and wrap into negative numbers. Anything storing it in 64 bits — which is now most things, including this page — is unaffected for longer than the age of the universe.",
+			},
+			{
+				question: "Can it handle dates before 1970?",
+				answer:
+					"Yes. Those are negative timestamps, counting seconds backwards from the epoch, and they convert correctly here.",
+			},
+			{
+				question: "Does the timestamp know about leap seconds?",
+				answer:
+					"No, and neither does any other Unix timestamp. The count deliberately pretends every day has exactly 86,400 seconds, which is why it stays simple to convert and why it drifts from astronomical time by a handful of seconds.",
+			},
+		],
+	},
+	"/regex-tester": {
+		heading: "Regex tester",
+		lead: "Regular expressions are quicker to test than to reason about, and testing them somewhere that runs the same engine as the code matters — this page uses your browser's own JavaScript regex engine, so what matches here matches in your script. Every match is highlighted in the text, listed with its position and its captured groups, and you can preview a replacement with $1-style references before committing to it. Test text tends to be real data, so it is worth saying: nothing you paste leaves the page.",
+		stepsTitle: "How to test a regular expression",
+		steps: [
+			"Type the pattern. Write it as you would inside the slashes — the tool adds those and the flags around it.",
+			"Toggle the flags you need: i to ignore case, m to make ^ and $ work per line, s to let the dot match newlines, u for Unicode mode.",
+			"Paste the text to search underneath. Matches are highlighted as you type, and the table lists each one with where it starts and what its groups captured.",
+			'Turn on "show replacement" to try a substitution. Use $1, $2 for numbered groups and $<name> for named ones.',
+		],
+		faqTitle: "Questions about testing regular expressions",
+		faq: [
+			{
+				question: "Which flavour of regular expression is this?",
+				answer:
+					"JavaScript's, because it is your browser's own engine running the pattern. It is close to PCRE for everyday work, but lookbehind, named groups and Unicode property escapes have their own support history, and some things PCRE allows — recursion, possessive quantifiers — do not exist here at all.",
+			},
+			{
+				question: "Is my test text uploaded?",
+				answer:
+					"No. The pattern runs in the page against text that never leaves it. That is worth knowing when you are testing against a log excerpt or a customer record.",
+			},
+			{
+				question: "Why is there a limit on the text length?",
+				answer:
+					"Because a pattern can be made to backtrack catastrophically — nested quantifiers over the wrong input take exponential time — and a browser cannot interrupt a regex once it starts. Capping the input keeps a bad pattern from freezing the tab instead of showing you the problem.",
+			},
+			{
+				question: "Why does it stop at 1,000 matches?",
+				answer:
+					"Rendering tens of thousands of highlighted matches would make the page unusable without telling you anything more. When the cap is reached it is stated above the results, so you know the list is partial.",
+			},
+			{
+				question: "What do the named groups look like in output?",
+				answer:
+					"They appear as an object in the groups column, and you can reference them in a replacement with $<name>. A pattern like (?<year>\\d{4}) makes the year available under that name instead of a number.",
+			},
+		],
+	},
+	"/jwt-decoder": {
+		heading: "JWT decoder",
+		lead: "A JSON Web Token looks like noise but is mostly readable: two of its three parts are just base64-encoded JSON. This decoder opens them so you can see who the token is for, what it claims, and exactly when it expires — usually while working out why a request is being rejected. It can also check an HMAC signature if you have the secret, which tells you whether the token was really issued by the system you think. Tokens carry live credentials, so it matters that this runs in the page: neither the token nor the secret is transmitted anywhere.",
+		stepsTitle: "How to decode a JWT",
+		steps: [
+			"Paste the token. All three dot-separated parts, exactly as it appears in the header or the cookie.",
+			"Read the header and payload side by side. The header names the signing algorithm; the payload holds the claims.",
+			"Check the dates panel: exp, iat and nbf are shown as real times, and an expired token is labelled as such.",
+			"To confirm the signature, paste the signing secret and press check. This works for HS256, HS384 and HS512.",
+		],
+		faqTitle: "Questions about JSON Web Tokens",
+		faq: [
+			{
+				question: "Is it safe to paste a real token here?",
+				answer:
+					"Safer than most places, because the decoding happens in your browser and nothing is sent over the network. Still treat the token as the credential it is: anyone who sees your screen or clipboard has it, and if it is a live session token, it stays valid until it expires.",
+			},
+			{
+				question: "Is the payload encrypted?",
+				answer:
+					"No, and this surprises people. The header and payload are only base64-encoded — anyone holding the token can read them without a key. The signature stops the contents being changed, not read. Never put anything secret in a JWT payload.",
+			},
+			{
+				question: "Why can it only verify HS256 and its relatives?",
+				answer:
+					"Those are signed with a shared secret, which you can paste in. RS256, ES256 and the rest are signed with a private key and verified with the matching public key, which usually has to be fetched from the issuer's JWKS endpoint — that would mean sending a request, which this tool does not do.",
+			},
+			{
+				question: "The signature does not match. What went wrong?",
+				answer:
+					"Most often the secret is not the one used to sign, or it was pasted with a stray space or newline. It can also mean the token was signed with a different algorithm than its header claims, or that it was tampered with — which is exactly the case verification exists to catch.",
+			},
+			{
+				question: "What do exp, iat and nbf mean?",
+				answer:
+					"They are standard time claims, all Unix timestamps in seconds. exp is when the token stops being valid, iat is when it was issued, and nbf is the earliest time it may be used. This page shows all three as ordinary dates and flags a token whose exp has passed.",
+			},
+		],
+	},
 };
 
 export default GUIDES_EN;

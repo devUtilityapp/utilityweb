@@ -33,6 +33,12 @@ export const SEO_ROUTES: Array<SeoRoute> = [
 	{ path: "/csv-to-json", priority: "0.8" },
 	{ path: "/text-diff", priority: "0.8" },
 	{ path: "/color-converter", priority: "0.8" },
+	{ path: "/unit-converter", priority: "0.8" },
+	{ path: "/password-generator", priority: "0.8" },
+	{ path: "/date-calculator", priority: "0.8" },
+	{ path: "/timestamp-converter", priority: "0.8" },
+	{ path: "/regex-tester", priority: "0.8" },
+	{ path: "/jwt-decoder", priority: "0.8" },
 	{ path: "/calculator/gcd", priority: "0.7" },
 	{ path: "/calculator/lcm", priority: "0.7" },
 ];

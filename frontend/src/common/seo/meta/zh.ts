@@ -102,6 +102,36 @@ export const META_ZH: Record<string, PageMeta> = {
 		description:
 			"统计词数、含空格与不含空格的字符数、句数和段落数，并给出阅读时间和最常用的词。写下的内容不会上传。",
 	},
+	"/unit-converter": {
+		title: "单位换算 - 长度、重量、温度 - Utility web",
+		description:
+			"在公制与英制之间换算长度、重量、温度、面积、体积、速度、数据和时间。免费、即时，全在浏览器中运行。",
+	},
+	"/password-generator": {
+		title: "强密码生成器 - 免费、不留存 - Utility web",
+		description:
+			"按你选定的长度和字符种类生成随机密码。由浏览器的密码学随机源生成，不会发送到任何地方。",
+	},
+	"/date-calculator": {
+		title: "日期计算器 - 两个日期相差天数 - Utility web",
+		description:
+			"计算两个日期之间的天数、周数和工作日，或求出距某日期一段时间的那一天。正确处理月份长度与闰年。",
+	},
+	"/timestamp-converter": {
+		title: "Unix 时间戳转换 - 时间戳转日期 - Utility web",
+		description:
+			"把 Unix 时间戳转成可读日期，也能反向转换。自动识别秒与毫秒，并同时给出 ISO、UTC 和本地时间。",
+	},
+	"/regex-tester": {
+		title: "正则测试 - 检验与调试正则表达式 - Utility web",
+		description:
+			"用正则表达式检索文本，高亮每处匹配、列出捕获分组，并预览替换结果。粘贴的内容不会上传。",
+	},
+	"/jwt-decoder": {
+		title: "JWT 解码 - 读取并校验令牌 - Utility web",
+		description:
+			"解码 JSON Web Token，查看头部、声明与过期时间，并用密钥校验 HS256 签名。令牌始终留在你的浏览器里。",
+	},
 	"/calculator/gcd": {
 		title: "最大公约数计算器 - Utility web",
 		description: "求两个或更多数的最大公约数，并逐一列出它们共有的约数。",
