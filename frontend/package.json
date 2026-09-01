@@ -36,16 +36,9 @@
 		"commitizen": "exec < /dev/tty && git cz --hook || true"
 	},
 	"dependencies": {
-		"@hookform/resolvers": "^3.9.0",
-		"@nivo/bar": "^0.87.0",
-		"@nivo/core": "^0.87.0",
-		"@nivo/line": "^0.87.0",
-		"@nivo/pie": "^0.87.0",
-		"@tanstack/react-query": "^5.53.1",
 		"@tanstack/react-router": "^1.51.6",
 		"@tanstack/react-table": "^8.20.5",
 		"axios": "^1.7.9",
-		"dayjs": "^1.11.13",
 		"i18next": "^23.14.0",
 		"i18next-browser-languagedetector": "^8.0.0",
 		"i18next-http-backend": "^2.6.1",
@@ -57,12 +50,10 @@
 		"qrcode": "^1.5.4",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"react-hook-form": "^7.53.0",
 		"react-i18next": "^15.0.1",
 		"react-router-dom": "^7.1.5",
 		"react-toastify": "^11.0.3",
 		"react-uuid": "^2.0.0",
-		"zod": "^3.23.8",
 		"zustand": "^4.5.5"
 	},
 	"devDependencies": {

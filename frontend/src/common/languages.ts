@@ -2,8 +2,11 @@ export const LANGUAGES = ["en", "ko", "ja", "zh"] as const;
 
 export type Language = (typeof LANGUAGES)[number];
 
-/** 기본 언어는 접두사 없이 지금 쓰던 주소를 그대로 쓴다. */
-export const DEFAULT_LANGUAGE: Language = "en";
+/**
+ * 기본 언어는 접두사 없이 지금 쓰던 주소를 그대로 쓴다.
+ * 타입을 넓히지 않고 "en" 그대로 두어야, 나머지 언어만 골라내는 곳에서 쓸 수 있다.
+ */
+export const DEFAULT_LANGUAGE = "en" satisfies Language;
 
 export const LANGUAGE_NAMES: Record<Language, string> = {
 	en: "English",

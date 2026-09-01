@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import i18n from "i18next";
+import { ensureLanguage } from "./i18n";
 import { LANGUAGE_TAGS, splitLanguagePath } from "./languages";
 import {
 	OG_IMAGE_PATH,
@@ -96,8 +97,11 @@ export const useSeo = (): void => {
 		const { language, path } = splitLanguagePath(pathname);
 
 		// 화면 문구는 주소의 언어를 따른다. 브라우저 설정보다 주소가 우선이다.
+		// 문구를 받은 뒤에 바꾼다. 먼저 바꾸면 도착할 때까지 영어가 보인다.
 		if (i18n.language !== language) {
-			void i18n.changeLanguage(language);
+			void ensureLanguage(language).then(async () =>
+				i18n.changeLanguage(language)
+			);
 		}
 		document.documentElement.lang = LANGUAGE_TAGS[language];
 

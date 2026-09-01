@@ -4,7 +4,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { routeTree } from "./routeTree.gen.ts";
 import "./styles/tailwind.css";
-import "./common/i18n";
+import { initI18n } from "./common/i18n";
 import { startAnalytics } from "./common/analytics";
 
 startAnalytics();
@@ -20,9 +20,12 @@ declare module "@tanstack/react-router" {
 
 const rootElement = document.querySelector("#root") as Element;
 
-// 빌드 시점에 넣어둔 정적 SEO 본문이 들어 있을 수 있다(vite-seo-plugin.ts).
-// 비운 뒤 앱을 그린다. 이미 마운트된 뒤에는 다시 그리지 않는다.
-if (!rootElement.hasAttribute("data-mounted")) {
+// 화면 문구를 먼저 받아 둔다. 그 사이 화면에는 빌드 때 넣어둔 정적 본문이
+// 같은 언어로 남아 있으므로, 기다리는 동안 빈 화면이 보이지 않는다.
+void initI18n().then(() => {
+	// 빌드 시점에 넣어둔 정적 SEO 본문이 들어 있을 수 있다(vite-seo-plugin.ts).
+	// 비운 뒤 앱을 그린다. 이미 마운트된 뒤에는 다시 그리지 않는다.
+	if (rootElement.hasAttribute("data-mounted")) return;
 	rootElement.setAttribute("data-mounted", "true");
 	rootElement.innerHTML = "";
 
@@ -34,4 +37,4 @@ if (!rootElement.hasAttribute("data-mounted")) {
 			</React.Suspense>
 		</React.StrictMode>
 	);
-}
+});
